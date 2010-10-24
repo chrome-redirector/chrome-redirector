@@ -1,0 +1,11 @@
+#summary One-sentence summary of this page.
+#labels Phase-Requirements,Featured
+READ ME BEFORE INSTALLATION
+= Introduction =
+Installation instruction in English
+
+
+=INSTALLATION INSTRUCTION=
+Before you download this extension, make sure the following things:
+  *Your Google Chrome is belong to the dev channel;
+  *Specify the --enable-experimental-extension-apis flag when you launch the browser.
