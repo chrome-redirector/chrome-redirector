@@ -1,7 +1,7 @@
 #summary One-sentence summary of this page.
 安装前先阅读本文档
 = Introduction =
-Redirector 安装说明
+Redirector 安装说明 (非Redirector Lite)
 
 =安装说明=
 由于本插件使用了experimental版的API，故需开启相关支持。
