@@ -1,5 +1,5 @@
-#summary One-sentence summary of this page.
-安装前先阅读本文档
+#labels Phase-Requirements,Featured
+#安装前先阅读本文档
 = Introduction =
 Redirector 安装说明 (非Redirector Lite)
 
