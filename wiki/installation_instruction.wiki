@@ -7,5 +7,5 @@ Installation instruction for Redirector (Not Redirector Lite)
 
 =INSTALLATION INSTRUCTION=
 Before you download this extension, make sure the following things:
-  *Your Google Chrome is belong to the dev channel;
-  *Specify the --enable-experimental-extension-apis flag when you launch the browser.
+  * Your Google Chrome is belong to the dev channel;
+  * Specify the --enable-experimental-extension-apis flag when you launch the browser.
