@@ -2,7 +2,7 @@
 #labels Phase-Requirements,Featured
 READ ME BEFORE INSTALLATION
 = Introduction =
-Installation instruction in English
+Installation instruction for Redirector (Not Redirector Lite)
 
 
 =INSTALLATION INSTRUCTION=
