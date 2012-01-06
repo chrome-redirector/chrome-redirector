@@ -4,7 +4,9 @@
 Redirector 安装说明 (非Redirector Lite)
 
 =安装说明=
-~~由于本插件使用了experimental版的API，故需开启相关支持。
-下载本插件前，请先确保下列事项：
-  * 您使用的是dev版的Google Chrome，且保持更新；
-  * 为Chrome的启动选项加上 --enable-experimental-extension-apis。~~
+~~由于本插件使用了experimental版的API，故需开启相关支持。~~
+~~下载本插件前，请先确保下列事项：~~
+  ~~* 您使用的是dev版的Google Chrome，且保持更新；~~
+  ~~* 为Chrome的启动选项加上 --enable-experimental-extension-apis。~~
+
+Redirector 2.0.0 版本之后无特别要求
