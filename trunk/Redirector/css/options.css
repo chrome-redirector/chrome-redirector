@@ -253,7 +253,8 @@ th,td {
 }
 
 th {
-    background: #aaaaaa url(tr_back.gif) repeat-x;
+    /* background: #aaaaaa url(tr_back.gif) repeat-x; */
+    background: #aaaaaa;
     color: #fff;
 }
 

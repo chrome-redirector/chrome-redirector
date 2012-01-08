@@ -17,6 +17,6 @@
     },
     "name": "Redirector",
     "permissions": ["webNavigation", "notifications", "tabs",
-                    "http://*/*", "https://*/*"],
-    "version": "2.0.2"
+                    "<all_urls>"],
+    "version": "2.1.4"
 }

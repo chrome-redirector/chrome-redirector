@@ -5,8 +5,8 @@ var i18nT_en = {
     "h1-pref": "Preferences",
     "h3-lang": "Language",
     "h3-amredir": "Auto/Manual Redirect",
-    "pref-autoredir": "Enable auto redirect",
-    "pref-manredir": "Enable page action",
+    "pref-autoredir": "Enable automatically redirect",
+    "pref-manredir": "Enable manually redirect",
     "h1-mngrule": "Manage Rules",
     "h3-rulelist": "Rule List",
     "table-name": "Rule Name",
@@ -16,9 +16,14 @@ var i18nT_en = {
     "table-repl": "Replacement",
     "h3-manredir": "Manual Redirect",
     "op-edit": "Current Rule",
-    "op-appques": "Append '?' to all URL",
-    "op-googlecache": "Access Google Cache Text-only Version",
-    "op-sixxs": "SixXS.org IPv6-to-IPv4 Proxy",
+    "op-http2https": "Visit URLs begin with http://code.google.com \
+using https://",
+    "op-appques": "Append '?' to all URLs begin with http:// \
+(You probably don't need it)",
+    "op-googlecache": "Access Google cache text-only version \
+directly",
+    "op-sixxs": "SixXS.org IPv6-to-IPv4 proxy \
+(Modify the whitelist to apply to certain sites)",
     "lb-name": "Rule Name",
     "lb-white": "Whitelist",
     "lb-black": "Blacklist",
@@ -29,7 +34,7 @@ var i18nT_en = {
 
 var i18nP_en = {
     "pref-savebttn": "Save",
-    "pref-cancelbttn": "Cancel",
+    "pref-cancelbttn": "Restore",
     "bttns-add": "Add",
     "bttns-edit": "Edit",
     "bttns-del": "Delete",
@@ -59,9 +64,10 @@ var i18nT_zhCN = {
     "table-repl": "替换式",
     "h3-manredir": "手动重定向",
     "op-edit": "当前条目",
-    "op-appques": "在URL后添加'?'号",
-    "op-googlecache": "直接使用Google网页快照的纯文字版本",
-    "op-sixxs": "在域名后添加sixxs.org",
+    "op-http2https": "将http://code.google.com重定向到https://",
+    "op-appques": "在URL后添加'?'号（如果不是有需求，勿用）",
+    "op-googlecache": "跳过完整版直接使用Google网页快照的纯文字版",
+    "op-sixxs": "在域名后添加sixxs.org（需要修改白名单以便针对特定地址）",
     "lb-name": "规则名称",
     "lb-white": "白名单",
     "lb-black": "黑名单",
@@ -72,7 +78,7 @@ var i18nT_zhCN = {
 
 var i18nP_zhCN = {
     "pref-savebttn": "保存",
-    "pref-cancelbttn": "取消",
+    "pref-cancelbttn": "重置",
     "bttns-add": "添加",
     "bttns-edit": "编辑",
     "bttns-del": "删除",
@@ -85,6 +91,7 @@ var i18nP_zhCN = {
 }
 
 notif_en = {
+    "pref_saved": ["Notice", "Preferences saved!"],
     "illegal_re": ["Error", "Illegal Regular Expression!"],
     "value_blank": ["Error", "Value should not be blank!"],
     "endless_loop": ["Error", "Endless loop!"],
@@ -93,6 +100,7 @@ notif_en = {
 };
 
 notif_zhCN = {
+    "pref_saved": ["提醒", "设置已保存！"],
     "illegal_re": ["错误", "非法的正则表达式！"],
     "value_blank": ["错误", "输入不能为空！"],
     "endless_loop": ["错误", "死循环！"],

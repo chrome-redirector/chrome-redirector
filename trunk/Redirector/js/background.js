@@ -142,5 +142,5 @@ function cacheUrl(url, opt) {
     return url;
 }
 
-//chrome.management.onInstalled.addListener(function(info) {
-//});
+// chrome.management.onInstalled.addListener(function(info) {
+// });

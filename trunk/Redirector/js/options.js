@@ -1,7 +1,7 @@
 // Initialization
 function init()
 {
-    // Some predefined values
+    // Several predefined values
     timeout = 3;
     inputNum = 6;
     tableColNum = 5;
@@ -12,7 +12,7 @@ function init()
 
     loadPref();
 
-    // Some Listeners may required here
+    // Some Listeners may be required here
     navTags.addEventListener("click", switchNavTag, false);
     ruleListTable.addEventListener("click", ruleList.onSel, false);
     form.addEventListener("change", function(e) {
@@ -47,6 +47,7 @@ function savePref(e) {
     localStorage.pref = JSON.stringify(pref);
     localStorage.selLang = selLang;
     sendUpdateMsg();
+    desktopNotif(notif.pref_saved, timeout);
 }
 
 // Hide the input layer
@@ -66,7 +67,6 @@ function desktopNotif(arr, timeout) {
 }
 
 // Send update message
-// SEEMS NOT WORK
 function sendUpdateMsg() {
     var port = chrome.extension.connect({name: "update"});
     port.postMessage({hasUpdate: true});
@@ -92,16 +92,25 @@ function switchNavTag(e)
 // Select built-in rules
 function selBuiltInRule(e)
 {
+    var http2https = [
+        "Visit URLs begin with http://code.google.com using https://",
+        "/^http:\\/\\/code\\.google\\.com.*/",
+        "/^https/",
+        "/^http/",
+        "https",
+        "http://code.google.com/"
+    ];
     var appendQues = [
-        "Append '?' to all URL",
-        "/.*/",
+        "Append '?' to all URLs begin with http:// \
+(You probably don't need it)",
+        "/http:\\/\\/.*/",
         "/\\?$/",
         "/$/",
         "?",
         "http://code.google.com/p/chrome-redirector/downloads/list"
     ];
     var gCacheText = [
-        "Access Google Cache Text-only Version",
+        "Access Google cache text-only version directly",
         "/webcache\\.google.*/",
         "/&strip=1$/",
         "/$/",
@@ -109,7 +118,8 @@ function selBuiltInRule(e)
         "http://webcache.googleusercontent.com/"
     ];
     var sixxs = [
-        "SixXS.org IPv6-to-IPv4 Proxy",
+        "SixXS.org IPv6-to-IPv4 proxy \
+(Modify the whitelist to apply to certain sites)",
         "/\\.loooooogurl\\./",
         "/\\.sixxs\\.org/",
         "/(^(?:\\w+:\\/\\/)?[\\w\\.-]+)\\//",
@@ -120,12 +130,15 @@ function selBuiltInRule(e)
     // Todo: https, link decode, etc.
     switch(chooseRule.selectedIndex) {
     case 1:
-        var rule = appendQues;
+        var rule = http2https;
         break;
     case 2:
-        var rule = gCacheText;
+        var rule = appendQues;
         break;
     case 3:
+        var rule = gCacheText;
+        break;
+    case 4:
         var rule = sixxs;
         break;
     default:
@@ -175,7 +188,7 @@ function ruleList() {
 }
 
 ruleList.prototype.add = function() {
-    // need simplification
+    // Simplification needed
     this.data.push(["Untitled", "", "", "", "", "", true]);
     ruleListSel = this.getLen() - 1;
 
@@ -409,6 +422,8 @@ manRedirList.prototype.update = function() {
     for(var i in this.data) {
         manRedirSel.options.add(new Option(this.data[i]));
     }
+
+    sendUpdateMsg();
 }
 
 manRedirList.prototype.getLen = function() {
