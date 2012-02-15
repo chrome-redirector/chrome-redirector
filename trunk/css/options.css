@@ -249,6 +249,10 @@ label {
     white-space: nowrap;
 }
 
+.lab-tiny {
+    font-size: 80%;
+}
+
 span, input, select {
     vertical-align: middle;
 }

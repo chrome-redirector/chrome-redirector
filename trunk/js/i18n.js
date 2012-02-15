@@ -52,7 +52,8 @@ Lang.prototype.init = function(type) {
         case 'i18nP':
             attribArr = attrib.split(":");
 
-            if ((typeof (tmp = this.i18nP[attribArr[1]])) != 'undefined')
+            if ((typeof (tmp = this.i18nP[attribArr[1]])) !=
+                'undefined')
                 elem[i].setAttribute(attribArr[0], tmp);
             break;
         default:
@@ -106,26 +107,23 @@ var i18nT = {
     'RULEMGR-TAB-REPL': 'Replacement',
     'RULEMGR-BAK-TITLE': 'Backup Rules List',
 
-    'RULEEDIT-CURRENT': 'Current Rule',
+    'RULEEDIT-CURRENT': 'Current/New added Rule',
     'RULEEDIT-SIXXS': 'SixXS.org IPv6->IPv4 Proxy',
-    'RULEEDIT-GOOGLECACHE': 'Google Cache Text-only Version',
+    'RULEEDIT-GOOGLECACHE': 'Enforce Google Cache Text-only Version',
 
     'RULEEDIT-TYPE-REGEXP': 'RegExp',
     'RULEEDIT-TYPE-GLOB': 'Wildcards',
     'RULEEDIT-TYPE-MANUAL': 'Manual',
     'RULEEDIT-TYPE-BLOCK': 'Block',
-    'RULEEDIT-TYPE-REGEXPI': 'RegExp (Ignore case)',
-    'RULEEDIT-TYPE-GLOBI': 'Wildcards (Ignore case)',
-    'RULEEDIT-TYPE-REGEXPG': 'RegExp (Global)',
-    'RULEEDIT-TYPE-GLOBG': 'Wildcards (Global)',
-    'RULEEDIT-TYPE-REGEXPIG': 'RegExp (Ignore case & Global)',
-    'RULEEDIT-TYPE-GLOBIG': 'Wildcards (Ignore case & Global)',
 
-    'RULEEDI-LAB-NAME': 'Name',
-    'RULEEDI-LAB-MATCH': 'Match',
-    'RULEEDI-LAB-SUB': 'Sub',
-    'RULEEDI-LAB-REPL': 'Replacement',
-    'RULEEDI-LAB-TEST': 'Test URL',
+    'RULEEDIT-LAB-NAME': 'Name',
+    'RULEEDIT-LAB-MATCH': 'Match',
+    'RULEEDIT-LAB-SUB': 'Sub',
+    'RULEEDIT-LAB-REPL': 'Replacement',
+    'RULEEDIT-LAB-TEST': 'Test URL',
+    'RULEDIT-LAB-IGNCASE': 'Ignore case',
+    'RULEDIT-LAB-SUBGLOB': 'Global match',
+    'RULEDIT-LAB-REPLDECODE': 'Decode afer replace',
 };
 
 var i18nP = {
@@ -148,7 +146,7 @@ var i18nP = {
 var notif = {
     'PREF-SAVED': 'Preferences saved!',
     'CONFIRM-DISCARD': 'Do you really want to discard?',
-    'EXP-ERR': 'Expression(s) may be incorrect!',
+    'EXP-ERR': 'Expression(s) may be incorrect, or I have a bug!',
     'MULTI-MANUAL': 'Mutiple enabled manual rules (Only the 1st one \
 will be used)!',
     'MANUAL-BLOCK': 'URL cannot be blocked in manual redirection',
@@ -189,26 +187,23 @@ var i18nT_zhCN = {
     'RULEMGR-TAB-REPL': '替换字符串',
     'RULEMGR-BAK-TITLE': '备份规则',
 
-    'RULEEDIT-CURRENT': '当前规则',
+    'RULEEDIT-CURRENT': '当前／新添加的规则',
     'RULEEDIT-SIXXS': 'SixXS.org IPv6->IPv4 代理',
-    'RULEEDIT-GOOGLECACHE': 'Google 快照纯文本版',
+    'RULEEDIT-GOOGLECACHE': '强制使用Google 快照纯文字版',
 
     'RULEEDIT-TYPE-REGEXP': '正则表达式',
     'RULEEDIT-TYPE-GLOB': '通配符',
     'RULEEDIT-TYPE-MANUAL': '手动',
     'RULEEDIT-TYPE-BLOCK': '阻塞',
-    'RULEEDIT-TYPE-REGEXPI': '正则表达式（大小写不敏感）',
-    'RULEEDIT-TYPE-GLOBI': '通配符（大小写不敏感）',
-    'RULEEDIT-TYPE-REGEXPG': '正则表达式（全局）',
-    'RULEEDIT-TYPE-GLOBG': '通配符（全局）',
-    'RULEEDIT-TYPE-REGEXPIG': '正则表达式（大小写不敏感且全局）',
-    'RULEEDIT-TYPE-GLOBIG': '通配符（大小写不敏感且全局）',
 
-    'RULEEDI-LAB-NAME': '名称',
-    'RULEEDI-LAB-MATCH': '匹配',
-    'RULEEDI-LAB-SUB': '被替换式',
-    'RULEEDI-LAB-REPL': '替换字符串',
-    'RULEEDI-LAB-TEST': '测试URL',
+    'RULEEDIT-LAB-NAME': '名称',
+    'RULEEDIT-LAB-MATCH': '匹配',
+    'RULEEDIT-LAB-SUB': '被替换式',
+    'RULEEDIT-LAB-REPL': '替换字符串',
+    'RULEEDIT-LAB-TEST': '测试URL',
+    'RULEDIT-LAB-IGNCASE': '忽略大小写',
+    'RULEDIT-LAB-SUBGLOB': '全局匹配',
+    'RULEDIT-LAB-REPLDECODE': '替换后解码',
 };
 
 var i18nP_zhCN = {
@@ -231,7 +226,7 @@ var i18nP_zhCN = {
 var notif_zhCN = {
     'PREF-SAVED': '首选项已保存！',
     'CONFIRM-DISCARD': '确定放弃修改？',
-    'EXP-ERR': '表达式可能有误！',
+    'EXP-ERR': '表达式有误或程序出错！',
     'MULTI-MANUAL': '多条手动规则被启用（仅第一条有效）!',
     'MANUAL-BLOCK': '手动重定向不能阻塞URL',
     'TEST-NOTMATCH': '测试URL不能匹配！',

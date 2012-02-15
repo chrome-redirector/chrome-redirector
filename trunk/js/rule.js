@@ -22,7 +22,8 @@ function RuleList() {
 
 RuleList.prototype.add = function() {
     this.data.push({
-        name: 'Untitled', match: {str: ''}, sub: {str: ''}, repl: ''
+        name: 'Untitled', match: {str: ''},
+        sub: {str: ''}, repl: {str: ''}
     });
 
     ruleEdit_sel.selectedIndex = 0;
@@ -61,22 +62,42 @@ RuleList.prototype.edit = function() {
     } catch (e) {}
 }
 
-RuleList.prototype.update = function(idx) {
-    if (this.data.length == 0) return;
+RuleList.prototype.update = function(idx) { // idx can also be an obj
+    if (typeof idx == 'object') {
+        var rule = idx;
+        var row = ruleListTable.getElementsByTagName('tr')[
+            this.sel + 1].children;
+    } else {
+        if (this.data.length == 0) return;
 
-    var row = ruleListTable.getElementsByTagName('tr')[
-        parseInt(idx) + 1].children;
-    var rule = this.data[idx];
+        var rule = this.data[idx];
+        var row = ruleListTable.getElementsByTagName('tr')[
+            parseInt(idx) + 1].children;
+    }
 
     row[0].children[0].checked = rule.enabled;
     row[1].innerText = ruleEdit_name.value = rule.name;
     row[2].innerText = ruleEdit_matchstr.value = rule.match.str;
     row[3].innerText = ruleEdit_substr.value = rule.sub.str;
-    row[4].innerText = ruleEdit_repl.value = rule.repl;
+    row[4].innerText = ruleEdit_repl.value = rule.repl.str;
+
     ruleEdit_matchstr.disabled = TYPE_MANUAL ==
         (ruleEdit_matchtype.selectedIndex = rule.match.type);
+    if (typeof rule.match.modi != 'undefined')
+        ruleEdit_matchcase.checked = rule.match.modi;
+
     ruleEdit_substr.disabled = TYPE_BLOCK ==
         (ruleEdit_subtype.selectedIndex = rule.sub.type);
+    if (typeof rule.sub.modi != 'undefined')
+        ruleEdit_subcase.checked = rule.sub.modi;
+    if (typeof rule.sub.modg != 'undefined')
+        ruleEdit_subglob.checked = rule.sub.modg;
+
+    if (typeof rule.repl.decode != 'undefined' && rule.repl.decode)
+        ruleEdit_replDecode.checked = true;
+
+    this.onChgMatchType();
+    this.onChgSubType();
 }
 
 RuleList.prototype.onSel = function(e) {
@@ -119,20 +140,76 @@ RuleList.prototype.onSel = function(e) {
 }
 
 RuleList.prototype.selBuiltin = function (e) { // Built-in rules
-    // Todo: link decode, etc.
+    // Todo: link decode; Skip Google Malware Warning; Tiny DNS
     var sixxs = {
         name: 'SixXS.org IPv6->IPv4 Proxy',
         match: {str: 'MANUAL', type: TYPE_MANUAL},
-        sub: {str: '^[^\\.]*[^/]*'},
-        repl: '$&.sixxs.org'
+        sub: {str: '^[^\\.]*[^/]*', type: TYPE_REGEXP},
+        repl: {str: '$&.sixxs.org'}
     };
 
     var gCacheText = {
-        name: 'Google Cache Text-only Version',
-        match: {str: '^http://webcache\\.googleusercontent\\.com/'},
-        sub: {str: '$'},
-        repl: '&strip=1'
+        name: 'Enforce Google Cache Text-only Version',
+        match: {
+            str: '^http://webcache\\.googleusercontent\\.com/',
+            type: TYPE_REGEXP},
+        sub: {str: '$', type: TYPE_REGEXP},
+        repl: {str: '&strip=1'}
     };
+
+    // var http2https = {
+    //     name: 'Enforce Visiting foo.com with SSL (https)',
+    //     match: {str: '^http://[^/]*foo\\.com/', type: TYPE_REGEXPI},
+    //     sub: {str: '^http', type: TYPE_REGEXPI},
+    //     repl: 'https'
+    // };
+
+    // var skipRedir = {
+    //     name: 'Skip Redirection',
+    //     match: {
+    //         str: '^http://foo\\.com/\\?redirectTo=',
+    //         type: TYPE_REGEXPI},
+    //     sub: {str: '^[^\\?]*\\?redirectTo=', type: TYPE_REGEXPI},
+    //     repl: ''
+    // };
+
+    // var skipGoogleRedir = {
+    //     name: 'Skip Google Redirect Notice',
+    //     match: {
+    //         str: '^http://www\\.google\\.com/url\\?',
+    //         type: TYPE_REGEXPI},
+    //     sub: {
+    //         str: '^http://www\\.google\\.com/url\\?',
+    //         type: TYPE_REGEXPI},
+    //     repl: ''
+    // };
+
+    // var wikiZh_CN = {
+    //     name: 'Enforce Visiting zh.wikipedia.org in zh-CN',
+    //     match: {
+    //         str: 'http://zh\\.wikipedia\\.org/(?!zh-cn)/',
+    //         type: TYPE_REGEXPI},
+    //     sub: {
+    //         str: '(^[^\\.]*[^/]*)/[^/]*/',
+    //         type: TYPE_REGEXPI},
+    //     repl: '$1/zh-cn/'
+    // };
+
+    // var urlAlias = {
+    //     name: 'URL Alias',
+    //     match : {str: '^http://foo\\.arpa/$', type: TYPE_REGEXPI},
+    //     sub: {str: '.*', type: TYPE_REGEXP},
+    //     repl: 'http://this.is/a/quite/long/url'
+    // };
+
+    // var ezProxy = {
+    //     name: 'EZProxy',
+    //     match: {
+    //         str: '^http://ieeexplore\\.ieee\\.org/',
+    //         type: TYPE_REGEXPI},
+    //     sub: {str: '.*', type: TYPE_REGEXP},
+    //     repl: 'http://www.library.drexel.edu/cgi-bin/r.cgi?url='
+    // };
 
     switch(ruleEdit_sel.selectedIndex) {
     case 1:
@@ -140,34 +217,27 @@ RuleList.prototype.selBuiltin = function (e) { // Built-in rules
     case 2:
         var rule = gCacheText; break;
     default:
-        // this.update(this.sel);
-        console.log('Oops!');
-        return;
+        this.update(this.sel);  // Restore the current rule
     }
 
-    // Copy rule content to edit form
-    ruleEdit_name.value = rule.name;
-    ruleEdit_matchstr.value = rule.match.str;
-    ruleEdit_substr.value = rule.sub.str;
-    ruleEdit_repl.value = rule.repl;
-
-    ruleEdit_matchstr.disabled = TYPE_MANUAL ==
-        (ruleEdit_matchtype.selectedIndex = rule.match.type);
-    ruleEdit_substr.disabled = TYPE_BLOCK ==
-        (ruleEdit_subtype.selectedIndex = rule.sub.type);
+    // TODO: Move up
+    this.update(rule);
 }
 
 RuleList.prototype.onChgMatchType = function() {
-    if (ruleEdit_matchstr.disabled =
-        ruleEdit_matchtype.selectedIndex == 2)
+    if (ruleEdit_matchstr.disabled = ruleEdit_matchcase.disabled =
+        ruleEdit_matchtype.selectedIndex == TYPE_MANUAL) {
         ruleEdit_matchstr.value = 'MANUAL';
-    else if (ruleEdit_matchstr.value == 'MANUAL')
+    } else if (ruleEdit_matchstr.value == 'MANUAL') {
         ruleEdit_matchstr.value = '';
+    }
 }
 
 RuleList.prototype.onChgSubType = function() {
-    if (ruleEdit_substr.disabled = ruleEdit_repl.disabled =
-        ruleEdit_subtype.selectedIndex == 2) {
+    if (ruleEdit_substr.disabled = ruleEdit_subcase.disabled =
+        ruleEdit_subglob.disabled =
+        ruleEdit_repl.disabled = ruleEdit_replDecode.disabled =
+        ruleEdit_subtype.selectedIndex == TYPE_BLOCK) {
         ruleEdit_substr.value = 'BLOCK';
         ruleEdit_repl.value = 'N/A';
     } else {
@@ -185,11 +255,16 @@ RuleList.prototype.save = function() {
     this.data[this.sel].name = ruleEdit_name.value;
     this.data[this.sel].match = {
         str: ruleEdit_matchstr.value,
-        type: ruleEdit_matchtype.selectedIndex}; // Prob
+        type: ruleEdit_matchtype.selectedIndex,
+        modi: ruleEdit_matchcase.checked};
     this.data[this.sel].sub = {
         str: ruleEdit_substr.value,
-        type: ruleEdit_subtype.selectedIndex}; // Prob
-    this.data[this.sel].repl = ruleEdit_repl.value;
+        type: ruleEdit_subtype.selectedIndex,
+        modi: ruleEdit_subcase.checked,
+        modg: ruleEdit_subglob.checked};
+    this.data[this.sel].repl = {
+        str: ruleEdit_repl.value,
+        decode: ruleEdit_replDecode.checked};
 
     try {
         this.refresh();
@@ -204,7 +279,7 @@ RuleList.prototype.save = function() {
     this.chg = this.isNew = false;
 }
 
-RuleList.prototype.restore = function() {
+RuleList.prototype.discard = function() {
     if (this.chg)
         if (! confirm(lang.notif['CONFIRM-DISCARD'])) return;
 

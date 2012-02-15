@@ -5,12 +5,10 @@
 TYPE_REGEXP = 0;
 TYPE_GLOB = 1;
 TYPE_MANUAL = TYPE_BLOCK = 2;
-TYPE_REGEXPI = 3;
-TYPE_GLOBI = 4;
-TYPE_REGEXPG = 5;
-TYPE_GLOBG = 6;
-TYPE_REGEXPIG = 7;
-TYPE_GLOBIG = 8;
+
+function DBG(msg) {
+    chrome.extension.getBackgroundPage().console.log(msg);
+}
 
 Object.merge = function(dest, src) { // Merge obj src into dest
     for (var prop in src) {
@@ -26,21 +24,13 @@ function str2re(proto) {        // Construct compiled regexp from str
     if (typeof proto.type !== 'undefined') {
         if (proto.type == TYPE_BLOCK) retrun;
 
-        if (proto.type == TYPE_GLOB || proto.type == TYPE_GLOBI ||
-            proto.type == TYPE_GLOBG || proto.type == TYPE_GLOBIG)
+        if (proto.type == TYPE_GLOB)
             str = glob2re(str);
     }
 
-    switch (proto.type) {
-    case TYPE_REGEXPI: case TYPE_GLOBI:
-        mod = 'i'; break;
-    case TYPE_REGEXPG: case TYPE_GLOBG:
-        mod = 'g'; break;
-    case TYPE_REGEXPIG: case TYPE_GLOBIG:
-        mod = 'ig'; break;
-    default:
-        mod = '';
-    }
+    mod='';
+    if (typeof proto.modi != 'undefined') mod += 'i';
+    if (typeof proto.modg != 'undefined') mod += 'g';
 
     var tmp = new RegExp(str, mod);
     tmp.compile(tmp);

@@ -134,44 +134,48 @@
 
       <!-- Main form -->
       <form id="ruleEdit" onsubmit="return false;">
-        <label i18nT="RULEEDI-LAB-NAME"></label><br />
+        <label i18nT="RULEEDIT-LAB-NAME"></label><br />
         <input id="ruleEdit_name" class="input-text"
                placeholder="NAME" required autofocus="autofocus" />
         <br />
 
-        <label i18nT="RULEEDI-LAB-MATCH"></label>
+        <label i18nT="RULEEDIT-LAB-MATCH"></label>
         <select id="ruleEdit_matchtype"
                 onchange="ruleList.onChgMatchType()">
           <option selected="selected" i18nT="RULEEDIT-TYPE-REGEXP">
           </option>
           <option i18nT="RULEEDIT-TYPE-GLOB"></option>
           <option i18nT="RULEEDIT-TYPE-MANUAL"></option>
-          <option i18nT="RULEEDIT-TYPE-REGEXPI">
-          <option i18nT="RULEEDIT-TYPE-GLOBI"></option>
         </select>
+        <input type="checkbox" id="ruleEdit_matchcase" />
+        <label class="lab-tiny" i18nT="RULEDIT-LAB-IGNCASE"></label>
+
         <input id="ruleEdit_matchstr" class="input-text"
                placeholder="MATCH PATTERN" required />
         <br />
 
-        <label i18nT="RULEEDI-LAB-SUB"></label>
+        <label i18nT="RULEEDIT-LAB-SUB"></label>
         <select id="ruleEdit_subtype"
                 onchange="ruleList.onChgSubType()">
           <option selected="selected" i18nT="RULEEDIT-TYPE-REGEXP">
           </option>
           <option i18nT="RULEEDIT-TYPE-GLOB"></option>
           <option i18nT="RULEEDIT-TYPE-BLOCK"></option>
-          <option i18nT="RULEEDIT-TYPE-REGEXPI">
-          <option i18nT="RULEEDIT-TYPE-GLOBI"></option>
-          <option i18nT="RULEEDIT-TYPE-REGEXPG">
-          <option i18nT="RULEEDIT-TYPE-GLOBG">
-          <option i18nT="RULEEDIT-TYPE-REGEXPIG">
-          <option i18nT="RULEEDIT-TYPE-GLOBIG">
         </select>
+        <input type="checkbox" id="ruleEdit_subcase" />
+        <label class="lab-tiny" i18nT="RULEDIT-LAB-IGNCASE"></label>
+        <input type="checkbox" id="ruleEdit_subglob" />
+        <label class="lab-tiny" i18nT="RULEDIT-LAB-SUBGLOB"></label>
+
         <input id="ruleEdit_substr" class="input-text"
                placeholder="SUB STRING/REGEXP" required />
         <br />
 
-        <label i18nT="RULEEDI-LAB-REPL"></label>
+        <label i18nT="RULEEDIT-LAB-REPL"></label>
+        <input type="checkbox" id="ruleEdit_replDecode" />
+        <label class="lab-tiny" i18nT="RULEDIT-LAB-REPLDECODE">
+        </label>
+
         <input id="ruleEdit_repl" class="input-text"
                placeholder="REPLACEMENT" />
         <br />
@@ -179,14 +183,14 @@
         <input type="submit" i18nP="value:RULEEDIT-SAVE"
                onclick="ruleList.save()" />
         <input type="button" i18nP="value:RULEEDIT-DISCARD"
-               onclick="ruleList.restore()" />
+               onclick="ruleList.discard()" />
         <br />
       </form>
 
       <!-- Test form -->
       <form onsubmit="return false;">
         <section>
-          <label i18nT="RULEEDI-LAB-TEST"></label>
+          <label i18nT="RULEEDIT-LAB-TEST"></label>
           <input id="ruleEdit_test" class="input-text"
                  placeholder="TEST URL" required />
           <br />

@@ -12,5 +12,5 @@
     "name": "Redirector",
     "description": "Redirects URLs automatically or manually",
     "permissions": ["webRequest", "webRequestBlocking", "tabs", "<all_urls>"],
-    "version": "2.2.1"
+    "version": "2.2.2"
 }
