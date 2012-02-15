@@ -267,3 +267,29 @@ RuleList.prototype.move = function(inc) {
 
     this.refresh();
 }
+
+RuleList.prototype.bak = function() {
+    ruleMgr_bak.value = JSON.stringify(this.data);
+
+    alert(lang.notif['RULE-BAK']);
+}
+
+RuleList.prototype.restore = function() {
+    // Remove leading and trailing whitespaces
+    tmp = ruleMgr_bak.value.replace(/^\s*/, '').replace(/\s*$/, '');
+
+    if (tmp == '') {
+        alert(lang.notif['RULE-RESTORE-EMPTY']);
+        return;
+    }
+
+    try {
+        this.data = JSON.parse(tmp);
+    } catch (e) {
+        alert(lang.notif['RULE-RESTORE-ERR']);
+        return;
+    }
+
+    this.refresh();
+    window.location.reload();
+}

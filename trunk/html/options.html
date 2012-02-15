@@ -71,6 +71,8 @@
           <h1 i18nT="RULEMGR-TITLE"></h1>
 
           <section>
+            <h3 i18nT="RULEMGR-TAB-TITLE"></h3>
+
             <input type="button" i18nP="value:RULEMGR-BTN-ADD"
                    onclick="ruleList.add()" />
             <input type="button" i18nP="value:RULEMGR-BTN-EDIT"
@@ -94,6 +96,17 @@
                 <th i18nT="RULEMGR-TAB-REPL"></th>
               </tr>
             </table>
+          </section>
+
+          <!-- Backup rule list -->
+          <section>
+            <h3 i18nT="RULEMGR-BAK-TITLE"></h3>
+
+            <textarea id="ruleMgr_bak"></textarea><br />
+            <input type="button" i18nP="value:RULEMGR-BAK"
+                   onclick="ruleList.bak()" />
+            <input type="button" i18nP="value:RULEMGR-RESTORE"
+                   onclick="ruleList.restore()" /><br />
           </section>
         </div>
 

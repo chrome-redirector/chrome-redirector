@@ -99,10 +99,12 @@ var i18nT = {
 
     'RULEMGR-TITLE': 'Rules',
 
+    'RULEMGR-TAB-TITLE': 'Rules List',
     'RULEMGR-TAB-NAME': 'Name',
     'RULEMGR-TAB-MATCH': 'Match',
     'RULEMGR-TAB-SUB': 'Sub',
     'RULEMGR-TAB-REPL': 'Replacement',
+    'RULEMGR-BAK-TITLE': 'Backup Rules List',
 
     'RULEEDIT-CURRENT': 'Current Rule',
     'RULEEDIT-SIXXS': 'SixXS.org IPv6->IPv4 Proxy',
@@ -135,6 +137,8 @@ var i18nP = {
     'RULEMGR-BTN-DEL': 'Delete',
     'RULEMGR-BTN-UP': 'Up',
     'RULEMGR-BTN-DOWN': 'Down',
+    'RULEMGR-BAK': 'Backup',
+    'RULEMGR-RESTORE': 'Restore',
 
     'RULEEDIT-SAVE': 'Save',
     'RULEEDIT-DISCARD': 'Discard',
@@ -151,6 +155,9 @@ will be used)!',
     'TEST-NOTMATCH': 'Test URL is not matched!',
     'TEST-BLOCK': 'Test URL will be blocked',
     'TEST-DEST': 'Redirect to: ',
+    'RULE-BAK': 'Please copy the text in the textarea for later use',
+    'RULE-RESTORE-EMPTY': "You didn't paste the text!",
+    'RULE-RESTORE-ERR': "An error occurred! Please check the text",
 }
 
 /**
@@ -175,10 +182,12 @@ var i18nT_zhCN = {
 
     'RULEMGR-TITLE': '规则',
 
+    'RULEMGR-TAB-TITLE': '规则列表',
     'RULEMGR-TAB-NAME': '名称',
     'RULEMGR-TAB-MATCH': '匹配',
     'RULEMGR-TAB-SUB': '被替换式',
     'RULEMGR-TAB-REPL': '替换字符串',
+    'RULEMGR-BAK-TITLE': '备份规则',
 
     'RULEEDIT-CURRENT': '当前规则',
     'RULEEDIT-SIXXS': 'SixXS.org IPv6->IPv4 代理',
@@ -211,6 +220,8 @@ var i18nP_zhCN = {
     'RULEMGR-BTN-DEL': '删除',
     'RULEMGR-BTN-UP': '上移',
     'RULEMGR-BTN-DOWN': '下移',
+    'RULEMGR-BAK': '备份',
+    'RULEMGR-RESTORE': '还原',
 
     'RULEEDIT-SAVE': '保存',
     'RULEEDIT-DISCARD': '放弃',
@@ -226,4 +237,7 @@ var notif_zhCN = {
     'TEST-NOTMATCH': '测试URL不能匹配！',
     'TEST-BLOCK': '测试URL将被阻塞',
     'TEST-DEST': '重定向至：',
+    'RULE-BAK': '请复制文本框中的文字保存以备用',
+    'RULE-RESTORE-EMPTY': "请粘贴文本！",
+    'RULE-RESTORE-ERR': "无法还原！请检查文本",
 }
