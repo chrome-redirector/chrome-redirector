@@ -1,0 +1,263 @@
+body {
+    font-family: Arial, sans-serif;
+    margin: 10px;
+    margin-top: 10px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+    display: block;
+    -webkit-user-select: none;
+}
+
+#box {
+    bottom: 0px;
+    left: 0px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    display: -webkit-box;
+}
+
+#navBar {
+    background: #eee;
+    bottom: 0px;
+    left: 0px;
+    position: fixed;
+    top: 0px;
+    width: 20%;
+    z-index: 2;
+    -webkit-border-end: 1px solid #ccc;
+}
+
+#main {
+    bottom: 0px;
+    left: 0px;
+    margin: 0px;
+    position: absolute;
+    right: 0px;
+    top: 0px;
+    z-index: 1;
+    -webkit-box-align: stretch;
+    -webkit-padding-start: 21%;
+}
+
+.mainview {
+    padding: 0px 6px;
+    width: 80%;
+    display: none;
+}
+
+.mainview-sel {
+    padding: 0px 6px;
+    width: 80%;
+    display: block;
+}
+
+hr {
+    border-style: inset;
+    border-top-style: inset;
+    border-right-style: inset;
+    border-bottom-style: inset;
+    border-left-style: inset;
+    border-width: 1px;
+    border-top-width: 1px;
+    border-right-width: 1px;
+    border-bottom-width: 1px;
+    border-left-width: 1px;
+    display: block;
+    margin: 0.5em auto;
+    margin-top: 0.5em;
+    margin-right: auto;
+    margin-bottom: 0.5em;
+    margin-left: auto;
+}
+
+#navBar > hr {
+    background-color: #ddd;
+    border: 0px;
+    border-top-width: 0px;
+    border-right-width: 0px;
+    border-bottom-width: 0px;
+    border-left-width: 0px;
+    border-style: initial;
+    border-color: initial;
+    height: 1px;
+    width: 65%;
+    -webkit-margin-start: 35%;
+}
+
+#navBar > ul {
+    margin: 0px;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+}
+
+.navTag {
+    color: #46c;
+    display: block;
+    outline: none;
+    outline-style: none;
+    outline-width: initial;
+    outline-color: initial;
+    padding: 7px 0px;
+    padding-top: 7px;
+    padding-right: 0px;
+    padding-bottom: 7px;
+    padding-left: 0px;
+    text-align: end;
+    cursor: pointer;
+    -webkit-padding-end: 6px;
+}
+
+.navTagSel {
+    color: black;
+    background: -webkit-gradient(
+        linear, 0% 0%, 100% 0%,
+        from(#eef), color-stop(0.95, #bce), to(#bce));
+}
+
+h1 {
+    display: block;
+    font-weight: bold;
+    color: #567;
+    font-size: 150%;
+    margin: 0px;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    padding-bottom: 1em;
+    padding-top: 1em;
+    text-align: start;
+    -webkit-padding-end: 6px;
+}
+
+#navBar > h1 {
+    display: block;
+    color: #567;
+    font-size: 160%;
+    font-weight: normal;
+    margin: 0px;
+    margin-top: 0px;
+    margin-right: 0px;
+    margin-bottom: 0px;
+    margin-left: 0px;
+    padding-bottom: 12px;
+    padding-top: 6px;
+    text-align: end;
+    -webkit-padding-end: 6px;
+}
+
+section {
+    border-bottom: 1px solid #eee;
+    border-bottom-width: 1px;
+    border-bottom-style: solid;
+    border-bottom-color: #eee;
+    margin-bottom: 1em;
+    margin-top: 1em;
+    padding-bottom: 0.5em;
+    -webkit-box-orient: horizontal;
+}
+
+section > h3 {
+    font-size: 120%;
+    font-weight: bold;
+    margin: 0px;
+    padding-top: 2px;
+    vertical-align: middle;
+}
+
+#layerFront {
+    display:none;
+    position: fixed;
+    z-index: 3;
+    height:auto;
+    padding:6px;
+    top:20%;
+    left:25%;
+    right:25%;
+    border:2px solid #add;
+    background: #eee;
+}
+
+#layerBack {
+    position:fixed;
+    top:0;
+    left:0;
+    z-index:2;
+    width:100%;
+    height:100%;
+    background:#000;
+    filter:alpha(opacity=70);
+    opacity:0.7;
+    display: none;
+}
+
+#ruleEdit_sel {
+    width: 100%;
+}
+
+table {
+    font-size: 80%;
+    width: 100%;
+    border-collapse: collapse;
+    margin: 1em 0;
+    height: 10px;
+    line-height: 10px;
+    table-layout: fixed;
+    cursor: default;
+}
+
+td {
+    text-align: left;
+    padding: .5em;
+    border: 1px solid #fff;
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+td+td+td,td+td+td+td+td {
+    background: #ccc;
+}
+
+td,td+td,td+td+td+td {
+    background: #eee;
+}
+
+th {
+    text-align: center;
+    padding: .5em;
+    border: 1px solid #fff;
+    background: #aaa;
+    color: #fff;
+}
+
+.sel-td {
+    background: #a99 !important;
+}
+
+.input-text {
+    width: 100%;
+}
+
+label {
+    width: 3em;
+    vertical-align: middle;
+    white-space: nowrap;
+}
+
+span, input, select {
+    vertical-align: middle;
+}
+
+input[type="button"],input[type="submit"] {
+    width: 5em;
+    height: 30px;
+    float: left;
+    margin-right: 3px;
+    display: inline-block;
+    cursor: pointer;
+}
