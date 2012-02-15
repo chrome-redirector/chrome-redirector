@@ -1,0 +1,16 @@
+{
+    "background_page": "/html/background.html",
+    "options_page": "/html/options.html",
+    "page_action": {
+        "default_icon": "/icons/icon_19.png",
+        "default_title": "Redirector"
+    },
+    "icons": {
+        "128": "/icons/icon_128.png"
+    },
+    "homepage_url": "https://code.google.com/p/chrome-redirector/",
+    "name": "Redirector",
+    "description": "Redirects URLs automatically or manually",
+    "permissions": ["webRequest", "webRequestBlocking", "tabs", "<all_urls>"],
+    "version": "2.2.0"
+}
