@@ -29,8 +29,8 @@ function str2re(proto) {        // Construct compiled regexp from str
     }
 
     mod='';
-    if (typeof proto.modi != 'undefined') mod += 'i';
-    if (typeof proto.modg != 'undefined') mod += 'g';
+    if (typeof proto.modi != 'undefined' && proto.modi) mod += 'i';
+    if (typeof proto.modg != 'undefined' && proto.modg) mod += 'g';
 
     var tmp = new RegExp(str, mod);
     tmp.compile(tmp);

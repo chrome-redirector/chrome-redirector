@@ -76,7 +76,7 @@ chrome.webRequest.onBeforeRequest.addListener(
                 } else {        // To redirect
                     var tgt = tmp.url.replace(
                         ruleAuto[i].sub, ruleAuto[i].repl);
-                    if (ruleAuto.decode)
+                    if (ruleAuto[i].decode)
                         tgt = decodeURIComponent(tgt);
 
                     return {redirectUrl: tgt};
@@ -93,7 +93,7 @@ chrome.pageAction.onClicked.addListener(function(tab) {
     if (ruleManual.length == 0) return;
 
     var tmp = tab.url.replace(ruleManual[0].sub, ruleManual[0].repl);
-    if (ruleManual.decode) tmp = decodeURIComponent(tmp);
+    if (ruleManual[0].decode) tmp = decodeURIComponent(tmp);
 
     chrome.tabs.update(tab.id, {
         url: tmp
@@ -131,11 +131,7 @@ function updatePref() {
 }
 
 function updateRule() {         // Called when data need update
-    try {                       // Load prototype of rules
-        var ruleData = JSON.parse(localStorage.RULELIST);
-    } catch (e) {
-        var ruleData = [];
-    }
+    ruleData = (new RuleList(false)).data;
 
     ruleAuto = [];              // Rules for auto redir
     ruleManual = [];            // Rules for manual redir

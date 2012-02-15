@@ -2,12 +2,14 @@
  * Rule list obj
  */
 
-function RuleList() {
+function RuleList(init) {
     try {
         this.data = JSON.parse(localStorage.RULELIST);
     } catch (e) {
         this.data = [];
     }
+
+    if (init != null) return;
 
     for (var i in this.data) {
         ruleListTable.insertRow(-1).innerHTML =
@@ -17,6 +19,7 @@ function RuleList() {
         this.update(i);
     }
 
+    this.updateBuiltin();
     this.chg = this.isNew = false;
 }
 
@@ -139,89 +142,25 @@ RuleList.prototype.onSel = function(e) {
     }
 }
 
-RuleList.prototype.selBuiltin = function (e) { // Built-in rules
-    // Todo: link decode; Skip Google Malware Warning; Tiny DNS
-    var sixxs = {
-        name: 'SixXS.org IPv6->IPv4 Proxy',
-        match: {str: 'MANUAL', type: TYPE_MANUAL},
-        sub: {str: '^[^\\.]*[^/]*', type: TYPE_REGEXP},
-        repl: {str: '$&.sixxs.org'}
-    };
+RuleList.prototype.updateBuiltin = function (e) { // Update builtin
+    this.builtin = [];
 
-    var gCacheText = {
-        name: 'Enforce Google Cache Text-only Version',
-        match: {
-            str: '^http://webcache\\.googleusercontent\\.com/',
-            type: TYPE_REGEXP},
-        sub: {str: '$', type: TYPE_REGEXP},
-        repl: {str: '&strip=1'}
-    };
-
-    // var http2https = {
-    //     name: 'Enforce Visiting foo.com with SSL (https)',
-    //     match: {str: '^http://[^/]*foo\\.com/', type: TYPE_REGEXPI},
-    //     sub: {str: '^http', type: TYPE_REGEXPI},
-    //     repl: 'https'
-    // };
-
-    // var skipRedir = {
-    //     name: 'Skip Redirection',
-    //     match: {
-    //         str: '^http://foo\\.com/\\?redirectTo=',
-    //         type: TYPE_REGEXPI},
-    //     sub: {str: '^[^\\?]*\\?redirectTo=', type: TYPE_REGEXPI},
-    //     repl: ''
-    // };
-
-    // var skipGoogleRedir = {
-    //     name: 'Skip Google Redirect Notice',
-    //     match: {
-    //         str: '^http://www\\.google\\.com/url\\?',
-    //         type: TYPE_REGEXPI},
-    //     sub: {
-    //         str: '^http://www\\.google\\.com/url\\?',
-    //         type: TYPE_REGEXPI},
-    //     repl: ''
-    // };
-
-    // var wikiZh_CN = {
-    //     name: 'Enforce Visiting zh.wikipedia.org in zh-CN',
-    //     match: {
-    //         str: 'http://zh\\.wikipedia\\.org/(?!zh-cn)/',
-    //         type: TYPE_REGEXPI},
-    //     sub: {
-    //         str: '(^[^\\.]*[^/]*)/[^/]*/',
-    //         type: TYPE_REGEXPI},
-    //     repl: '$1/zh-cn/'
-    // };
-
-    // var urlAlias = {
-    //     name: 'URL Alias',
-    //     match : {str: '^http://foo\\.arpa/$', type: TYPE_REGEXPI},
-    //     sub: {str: '.*', type: TYPE_REGEXP},
-    //     repl: 'http://this.is/a/quite/long/url'
-    // };
-
-    // var ezProxy = {
-    //     name: 'EZProxy',
-    //     match: {
-    //         str: '^http://ieeexplore\\.ieee\\.org/',
-    //         type: TYPE_REGEXPI},
-    //     sub: {str: '.*', type: TYPE_REGEXP},
-    //     repl: 'http://www.library.drexel.edu/cgi-bin/r.cgi?url='
-    // };
-
-    switch(ruleEdit_sel.selectedIndex) {
-    case 1:
-        var rule = sixxs; break;
-    case 2:
-        var rule = gCacheText; break;
-    default:
-        this.update(this.sel);  // Restore the current rule
+    for (var i in this.builtinRule) {
+        var tmp = document.createElement('option');
+        tmp.text = this.builtinRule[i].name;
+        ruleEdit_sel.add(tmp, null);
+        this.builtin.push(this.builtinRule[i]);
     }
+}
 
-    // TODO: Move up
-    this.update(rule);
+RuleList.prototype.selBuiltin = function (e) { // Built-in rules
+    switch(ruleEdit_sel.selectedIndex) {
+    case 0:
+        this.update(this.sel); break; // Restore the current rule
+    default:
+        this.update(
+            this.builtin[parseInt(ruleEdit_sel.selectedIndex) - 1]);
+    }
 }
 
 RuleList.prototype.onChgMatchType = function() {
@@ -315,8 +254,10 @@ RuleList.prototype.test = function() {
     var tmp = str2re({
         str: ruleEdit_substr.value,
         type: ruleEdit_subtype.selectedIndex});
-    alert(lang.notif['TEST-DEST'] +
-          ruleEdit_test.value.replace(tmp, ruleEdit_repl.value));
+    tmp = ruleEdit_test.value.replace(tmp, ruleEdit_repl.value);
+    if (ruleEdit_replDecode) tmp = decodeURIComponent(tmp);
+
+    alert(lang.notif['TEST-DEST'] + tmp);
 }
 
 RuleList.prototype.refresh = function() {
@@ -368,3 +309,80 @@ RuleList.prototype.restore = function() {
     this.refresh();
     window.location.reload();
 }
+
+RuleList.prototype.builtinRule = [
+    // Todo: Skip Google Malware Warning; Tiny DNS
+    {
+        name: 'SixXS.org IPv6->IPv4 Proxy',
+        match: {str: 'MANUAL', type: TYPE_MANUAL},
+        sub: {str: '[^\\.]+?[^/]+?', type: TYPE_REGEXP},
+        repl: {str: '$&.sixxs.org'}
+    },
+
+    {
+        name: 'Enforce Google Cache Text-only Version',
+        match: {
+            str: '^http://webcache\\.googleusercontent\\.com/',
+            type: TYPE_REGEXP},
+        sub: {str: '$', type: TYPE_REGEXP},
+        repl: {str: '&strip=1'}
+    },
+
+    {
+        name: 'Enforce Visiting code.google.com with SSL (https)',
+        match: {
+            str: '^http://code\\.google\\.com/',
+            type: TYPE_REGEXP, modi: true},
+        sub: {str: '^http', type: TYPE_REGEXP},
+        repl: {str: 'https'}
+    },
+
+    {
+        name: 'Skip Google Redirection (Encoded or not)',
+        match: {
+            str: '^http://www\\.google\\.com(\\.[a-z]+)?/url\\?sa=t',
+            type: TYPE_REGEXP, modi: true},
+        sub: {str: '.+?&url=([^&]+).*', type: TYPE_REGEXP},
+        repl: {str: '$1', decode: true}
+    },
+
+    {
+        name: 'Skip Redirection by foo.com',
+        match: {
+            str: '^http://foo\\.com/\\?redirectTo=',
+            type: TYPE_REGEXP, modi: true},
+        sub: {
+            str: '^[^\\?]+\\?redirectTo=',
+            type: TYPE_REGEXP, modi: true},
+        repl: {str: ''}
+    },
+
+    {
+        name: '强制使用简体中文浏览zh.wikipedia.org',
+        match: {
+            str: 'http://zh\\.wikipedia\\.org/(?!zh-cn)',
+            type: TYPE_REGEXP, modi: true},
+        sub: {
+            str: '(^[^\\.]+[^/]+)/[^/]*/',
+            type: TYPE_REGEXP, modi: true},
+        repl: {str: '$1/zh-cn/'}
+    },
+
+    {
+        name: 'URL Alias (alias shoud be url-like with valid TDL)',
+        match : {
+            str: '^http://a\\.cn/$',
+            type: TYPE_REGEXP, modi: true},
+        sub: {str: '.*', type: TYPE_REGEXP},
+        repl: {str: 'http://this.is/quite/a/long/url'}
+    },
+
+    // {
+    //     name: 'EZProxy',
+    //     match: {
+    //         str: '^http://ieeexplore\\.ieee\\.org/',
+    //         type: TYPE_REGEXP, modi: true},
+    //     sub: {str: '.*', type: TYPE_REGEXP},
+    //     repl: {str: 'http://www.library.drexel.edu/cgi-bin/r.cgi?url='}
+    // },
+];

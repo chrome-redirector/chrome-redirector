@@ -108,8 +108,6 @@ var i18nT = {
     'RULEMGR-BAK-TITLE': 'Backup Rules List',
 
     'RULEEDIT-CURRENT': 'Current/New added Rule',
-    'RULEEDIT-SIXXS': 'SixXS.org IPv6->IPv4 Proxy',
-    'RULEEDIT-GOOGLECACHE': 'Enforce Google Cache Text-only Version',
 
     'RULEEDIT-TYPE-REGEXP': 'RegExp',
     'RULEEDIT-TYPE-GLOB': 'Wildcards',
@@ -188,8 +186,6 @@ var i18nT_zhCN = {
     'RULEMGR-BAK-TITLE': '备份规则',
 
     'RULEEDIT-CURRENT': '当前／新添加的规则',
-    'RULEEDIT-SIXXS': 'SixXS.org IPv6->IPv4 代理',
-    'RULEEDIT-GOOGLECACHE': '强制使用Google 快照纯文字版',
 
     'RULEEDIT-TYPE-REGEXP': '正则表达式',
     'RULEEDIT-TYPE-GLOB': '通配符',
