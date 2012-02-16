@@ -12,6 +12,8 @@ function RuleList(init) {
     if (init != null) return;
 
     for (var i in this.data) {
+        if (! this.data.hasOwnProperty(i)) continue;
+
         ruleListTable.insertRow(-1).innerHTML =
             '<td><input type="checkbox" /></td>\
 <td></td><td></td><td></td><td></td>';
@@ -61,7 +63,10 @@ RuleList.prototype.edit = function() {
 
     try {                       // A better way?
         tmp = ruleEdit.children;
-        for (var i in tmp) tmp[i].removeAttribute('title');
+        for (var i in tmp) {
+            if (! tmp.hasOwnProperty(i)) continue;
+            tmp[i].removeAttribute('title');
+        }
     } catch (e) {}
 }
 
@@ -146,6 +151,8 @@ RuleList.prototype.updateBuiltin = function (e) { // Update builtin
     this.builtin = [];
 
     for (var i in this.builtinRule) {
+        if (! this.builtinRule.hasOwnProperty(i)) continue;
+
         var tmp = document.createElement('option');
         tmp.text = this.builtinRule[i].name;
         ruleEdit_sel.add(tmp, null);
@@ -234,7 +241,8 @@ RuleList.prototype.discard = function() {
 }
 
 RuleList.prototype.test = function() {
-    if (ruleEdit_test.value == '') return;
+    if (ruleEdit_test.value == '' || ! verifyUrl(ruleEdit_test.value))
+        return;
 
     if (ruleEdit_matchtype.selectedIndex != TYPE_MANUAL) {
         var tmp = str2re({
@@ -257,7 +265,8 @@ RuleList.prototype.test = function() {
     tmp = ruleEdit_test.value.replace(tmp, ruleEdit_repl.value);
     if (ruleEdit_replDecode) tmp = decodeURIComponent(tmp);
 
-    alert(lang.notif['TEST-DEST'] + tmp);
+    if (verifyUrl(tmp))
+        alert(lang.notif['TEST-DEST'] + tmp);
 }
 
 RuleList.prototype.refresh = function() {
@@ -311,7 +320,7 @@ RuleList.prototype.restore = function() {
 }
 
 RuleList.prototype.builtinRule = [
-    // Todo: Skip Google Malware Warning; Tiny DNS
+    // Todo: Tiny DNS Spool
     {
         name: 'SixXS.org IPv6->IPv4 Proxy',
         match: {str: 'MANUAL', type: TYPE_MANUAL},
@@ -329,7 +338,7 @@ RuleList.prototype.builtinRule = [
     },
 
     {
-        name: 'Enforce Visiting code.google.com with SSL (https)',
+        name: 'http://code.google.com/* => https://code.google.com/*',
         match: {
             str: '^http://code\\.google\\.com/',
             type: TYPE_REGEXP, modi: true},
@@ -363,26 +372,17 @@ RuleList.prototype.builtinRule = [
             str: 'http://zh\\.wikipedia\\.org/(?!zh-cn)',
             type: TYPE_REGEXP, modi: true},
         sub: {
-            str: '(^[^\\.]+[^/]+)/[^/]*/',
+            str: '(^[^\\.]+[^/]+)/[^/]*',
             type: TYPE_REGEXP, modi: true},
-        repl: {str: '$1/zh-cn/'}
+        repl: {str: '$1/zh-cn'}
     },
 
     {
-        name: 'URL Alias (alias shoud be url-like with valid TDL)',
+        name: 'URL Alias (alias shoud be URL-like with valid TLD)',
         match : {
             str: '^http://a\\.cn/$',
             type: TYPE_REGEXP, modi: true},
         sub: {str: '.*', type: TYPE_REGEXP},
         repl: {str: 'http://this.is/quite/a/long/url'}
     },
-
-    // {
-    //     name: 'EZProxy',
-    //     match: {
-    //         str: '^http://ieeexplore\\.ieee\\.org/',
-    //         type: TYPE_REGEXP, modi: true},
-    //     sub: {str: '.*', type: TYPE_REGEXP},
-    //     repl: {str: 'http://www.library.drexel.edu/cgi-bin/r.cgi?url='}
-    // },
 ];

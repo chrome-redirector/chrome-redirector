@@ -10,12 +10,11 @@ function DBG(msg) {
     chrome.extension.getBackgroundPage().console.log(msg);
 }
 
-Object.merge = function(dest, src) { // Merge obj src into dest
+Object.prototype.merge = function(src) { // Merge obj from src
     for (var prop in src) {
-        dest[prop] = src[prop];
+        if (! src.hasOwnProperty(prop)) continue;
+        this[prop] = src[prop];
     }
-
-    return dest;
 };
 
 function str2re(proto) {        // Construct compiled regexp from str
@@ -43,6 +42,8 @@ function glob2re(glob) {
 
     glob = glob.split('');
     for (var i in glob) {
+        if (! glob.hasOwnProperty(i)) continue;
+
         switch (glob[i]) {
         case '?':
             re.push("."); break;
@@ -56,4 +57,13 @@ function glob2re(glob) {
     }
 
     return re.join('');
+}
+
+function verifyUrl(url) {
+    if (! /^(https?|ftp|file):\/\//i.test(url)) {
+        alert(lang.notif['URL-INVALID-PROTO']);
+        return false;
+    }
+
+    return true;
 }

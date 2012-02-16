@@ -11,6 +11,8 @@ function COMPATIBLE() {
     }
 
     for (var i in tmp) {
+        if (! tmp.hasOwnProperty(i)) return;
+
         rule = tmp[i];
         if (typeof rule.repl != 'string') return; // str for 2.2.1
 
@@ -70,6 +72,8 @@ chrome.webRequest.onBeforeRequest.addListener(
         if (ruleAuto.length == 0) return; // return if no rules
 
         for (var i in ruleAuto) {
+            if (! ruleAuto.hasOwnProperty(i)) continue;
+
             if (ruleAuto[i].match.test(tmp.url)) { // match
                 if (ruleAuto[i].sub === null) {    // To block
                     return {cancel: true};
@@ -136,6 +140,8 @@ function updateRule() {         // Called when data need update
     ruleAuto = [];              // Rules for auto redir
     ruleManual = [];            // Rules for manual redir
     for (var i in ruleData) {
+        if (! ruleData.hasOwnProperty(i)) continue;
+
         var rule=ruleData[i];   // Current rule
 
         // Rule must be enabled
