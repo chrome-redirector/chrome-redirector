@@ -349,7 +349,7 @@ RuleList.prototype.builtinRule = [
     {
         name: 'Skip Google Redirection (Encoded or not)',
         match: {
-            str: '^http://www\\.google\\.com(\\.[a-z]+)?/url\\?sa=t',
+            str: '^https?://www\\.google\\.com(\\.[a-z]+)?/url\\?sa=t',
             type: TYPE_REGEXP, modi: true},
         sub: {str: '.+?&url=([^&]+).*', type: TYPE_REGEXP},
         repl: {str: '$1', decode: true}

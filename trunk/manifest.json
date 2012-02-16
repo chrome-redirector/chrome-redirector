@@ -11,6 +11,7 @@
     "homepage_url": "https://code.google.com/p/chrome-redirector/",
     "name": "Redirector",
     "description": "Redirects URLs automatically or manually",
-    "permissions": ["webRequest", "webRequestBlocking", "tabs", "<all_urls>"],
+    "permissions": ["webRequest", "webRequestBlocking", "tabs",
+                    "<all_urls>"],
     "version": "2.2.4"
 }

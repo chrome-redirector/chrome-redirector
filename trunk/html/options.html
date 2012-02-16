@@ -40,11 +40,11 @@
           </section>
 
           <section>
-            <h3 i18nT="PREF-PROTO"></h3><br />
+            <h3 i18nT="PROTO-TITLE"></h3><br />
 
             <input type="checkbox" id="pref_proto_all"
                    onclick="_pref.chgProto('all')" />
-            <span i18nT="PREF-PROTO-ALL"></span><br />
+            <span i18nT="PROTO-ALL"></span><br />
             <input type="checkbox" id="pref_proto_http"
                    onclick="_pref.chgProto('http')" />
             <span>http://</span><br />
@@ -60,10 +60,10 @@
           </section>
 
           <section>
-            <h3 i18nT="PREF-MISC"></h3><br />
+            <h3 i18nT="MISC-TITLE"></h3><br />
             <input type="checkbox" id="pref_misc_icon"
                    onclick="_pref.chgIcon()" />
-            <span i18nT="PREF-MISC-ICON"></span><br />
+            <span i18nT="MISC-ICON"></span><br />
           </section>
         </div>
 
@@ -71,17 +71,17 @@
           <h1 i18nT="RULEMGR-TITLE"></h1>
 
           <section>
-            <h3 i18nT="RULEMGR-TAB-TITLE"></h3>
+            <h3 i18nT="LBL-TITLE"></h3>
 
-            <input type="button" i18nP="value:RULEMGR-BTN-ADD"
+            <input type="button" i18nP="value:BTN-ADD"
                    onclick="ruleList.add()" />
-            <input type="button" i18nP="value:RULEMGR-BTN-EDIT"
+            <input type="button" i18nP="value:BTN-EDIT"
                    onclick="ruleList.edit()" />
-            <input type="button" i18nP="value:RULEMGR-BTN-DEL"
+            <input type="button" i18nP="value:BTN-DEL"
                    onclick="ruleList.del()" />
-            <input type="button" i18nP="value:RULEMGR-BTN-UP"
+            <input type="button" i18nP="value:BTN-UP"
                    onclick="ruleList.move(-1)" />
-            <input type="button" i18nP="value:RULEMGR-BTN-DOWN"
+            <input type="button" i18nP="value:BTN-DOWN"
                    onclick="ruleList.move(1)" />
 
             <table id="ruleListTable">
@@ -90,10 +90,10 @@
                 <col width="24%" span="4">
               </colgroup>
               <tr>
-                <th i18nT="RULEMGR-TAB-NAME" colspan="2"></th>
-                <th i18nT="RULEMGR-TAB-MATCH"></th>
-                <th i18nT="RULEMGR-TAB-SUB"></th>
-                <th i18nT="RULEMGR-TAB-REPL"></th>
+                <th i18nT="LBL-NAME" colspan="2"></th>
+                <th i18nT="LBL-MATCH"></th>
+                <th i18nT="LBL-SUB"></th>
+                <th i18nT="LBL-REPL"></th>
               </tr>
             </table>
           </section>
@@ -103,9 +103,9 @@
             <h3 i18nT="RULEMGR-BAK-TITLE"></h3>
 
             <textarea id="ruleMgr_bak"></textarea><br />
-            <input type="button" i18nP="value:RULEMGR-BAK"
+            <input type="button" i18nP="value:BTN-BAK"
                    onclick="ruleList.bak()" />
-            <input type="button" i18nP="value:RULEMGR-RESTORE"
+            <input type="button" i18nP="value:BTN-RESTORE"
                    onclick="ruleList.restore()" /><br />
           </section>
         </div>
@@ -132,55 +132,55 @@
 
       <!-- Main form -->
       <form id="ruleEdit" onsubmit="return false;">
-        <label i18nT="RULEEDIT-LAB-NAME"></label><br />
+        <label i18nT="LBL-NAME"></label><br />
         <input id="ruleEdit_name" class="input-text"
                placeholder="NAME" required autofocus="autofocus" />
         <br />
 
-        <label i18nT="RULEEDIT-LAB-MATCH"></label>
+        <label i18nT="LBL-MATCH"></label>
         <select id="ruleEdit_matchtype"
                 onchange="ruleList.onChgMatchType()">
-          <option selected="selected" i18nT="RULEEDIT-TYPE-REGEXP">
+          <option selected="selected" i18nT="TYPE-REGEXP">
           </option>
-          <option i18nT="RULEEDIT-TYPE-GLOB"></option>
-          <option i18nT="RULEEDIT-TYPE-MANUAL"></option>
+          <option i18nT="TYPE-GLOB"></option>
+          <option i18nT="TYPE-MANUAL"></option>
         </select>
         <input type="checkbox" id="ruleEdit_matchcase" />
-        <label class="lab-tiny" i18nT="RULEDIT-LAB-IGNCASE"></label>
+        <label class="lab-tiny" i18nT="LBL-IGNCASE"></label>
 
         <input id="ruleEdit_matchstr" class="input-text"
                placeholder="MATCH PATTERN" required />
         <br />
 
-        <label i18nT="RULEEDIT-LAB-SUB"></label>
+        <label i18nT="LBL-SUB"></label>
         <select id="ruleEdit_subtype"
                 onchange="ruleList.onChgSubType()">
-          <option selected="selected" i18nT="RULEEDIT-TYPE-REGEXP">
+          <option selected="selected" i18nT="TYPE-REGEXP">
           </option>
-          <option i18nT="RULEEDIT-TYPE-GLOB"></option>
-          <option i18nT="RULEEDIT-TYPE-BLOCK"></option>
+          <option i18nT="TYPE-GLOB"></option>
+          <option i18nT="TYPE-BLOCK"></option>
         </select>
         <input type="checkbox" id="ruleEdit_subcase" />
-        <label class="lab-tiny" i18nT="RULEDIT-LAB-IGNCASE"></label>
+        <label class="lab-tiny" i18nT="LBL-IGNCASE"></label>
         <input type="checkbox" id="ruleEdit_subglob" />
-        <label class="lab-tiny" i18nT="RULEDIT-LAB-SUBGLOB"></label>
+        <label class="lab-tiny" i18nT="LBL-SUBGLOB"></label>
 
         <input id="ruleEdit_substr" class="input-text"
                placeholder="SUB STRING/REGEXP" required />
         <br />
 
-        <label i18nT="RULEEDIT-LAB-REPL"></label>
+        <label i18nT="LBL-REPL"></label>
         <input type="checkbox" id="ruleEdit_replDecode" />
-        <label class="lab-tiny" i18nT="RULEDIT-LAB-REPLDECODE">
+        <label class="lab-tiny" i18nT="LBL-REPLDECODE">
         </label>
 
         <input id="ruleEdit_repl" class="input-text"
                placeholder="REPLACEMENT" />
         <br />
 
-        <input type="submit" i18nP="value:RULEEDIT-SAVE"
+        <input type="submit" i18nP="value:BTN-SAVE"
                onclick="ruleList.save()" />
-        <input type="button" i18nP="value:RULEEDIT-DISCARD"
+        <input type="button" i18nP="value:BTN-CANCEL"
                onclick="ruleList.discard()" />
         <br />
       </form>
@@ -188,11 +188,11 @@
       <!-- Test form -->
       <form onsubmit="return false;">
         <section>
-          <label i18nT="RULEEDIT-LAB-TEST"></label>
+          <label i18nT="LBL-TEST"></label>
           <input id="ruleEdit_test" class="input-text"
                  placeholder="TEST URL" required />
           <br />
-          <input type="submit" i18nP="value:RULEEDIT-TEST"
+          <input type="submit" i18nP="value:BTN-TEST"
                  onclick="ruleList.test()" />
           <br />
         </section>
