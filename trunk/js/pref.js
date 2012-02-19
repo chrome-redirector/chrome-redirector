@@ -2,17 +2,24 @@
  * Preferences obj
  */
 
-function _Pref() {
+/*jslint undef: false */
+/*global localStorage: true */
+
+function Pref() {
     try {
-        this.data = JSON.parse(localStorage._PREF);
+        this.data = JSON.parse(localStorage.PREF);
     } catch (e) {
         this.data = {
-            proto: {all: true}
+            proto: {all: true},
+            context: {link: true, page: true}
         };
     }
 
     var tmp = this.data.proto;
-    if (typeof tmp.all == 'undefined') tmp.all = true;
+    if (typeof tmp.all === 'undefined') {
+        tmp.all = true;
+    }
+
     try {
         pref_proto_all.checked = tmp.all;
         pref_proto_http.checked = tmp.http;
@@ -26,17 +33,22 @@ function _Pref() {
 
         pref_misc_icon.checked = this.data.hideIcon;
     } catch (e) {}
+
+    try {
+        pref_context_link.checked = this.data.context.link;
+        pref_context_page.checked = this.data.context.page;
+    } catch (e) {}
 }
 
-_Pref.prototype.refresh = function() {
-    localStorage._PREF = JSON.stringify(this.data);
+Pref.prototype.refresh = function () {
+    localStorage.PREF = JSON.stringify(this.data);
     ext_bg.updatePref();
-}
+};
 
-_Pref.prototype.chgProto = function(proto) {
+Pref.prototype.chgProto = function (proto) {
     var tmp = this.data.proto;
 
-    if (proto == 'all') {
+    if (proto === 'all') {
         pref_proto_http.disabled = pref_proto_https.disabled =
             pref_proto_ftp.disabled = pref_proto_file.disabled =
             pref_proto_all.checked;
@@ -46,13 +58,12 @@ _Pref.prototype.chgProto = function(proto) {
         document.getElementById('pref_proto_' + proto).checked;
 
     this.refresh();
-}
+};
 
-_Pref.prototype.chgIcon = function() { // Check to hide
-    if (! (this.data.hideIcon = pref_misc_icon.checked)) {
-        ext_bg.chrome.tabs.onCreated.addListener(ext_bg.showIcon);
-        ext_bg.chrome.tabs.onUpdated.addListener(ext_bg.showIcon);
-    }
+Pref.prototype.onChgContext = function () {
+    this.data.context.link = pref_context_link.checked;
+    this.data.context.page = pref_context_page.checked;
 
     this.refresh();
-}
+    ext_bg.updateContext();
+};

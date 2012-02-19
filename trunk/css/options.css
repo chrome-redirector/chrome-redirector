@@ -1,11 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    margin: 10px;
-    margin-top: 10px;
-    margin-right: 10px;
-    margin-bottom: 10px;
-    margin-left: 10px;
-    display: block;
+    margin: 0;
     -webkit-user-select: none;
 }
 
@@ -171,8 +166,8 @@ section > h3 {
 
 #layerFront {
     display:none;
-    position: fixed;
     z-index: 3;
+    position: fixed;
     height:auto;
     padding:6px;
     top:20%;
@@ -183,16 +178,44 @@ section > h3 {
 }
 
 #layerBack {
-    position:fixed;
+    display: none;
+    position: fixed;
+    z-index: 2;
     top:0;
     left:0;
-    z-index:2;
     width:100%;
     height:100%;
     background:#000;
-    filter:alpha(opacity=70);
-    opacity:0.7;
-    display: none;
+    opacity: 0.8;
+}
+
+#layerNotif {
+    display: block;
+    position: fixed;
+    z-index: 101;
+    width: 100%;
+    top: -50%;
+    overflow: hidden;
+    cursor: pointer;
+    opacity: 0.8;
+    padding: 10px;
+    -webkit-transition: top 1s ease-out;
+}
+
+#layerNotif.active {
+    top: 0;
+}
+
+pre {
+    white-space: pre-line;
+    margin-right: 1em;
+    text-align: left;
+}
+
+.div-center {
+    text-align: center;
+    display: table;
+    margin: 0 auto;
 }
 
 #ruleEdit_sel {
@@ -253,16 +276,14 @@ label {
     font-size: 80%;
 }
 
-span, input, select {
+input, select {
     vertical-align: middle;
 }
 
 input[type="button"],input[type="submit"] {
     width: 5em;
     height: 30px;
-    float: left;
-    margin-right: 3px;
-    display: inline-block;
+    margin-right: 10px;
     cursor: pointer;
 }
 

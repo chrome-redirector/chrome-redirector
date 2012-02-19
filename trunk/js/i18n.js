@@ -2,75 +2,81 @@
  * Internationalization
  */
 
+/*jslint nomen: false, undef: false */
+/*global localStorage: true */
+
 function Lang() {
+    var re, flt, arr, a, b;
     try {
         this.data = JSON.parse(localStorage.LANG);
     } catch (e) {
         this.data = {langTag: navigator.language};
     }
 
-    var langTag = this.data.langTag;
-    var re = new RegExp('^' + langTag.split('-')[0] + '(-\\w+)?$');
-    var flt = function(obj) {
-        return Object.keys(obj).filter(function(t) {
-            return re.test(t)}).sort()};
+    langTag = this.data.langTag;
+    re = new RegExp('^' + langTag.split('-')[0] + '(-\\w+)?$');
+    flt = function (obj) {
+        return Object.keys(obj).filter(function (t) {
+            return re.test(t)}).sort();
+    };
 
-    var arr = ['i18nT', 'i18nP', 'notif'];
-    for (var i in arr) {
-        if (! arr.hasOwnProperty(i)) continue;
-
-        var a = this[arr[i] + 'Set'];
-        var b = this[arr[i]] = a.FALLBACK;
-        if (typeof a[langTag] != 'undefined')
+    arr = ['i18nT', 'i18nP', 'notif'];
+    for (var i = 0; i < arr.length; i++) {
+        a = this[arr[i] + 'Set'];
+        b = this[arr[i]] = a.FALLBACK;
+        if (typeof a[langTag] !== 'undefined') {
             b.merge(a[langTag]);
-        else if ((tmp = flt(a)) != [])
+        } else if ((tmp = flt(a)).length > 0) {
             b.merge(a[tmp[0]]);
+        }
     }
 
     this.init('i18nT');
     this.init('i18nP');
 }
 
-Lang.prototype.init = function(type) {
-    var elem = document.querySelectorAll('[' + type + ']');
+Lang.prototype.init = function (type) {
+    var elem, attr;
 
-    for (var i in elem) {
-        if (! elem.hasOwnProperty(i)) continue;
+    elem = document.querySelectorAll('[' + type + ']');
 
+    for (var i = 0; i < elem.length; i++) {
         try {
-            var attr = elem[i].getAttribute(type);
+            attr = elem[i].getAttribute(type);
         } catch (e) {
             continue;
         }
 
-        if (attr == null) continue;
+        if (attr === null) continue;
 
         switch (type) {
         case 'i18nT':
-            if ((typeof (tmp = this.i18nT[attr])) != 'undefined')
+            if ((typeof (tmp = this.i18nT[attr])) !== 'undefined') {
                 elem[i].textContent = tmp;
+            }
             break;
         case 'i18nP':
             attrArr = attr.split(":");
 
-            if ((typeof (tmp = this.i18nP[attrArr[1]])) !=
-                'undefined')
+            if ((typeof (tmp = this.i18nP[attrArr[1]])) !==
+                'undefined') {
                 elem[i].setAttribute(attrArr[0], tmp);
+            }
             break;
         default:
             console.log('Oops!');
 
         }
     }
-}
+};
 
-Lang.prototype.refresh = function() {
+Lang.prototype.refresh = function () {
     localStorage.LANG = JSON.stringify(this.data);
     window.location.reload();   // Reload options page
-}
+};
 
-Lang.prototype.onSelLang = function(e) {
-    switch(langSel.selectedIndex) {
+Lang.prototype.onSelLang = function (e) {
+    switch (langSel.selectedIndex) {
     case 2:
         this.data.langTag='zh-CN'; break;
     default:
@@ -78,7 +84,7 @@ Lang.prototype.onSelLang = function(e) {
     }
 
     this.refresh();
-}
+};
 
 Lang.prototype.i18nTSet = {
     'FALLBACK': {
@@ -90,8 +96,10 @@ Lang.prototype.i18nTSet = {
         'PREF-TITLE': 'Preferences',
         'PROTO-TITLE': 'Enabled Protocols (restart required)',
         'PROTO-ALL': 'All supported protocols',
+        'CONTEXT-TITLE': 'Manual Redirection',
+        'CONTEXT-LINK': 'Enable context menu for Links',
+        'CONTEXT-PAGE': 'Enable context menu for Pages',
         'MISC-TITLE': 'Misc',
-        'MISC-ICON': 'Hide icon (disable manual redirection)',
         'DOC-TITLE': 'Documents',
         'RULEMGR-TITLE': 'Rules',
         'TAB-TITLE': 'Rules List',
@@ -108,7 +116,7 @@ Lang.prototype.i18nTSet = {
         'LBL-TEST': 'Test URL',
         'LBL-IGNCASE': 'Ignore case',
         'LBL-SUBGLOB': 'Global match',
-        'LBL-REPLDECODE': 'Decode URL',
+        'LBL-REPLDECODE': 'Decode URL'
     },
 
     'zh-CN': {
@@ -120,8 +128,10 @@ Lang.prototype.i18nTSet = {
         'PREF-TITLE': '首选项',
         'PROTO-TITLE': '启用的协议(需重启)',
         'PROTO-ALL': '所有支持的协议',
+        'CONTEXT-TITLE': '手动重定向',
+        'CONTEXT-LINK': '链接右键菜单',
+        'CONTEXT-PAGE': '页面右键菜单',
         'MISC-TITLE': '其它',
-        'MISC-ICON': '隐藏图标（禁用手动重定向）',
         'DOC-TITLE': '文档',
         'RULEMGR-TITLE': '规则',
         'TAB-TITLE': '规则列表',
@@ -134,17 +144,18 @@ Lang.prototype.i18nTSet = {
         'LBL-NAME': '名称',
         'LBL-MATCH': '匹配',
         'LBL-SUB': '被替换式',
-        'LBL-REPL': '替换为',
+        'LBL-REPL': '替换式',
         'LBL-TEST': '测试URL',
         'LBL-IGNCASE': '忽略大小写',
         'LBL-SUBGLOB': '多次替换',
-        'LBL-REPLDECODE': '解码URL',
-    },
+        'LBL-REPLDECODE': '解码URL'
+    }
 };
 
 Lang.prototype.i18nPSet = {
     'FALLBACK': {
         'BTN-SAVE': 'Save',
+        'BTN-OK': 'OK',
         'BTN-CANCEL': 'Cancel',
         'BTN-ADD': 'Add',
         'BTN-DEL': 'Delete',
@@ -153,7 +164,7 @@ Lang.prototype.i18nPSet = {
         'BTN-DOWN': 'Down',
         'BTN-BAK': 'Backup',
         'BTN-RESTORE': 'Restore',
-        'BTN-TEST': 'Test',
+        'BTN-TEST': 'Test'
     },
 
     'zh-CN': {
@@ -166,15 +177,13 @@ Lang.prototype.i18nPSet = {
         'BTN-DOWN': '下移',
         'BTN-BAK': '备份',
         'BTN-RESTORE': '还原',
-        'BTN-TEST': '测试',
-    },
+        'BTN-TEST': '测试'
+    }
 };
 
 Lang.prototype.notifSet = {
     'FALLBACK': {
-        'CONFIRM-DISCARD': 'Do you really want to discard?',
         'EXP-ERR': 'Expression(s) may be incorrect, or I have a bug!',
-        'MULTI-MANUAL': 'You have enabled multiple manual rules!',
         'MANUAL-BLOCK': 'URL cannot be blocked in manual redirection',
         'TEST-NOTMATCH': 'Test URL is not matched!',
         'TEST-BLOCK': 'Test URL will be blocked',
@@ -183,12 +192,11 @@ Lang.prototype.notifSet = {
         'RULE-RESTORE-EMPTY': 'You didn\'t paste the text!',
         'RULE-RESTORE-ERR': 'Unable to restore!',
         'URL-INVALID-PROTO': 'URL has no valid protocol',
+        'URL-INVALID-CHAR': 'URL contains invalid characters'
     },
 
     'zh-CN': {
-        'CONFIRM-DISCARD': '放弃修改？',
         'EXP-ERR': '表达式有误或程序出错！',
-        'MULTI-MANUAL': '多条手动规则被启用（仅第一条有效）!',
         'MANUAL-BLOCK': '手动重定向不能屏蔽URL',
         'TEST-NOTMATCH': '测试URL不匹配！',
         'TEST-BLOCK': '测试URL将被屏蔽',
@@ -197,5 +205,6 @@ Lang.prototype.notifSet = {
         'RULE-RESTORE-EMPTY': '请粘贴文本！',
         'RULE-RESTORE-ERR': '无法还原！',
         'URL-INVALID-PROTO': 'URL协议错误',
-    },
+        'URL-INVALID-CHAR': 'URL包含有非法字符'
+    }
 };

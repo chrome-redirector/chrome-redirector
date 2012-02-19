@@ -13,6 +13,7 @@
 
   <body onload="_init()">
     <div id="box">
+      <!-- Navigation bar -->
       <div id="navBar">
         <h1 i18nT="NAVBAR-TITLE"></h1>
 
@@ -25,10 +26,13 @@
         </ul>
       </div>
 
+      <!-- The main display part -->
       <div id="main">
+        <!-- Page for Preferences -->
         <div id="pref" class="mainview-sel">
           <h1 i18nT="PREF-TITLE"></h1>
 
+          <!-- Language settings -->
           <section>
             <h3>Language</h3><br />
 
@@ -39,50 +43,63 @@
             </select>
           </section>
 
+          <!-- Proto settings -->
           <section>
             <h3 i18nT="PROTO-TITLE"></h3><br />
 
             <input type="checkbox" id="pref_proto_all"
                    onclick="_pref.chgProto('all')" />
-            <span i18nT="PROTO-ALL"></span><br />
+            <label i18nT="PROTO-ALL"></label><br />
             <input type="checkbox" id="pref_proto_http"
                    onclick="_pref.chgProto('http')" />
-            <span>http://</span><br />
+            <label>http://</label><br />
             <input type="checkbox" id="pref_proto_https"
                    onclick="_pref.chgProto('https')" />
-            <span>https://</span><br />
+            <label>https://</label><br />
             <input type="checkbox" id="pref_proto_ftp"
                    onclick="_pref.chgProto('ftp')" />
-            <span>ftp://</span><br />
+            <label>ftp://</label><br />
             <input type="checkbox" id="pref_proto_file"
                    onclick="_pref.chgProto('file')" />
-            <span>file://</span><br />
+            <label>file://</label><br />
           </section>
 
+          <!-- Context menu settings -->
           <section>
-            <h3 i18nT="MISC-TITLE"></h3><br />
-            <input type="checkbox" id="pref_misc_icon"
-                   onclick="_pref.chgIcon()" />
-            <span i18nT="MISC-ICON"></span><br />
+            <h3 i18nT="CONTEXT-TITLE"></h3><br />
+            <input type="checkbox" id="pref_context_link"
+                   onclick="_pref.onChgContext()" />
+            <label i18nT="CONTEXT-LINK"></label><br />
+            <input type="checkbox" id="pref_context_page"
+                   onclick="_pref.onChgContext()" />
+            <label i18nT="CONTEXT-PAGE"></label><br />
           </section>
+
+          <!-- Misc settings -->
+          <!-- <section> -->
+          <!--   <h3 i18nT="MISC-TITLE"></h3><br /> -->
+          <!-- </section> -->
         </div>
 
+        <!-- Page for rules -->
         <div id="ruleMgr" class="mainview">
           <h1 i18nT="RULEMGR-TITLE"></h1>
-
+          <!-- Rules list -->
           <section>
             <h3 i18nT="LBL-TITLE"></h3>
 
-            <input type="button" i18nP="value:BTN-ADD"
-                   onclick="ruleList.add()" />
-            <input type="button" i18nP="value:BTN-EDIT"
-                   onclick="ruleList.edit()" />
-            <input type="button" i18nP="value:BTN-DEL"
-                   onclick="ruleList.del()" />
-            <input type="button" i18nP="value:BTN-UP"
-                   onclick="ruleList.move(-1)" />
-            <input type="button" i18nP="value:BTN-DOWN"
-                   onclick="ruleList.move(1)" />
+            <div class="div-center">
+              <input type="button" i18nP="value:BTN-ADD"
+                     onclick="ruleList.add()" />
+              <input type="button" i18nP="value:BTN-EDIT"
+                     onclick="ruleList.edit()" />
+              <input type="button" i18nP="value:BTN-DEL"
+                     onclick="ruleList.del()" />
+              <input type="button" i18nP="value:BTN-UP"
+                     onclick="ruleList.move(-1)" />
+              <input type="button" i18nP="value:BTN-DOWN"
+                     onclick="ruleList.move(1)" />
+            </div>
 
             <table id="ruleListTable">
               <colgroup>
@@ -103,26 +120,30 @@
             <h3 i18nT="RULEMGR-BAK-TITLE"></h3>
 
             <textarea id="ruleMgr_bak"></textarea><br />
-            <input type="button" i18nP="value:BTN-BAK"
-                   onclick="ruleList.bak()" />
-            <input type="button" i18nP="value:BTN-RESTORE"
-                   onclick="ruleList.restore()" /><br />
+            <div class="div-center">
+              <input type="button" i18nP="value:BTN-BAK"
+                     onclick="ruleList.bak()" />
+              <input type="button" i18nP="value:BTN-RESTORE"
+                     onclick="ruleList.restore()" /><br />
+            </div>
           </section>
         </div>
 
+        <!-- Page for docs -->
         <div id="doc" class="mainview">
           <h1 i18nT="DOC-TITLE"></h1>
 
           <section>
-            <a href="/html/docs.html" target="_blank">
-              <span>English</span></a><br />
-            <a href="/html/docs_zhCN.html" target="_blank">
-              <span>简体中文</span></a><br />
+            <a href="/html/docs.html" target="_blank">English</a>
+            <br />
+            <a href="/html/docs_zhCN.html" target="_blank">简体中文</a>
+            <br />
           </section>
         </div>
       </div>
     </div>
 
+    <!-- Rule Editor -->
     <div id="layerFront">
       <section>
         <!-- Predefined rule selector -->
@@ -132,11 +153,13 @@
 
       <!-- Main form -->
       <form id="ruleEdit" onsubmit="return false;">
+        <!-- Rule name -->
         <label i18nT="LBL-NAME"></label><br />
         <input id="ruleEdit_name" class="input-text"
                placeholder="NAME" required autofocus="autofocus" />
         <br />
 
+        <!-- Match pattern -->
         <label i18nT="LBL-MATCH"></label>
         <select id="ruleEdit_matchtype"
                 onchange="ruleList.onChgMatchType()">
@@ -152,6 +175,7 @@
                placeholder="MATCH PATTERN" required />
         <br />
 
+        <!-- Substitution -->
         <label i18nT="LBL-SUB"></label>
         <select id="ruleEdit_subtype"
                 onchange="ruleList.onChgSubType()">
@@ -169,6 +193,7 @@
                placeholder="SUB STRING/REGEXP" required />
         <br />
 
+        <!-- Replacement -->
         <label i18nT="LBL-REPL"></label>
         <input type="checkbox" id="ruleEdit_replDecode" />
         <label class="lab-tiny" i18nT="LBL-REPLDECODE">
@@ -178,11 +203,14 @@
                placeholder="REPLACEMENT" />
         <br />
 
-        <input type="submit" i18nP="value:BTN-SAVE"
-               onclick="ruleList.save()" />
-        <input type="button" i18nP="value:BTN-CANCEL"
-               onclick="ruleList.discard()" />
-        <br />
+        <!-- Save/Cancel buttons -->
+        <div class="div-center">
+          <input type="submit" i18nP="value:BTN-SAVE"
+                 onclick="ruleList.save()" />
+          <input type="button" i18nP="value:BTN-CANCEL"
+                 onclick="ruleList.discard()" />
+        </div>
+        <hr />
       </form>
 
       <!-- Test form -->
@@ -192,13 +220,23 @@
           <input id="ruleEdit_test" class="input-text"
                  placeholder="TEST URL" required />
           <br />
-          <input type="submit" i18nP="value:BTN-TEST"
-                 onclick="ruleList.test()" />
+          <div class="div-center">
+            <input type="submit" i18nP="value:BTN-TEST"
+                   onclick="ruleList.test()" />
+          </div>
           <br />
         </section>
       </form>
     </div>
 
+    <!-- Mask layer -->
     <div id="layerBack"></div>
+
+    <!-- Notification layer -->
+    <div id="layerNotif" onclick="this.className=''">
+      <div  class="div-center">
+        <div id="layerNotif_disp"></div>
+      </div>
+    </div>
   </body>
 </html>
