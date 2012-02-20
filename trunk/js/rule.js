@@ -156,7 +156,7 @@ RuleList.prototype.onSel = function (e) {
     }
 
     if (isChk) {
-        this.data[this.sel].enabled ^= true; // Toggle the bool value
+        this.data[this.sel].enabled ^= 1; // Toggle the bool value
         this.refresh();
         return;
     }
@@ -219,7 +219,9 @@ RuleList.prototype.onChgSubType = function () {
 RuleList.prototype.save = function () {
     if (ruleEdit_name.value === '' ||
         ruleEdit_matchstr.value === '' ||
-        ruleEdit_substr.value === '') {return;}
+        ruleEdit_substr.value === '') {
+        return;
+    }
 
     this.data[this.sel].name = ruleEdit_name.value;
     this.data[this.sel].match = {
@@ -264,11 +266,12 @@ RuleList.prototype.discard = function () {
 };
 
 RuleList.prototype.test = function () {
-    var url, sub, repl, decode, result,
-    matchArr, unmatchArr, innerHTML;
+    var url, sub, repl, decode, result, innerHTML;
 
     if (ruleEdit_test.value === '' ||
-        ! verifyUrl(ruleEdit_test.value)) {return;}
+        ! verifyUrl(ruleEdit_test.value)) {
+        return;
+    }
 
     if (ruleEdit_matchtype.selectedIndex !== TYPE_MANUAL) {
         tmp = str2re({
@@ -307,28 +310,27 @@ RuleList.prototype.test = function () {
     }
 
     // Colorizing the original URL
-    tmp = getRedirUrl(url, { // Replace result
+    tmp = getRedirUrl(url, {    // Mark substitute position
         sub: sub,
         repl: '\f$&\v',
         decode: decode
     });
     innerHTML = '<pre>' +
-        tmp.split('').join('<wbr>').replace(
+        tmp.split('').join('<wbr>').replace( // Force wrapping
             '\f', '<span style="color:red">'
         ).replace('\v', '</span>') + '</pre>';
 
-    // The arrow
-    innerHTML += '<div style=' +
-        '"color:magenta;-webkit-transform:rotate(90deg)">=></div>';
+    // Insert the arrow
+    innerHTML += '<div style="color:blue">&darr;</div>';
 
     // Colorizing the final URL
-    tmp = getRedirUrl(url, { // Replace result
+    tmp = getRedirUrl(url, { // Mark replacement position
         sub: sub,
         repl: '\f' + repl + '\v',
         decode: decode
     });
     innerHTML += '<pre>' +
-        tmp.split('').join('<wbr>').replace(
+        tmp.split('').join('<wbr>').replace( // Force wrapping
             '\f', '<span style="color:red">'
         ).replace('\v', '</span>') + '</pre>';
 
@@ -342,10 +344,14 @@ RuleList.prototype.refresh = function () {
 };
 
 RuleList.prototype.move = function (inc) {
-    if (typeof this.sel === 'undefined') {return;}
+    if (typeof this.sel === 'undefined') {
+        return;
+    }
 
     if (this.sel + inc < 0 ||
-        this.sel + inc >= this.data.length) {return;}
+        this.sel + inc >= this.data.length) {
+        return;
+    }
 
     var tmp = this.data[this.sel];
     this.data[this.sel] = this.data[this.sel + inc];

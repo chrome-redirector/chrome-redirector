@@ -2,7 +2,7 @@
  * Background
  */
 
-/*jslint undef: false */
+/*jslint undef: false, plusplus: false */
 
 // Backward compatible with 2.2.1
 function COMPATIBLE() {
@@ -14,7 +14,9 @@ function COMPATIBLE() {
 
     for (var i = 0; i < tmp.length; i++) {
         rule = tmp[i];
-        if (typeof rule.repl !== 'string') {return;} // str for 2.2.1
+        if (typeof rule.repl !== 'string') {
+            return;
+        }
 
         TYPE_REGEXPI = 3;
         TYPE_GLOBI = 4;
@@ -113,7 +115,9 @@ function updateContext() {
         });
     }
 
-    if (ruleManual.length === 0) {return;}
+    if (ruleManual.length === 0) {
+        return;
+    }
 
     chrome.contextMenus.removeAll(); // Remove previous created menus
 
@@ -210,7 +214,9 @@ updateRule();
 // Auto redirect
 chrome.webRequest.onBeforeRequest.addListener(
     function (tmp) {
-        if (ruleAuto.length === 0) {return;} // return if no rules
+        if (ruleAuto.length === 0) {
+            return;
+        }
 
         for (var i = 0; i < ruleAuto.length; i++) {
             if (ruleAuto[i].match.test(tmp.url)) { // match
@@ -227,20 +233,29 @@ chrome.webRequest.onBeforeRequest.addListener(
     ['blocking']
 );
 
+errLog = '';                    // Error log
 // Error of auto redirect
 chrome.webRequest.onErrorOccurred.addListener(
     function (err) {
-        // DBG(tmp);
+        // Only handle errors in normal main_frame & normal tab
+        if (err.frameId !== 0 || err.tabId < 0 ||
+            err.type !== 'main_frame') {
+            return;
+        }
+
+        // DBG(err);               // Write debug info
+        errLog += JSON.stringify(err);
 
         /* Try reload this if page unexpectedly aborted
          * If it's aborted by user, then reloading will fail
-         * Sort of bug?
+         * Why aborted, sort of bug?
          */
-        try {
-            if (tmp.length > 0 && err.error === 'net::ERR_ABORTED') {
-                chrome.tabs.update(err.tabId, {url: err.url});
-            }
-        } catch (e) {}
+        // if (err.hasOwnProperty('error') &&
+        //     /abort/i.test(err.error)) {
+        //     try {
+        //         chrome.tabs.update(err.tabId, {url: err.url});
+        //     } catch (e) {}
+        // }
     },
     {urls: validUrl}
 );
