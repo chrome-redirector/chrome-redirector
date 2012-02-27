@@ -3,7 +3,8 @@
  */
 
 /*jslint plusplus: false */
-/*global document: true, window: true, localStorage: true, tmp: true,
+/*global $: true, document: true, window: true, localStorage: true,
+  tmp: true,
   lang: true, ruleList: true, ext_bg: true,
   TYPE_REGEXP: true, TYPE_GLOB: true, TYPE_MANUAL: true,
   TYPE_BLOCK: true,
@@ -22,8 +23,7 @@ function RuleList(init) {
     }
 
     for (var i = 0; i < this.data.length; i++) {
-        document.getElementById('ruleListTable').insertRow(
-                -1).innerHTML =
+        $('ruleListTable').insertRow(-1).innerHTML =
             '<td><input type="checkbox" /></td>' +
             '<td></td><td></td><td></td><td></td>';
 
@@ -42,10 +42,10 @@ RuleList.prototype.add = function () {
         repl: {str: ''}
     });
 
-    document.getElementById('ruleEdit_sel').selectedIndex = 0;
+    $('ruleEdit_sel').selectedIndex = 0;
 
     this.sel = this.data.length - 1;
-    document.getElementById('ruleListTable').insertRow(-1).innerHTML =
+    $('ruleListTable').insertRow(-1).innerHTML =
         '<td><input type="checkbox" /></td>' +
         '<td></td><td></td><td></td><td></td>';
 
@@ -60,7 +60,7 @@ RuleList.prototype.del = function () {
 
     this.data.splice(this.sel, 1);
     this.refresh();
-    document.getElementById('ruleListTable').deleteRow(this.sel + 1);
+    $('ruleListTable').deleteRow(this.sel + 1);
 
     this.sel = undefined;
 };
@@ -72,16 +72,9 @@ RuleList.prototype.edit = function () {
 
     this.update(this.sel);
 
-    document.getElementById('layerBack').style.display = "block";
-    document.getElementById('layerFront').style.display = "block";
+    $('layerBack').style.display = "block";
+    $('layerFront').style.display = "block";
 //    scroll(0, 0);
-
-    // try {                       // A better way?
-    //     tmp = ruleEdit.children;
-    //     for (var i = 0; i < tmp.length; i++) {
-    //         tmp[i].removeAttribute('title');
-    //     }
-    // } catch (e) {}
 };
 
 // Make multiple updates according to idx (rule obj or rule num)
@@ -89,8 +82,7 @@ RuleList.prototype.update = function (idx) {
     var rule, row;
     if (typeof idx === 'object') { // idx may be a rule obj specified
         rule = idx;
-        row = document.getElementById(
-            'ruleListTable').getElementsByTagName('tr')[
+        row = $('ruleListTable').getElementsByTagName('tr')[
             this.sel + 1].children;
     } else {
         if (this.data.length === 0) {
@@ -98,44 +90,32 @@ RuleList.prototype.update = function (idx) {
         }
 
         rule = this.data[idx];
-        row = document.getElementById(
-            'ruleListTable').getElementsByTagName('tr')[
+        row = $('ruleListTable').getElementsByTagName('tr')[
             parseInt(idx, 10) + 1].children;
     }
 
     row[0].children[0].checked = rule.enabled;
-    row[1].innerText = document.getElementById(
-        'ruleEdit_name').value = rule.name;
-    row[2].innerText = document.getElementById(
-        'ruleEdit_matchstr').value = rule.match.str;
-    row[3].innerText = document.getElementById(
-        'ruleEdit_substr').value = rule.sub.str;
-    row[4].innerText = document.getElementById(
-        'ruleEdit_repl').value = rule.repl.str;
+    row[1].innerText = $('ruleEdit_name').value = rule.name;
+    row[2].innerText = $('ruleEdit_matchstr').value = rule.match.str;
+    row[3].innerText = $('ruleEdit_substr').value = rule.sub.str;
+    row[4].innerText = $('ruleEdit_repl').value = rule.repl.str;
 
-    document.getElementById('ruleEdit_matchstr').disabled =
-        TYPE_MANUAL ===
-        (document.getElementById('ruleEdit_matchtype').selectedIndex =
-         rule.match.type);
+    $('ruleEdit_matchstr').disabled = TYPE_MANUAL ===
+        ($('ruleEdit_matchtype').selectedIndex = rule.match.type);
     if (rule.match.hasOwnProperty('modi')) {
-        document.getElementById('ruleEdit_matchcase').checked =
-            rule.match.modi;
+        $('ruleEdit_matchcase').checked = rule.match.modi;
     }
 
-    document.getElementById('ruleEdit_substr').disabled =
-        TYPE_BLOCK ===
-        (document.getElementById('ruleEdit_subtype').selectedIndex =
-         rule.sub.type);
+    $('ruleEdit_substr').disabled = TYPE_BLOCK ===
+        ($('ruleEdit_subtype').selectedIndex = rule.sub.type);
     if (rule.sub.hasOwnProperty('modi')) {
-        document.getElementById('ruleEdit_subcase').checked =
-            rule.sub.modi;
+        $('ruleEdit_subcase').checked = rule.sub.modi;
     }
     if (rule.sub.hasOwnProperty('modg')) {
-        document.getElementById('ruleEdit_subglob').checked =
-            rule.sub.modg;
+        $('ruleEdit_subglob').checked = rule.sub.modg;
     }
     if (rule.repl.hasOwnProperty('decode') && rule.repl.decode) {
-        document.getElementById('ruleEdit_replDecode').checked = true;
+        $('ruleEdit_replDecode').checked = true;
     }
 
     this.onChgMatchType();
@@ -147,8 +127,7 @@ RuleList.prototype.onSel = function (e) {
     var elem, isChk;
 
     // Decolor all cells
-    tmp = document.getElementById(
-        'ruleListTable').getElementsByClassName("sel-td");
+    tmp = $('ruleListTable').getElementsByClassName("sel-td");
     while (tmp.length > 0) {
         tmp[0].className = '';
     }
@@ -173,8 +152,8 @@ RuleList.prototype.onSel = function (e) {
             return;
         }
 
-        elem = document.getElementById(
-            'ruleListTable').getElementsByTagName('tr')[this.sel + 1];
+        elem = $('ruleListTable').getElementsByTagName('tr')[
+            this.sel + 1];
     }
 
     if (isChk) {
@@ -200,86 +179,79 @@ RuleList.prototype.loadBuiltin = function (e) { // Load built-in rules
     for (var i = 0; i < this.builtinRule.length; i++) {
         tmp = document.createElement('option');
         tmp.text = this.builtinRule[i].name;
-        document.getElementById('ruleEdit_sel').add(tmp, null);
+        $('ruleEdit_sel').add(tmp, null);
         this.builtin.push(this.builtinRule[i]);
     }
 };
 
 // Actions when selected an built-in rule
 RuleList.prototype.selBuiltin = function (e) {
-    if (document.getElementById('ruleEdit_sel').selectedIndex === 0) {
+    if ($('ruleEdit_sel').selectedIndex === 0) {
         this.update(this.sel); // Restore the current rule
     } else {
         this.update(
             this.builtin[
-                parseInt(document.getElementById(
-                    'ruleEdit_sel').selectedIndex, 10) - 1]);
+                parseInt($('ruleEdit_sel').selectedIndex, 10) - 1]);
     }
 };
 
 // Actions when match type changed
 RuleList.prototype.onChgMatchType = function () {
-    tmp = document.getElementById('ruleEdit_matchstr').disabled =
-        document.getElementById('ruleEdit_matchcase').disabled =
-        document.getElementById(
-            'ruleEdit_matchtype').selectedIndex === TYPE_MANUAL;
+    tmp = $('ruleEdit_matchstr').disabled =
+        $('ruleEdit_matchcase').disabled =
+        $('ruleEdit_matchtype').selectedIndex === TYPE_MANUAL;
+
     if (tmp === true) {
-        document.getElementById('ruleEdit_matchstr').value = 'MANUAL';
-    } else if (document.getElementById('ruleEdit_matchstr').value ===
-               'MANUAL') {
-        document.getElementById('ruleEdit_matchstr').value = '';
+        $('ruleEdit_matchstr').value = 'MANUAL';
+    } else if ($('ruleEdit_matchstr').value === 'MANUAL') {
+        $('ruleEdit_matchstr').value = '';
     }
 };
 
 // Actions when sub type changed
 RuleList.prototype.onChgSubType = function () {
-    tmp = document.getElementById('ruleEdit_substr').disabled =
-        document.getElementById('ruleEdit_subcase').disabled =
-        document.getElementById('ruleEdit_subglob').disabled =
-        document.getElementById('ruleEdit_repl').disabled =
-        document.getElementById('ruleEdit_replDecode').disabled =
-        document.getElementById('ruleEdit_subtype').selectedIndex ===
-        TYPE_BLOCK;
+    tmp = $('ruleEdit_substr').disabled =
+        $('ruleEdit_subcase').disabled =
+        $('ruleEdit_subglob').disabled =
+        $('ruleEdit_repl').disabled =
+        $('ruleEdit_replDecode').disabled =
+        $('ruleEdit_subtype').selectedIndex === TYPE_BLOCK;
+
     if (tmp === true) {
-        document.getElementById('ruleEdit_substr').value = 'BLOCK';
-        document.getElementById('ruleEdit_repl').value = 'N/A';
+        $('ruleEdit_substr').value = 'BLOCK';
+        $('ruleEdit_repl').value = 'N/A';
     } else {
-        if (document.getElementById('ruleEdit_substr').value ===
-            'BLOCK') {
-            document.getElementById('ruleEdit_substr').value = '';
+        if ($('ruleEdit_substr').value === 'BLOCK') {
+            $('ruleEdit_substr').value = '';
         }
-        if (document.getElementById('ruleEdit_repl').value ===
-            'N/A') {
-            document.getElementById('ruleEdit_repl').value = '';
+        if ($('ruleEdit_repl').value === 'N/A') {
+            $('ruleEdit_repl').value = '';
         }
     }
 };
 
 RuleList.prototype.save = function () { // Save changes
-    if (document.getElementById('ruleEdit_name').value === '' ||
-        document.getElementById('ruleEdit_matchstr').value === '' ||
-        document.getElementById('ruleEdit_substr').value === '') {
+    if ($('ruleEdit_name').value === '' ||
+        $('ruleEdit_matchstr').value === '' ||
+        $('ruleEdit_substr').value === '') {
         return;
     }
 
-    this.data[this.sel].name = document.getElementById(
-        'ruleEdit_name').value;
+    this.data[this.sel].name = $('ruleEdit_name').value;
     this.data[this.sel].match = {
-        str: document.getElementById('ruleEdit_matchstr').value,
-        type: document.getElementById(
-            'ruleEdit_matchtype').selectedIndex,
-        modi: document.getElementById('ruleEdit_matchcase').checked
+        str: $('ruleEdit_matchstr').value,
+        type: $('ruleEdit_matchtype').selectedIndex,
+        modi: $('ruleEdit_matchcase').checked
     };
     this.data[this.sel].sub = {
-        str: document.getElementById('ruleEdit_substr').value,
-        type: document.getElementById(
-            'ruleEdit_subtype').selectedIndex,
-        modi: document.getElementById('ruleEdit_subcase').checked,
-        modg: document.getElementById('ruleEdit_subglob').checked
+        str: $('ruleEdit_substr').value,
+        type: $('ruleEdit_subtype').selectedIndex,
+        modi: $('ruleEdit_subcase').checked,
+        modg: $('ruleEdit_subglob').checked
     };
     this.data[this.sel].repl = {
-        str: document.getElementById('ruleEdit_repl').value,
-        decode: document.getElementById('ruleEdit_replDecode').checked
+        str: $('ruleEdit_repl').value,
+        decode: $('ruleEdit_replDecode').checked
     };
 
     try {
@@ -289,8 +261,8 @@ RuleList.prototype.save = function () { // Save changes
         return;
     }
 
-    document.getElementById('layerFront').style.display = "none";
-    document.getElementById('layerBack').style.display = "none";
+    $('layerFront').style.display = "none";
+    $('layerBack').style.display = "none";
     this.update(this.sel);
     this.chg = this.isNew = false;
 };
@@ -303,26 +275,23 @@ RuleList.prototype.discard = function () { // Discard changes
         this.isNew = false;
     }
 
-    document.getElementById('layerFront').style.display = "none";
-    document.getElementById('layerBack').style.display = "none";
+    $('layerFront').style.display = "none";
+    $('layerBack').style.display = "none";
 };
 
 RuleList.prototype.test = function () { // Test the current rule
     var url, sub, repl, decode, result, innerHTML, t1, t2;
 
-    if (document.getElementById('ruleEdit_test').value === '' ||
-        ! verifyUrl(document.getElementById('ruleEdit_test').value)) {
+    if ($('ruleEdit_test').value === '' ||
+        ! verifyUrl($('ruleEdit_test').value)) {
         return;
     }
 
-    if (document.getElementById(
-        'ruleEdit_matchtype').selectedIndex !== TYPE_MANUAL) {
+    if ($('ruleEdit_matchtype').selectedIndex !== TYPE_MANUAL) {
         tmp = str2re({
-            str: document.getElementById('ruleEdit_matchstr').value,
-            type: document.getElementById(
-                'ruleEdit_matchtype').selectedIndex,
-            modi: document.getElementById(
-                'ruleEdit_matchcase').checked
+            str: $('ruleEdit_matchstr').value,
+            type: $('ruleEdit_matchtype').selectedIndex,
+            modi: $('ruleEdit_matchcase').checked
         });
 
         if (! tmp.hasOwnProperty('global')) { // RegExp syntax error
@@ -330,27 +299,24 @@ RuleList.prototype.test = function () { // Test the current rule
             return;
         }
 
-        if (! tmp.test(document.getElementById(
-            'ruleEdit_test').value)) {
+        if (! tmp.test($('ruleEdit_test').value)) {
             err(lang.i18n['TEST-NOTMATCH']);
             return;
         }
     }
 
-    if (document.getElementById('ruleEdit_subtype').selectedIndex ===
-        TYPE_BLOCK) {
+    if ($('ruleEdit_subtype').selectedIndex === TYPE_BLOCK) {
         notif(lang.i18n['TEST-BLOCK']);
         return;
     }
 
     // The test URL
-    url = document.getElementById('ruleEdit_test').value;
+    url = $('ruleEdit_test').value;
     sub = str2re({              // Substitute pattern
-        str: document.getElementById('ruleEdit_substr').value,
-        type: document.getElementById(
-            'ruleEdit_subtype').selectedIndex,
-        modi: document.getElementById('ruleEdit_subcase').checked,
-        modg: document.getElementById('ruleEdit_subglob').checked
+        str: $('ruleEdit_substr').value,
+        type: $('ruleEdit_subtype').selectedIndex,
+        modi: $('ruleEdit_subcase').checked,
+        modg: $('ruleEdit_subglob').checked
     });
     if (! sub.hasOwnProperty('global')) { // RegExp syntax error
         err(sub.toString());
@@ -358,9 +324,9 @@ RuleList.prototype.test = function () { // Test the current rule
     }
 
     // Replacement
-    repl = document.getElementById('ruleEdit_repl').value;
+    repl = $('ruleEdit_repl').value;
     // Whether decode
-    decode = document.getElementById('ruleEdit_replDecode').checked;
+    decode = $('ruleEdit_replDecode').checked;
     result = getRedirUrl(url, {           // Replace result
         sub: sub,
         repl: repl,
@@ -428,16 +394,14 @@ RuleList.prototype.move = function (inc) { // Change the priority
 };
 
 RuleList.prototype.bak = function () { // Backup rule list
-    document.getElementById('ruleMgr_bak').value =
-        JSON.stringify(this.data);
+    $('ruleMgr_bak').value = JSON.stringify(this.data);
 
     warn(lang.i18n['RULE-BAK']);
 };
 
 RuleList.prototype.restore = function () { // Restore rule list
     // Remove leading and trailing whitespaces
-    tmp = document.getElementById(
-        'ruleMgr_bak').value.replace(/^\s*/, '').replace(/\s*$/, '');
+    tmp = $('ruleMgr_bak').value.replace(/^\s*/, '').replace(/\s*$/, '');
 
     if (tmp === '') {
         err(lang.i18n['RULE-RESTORE-EMPTY']);

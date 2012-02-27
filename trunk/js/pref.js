@@ -2,7 +2,7 @@
  * Preferences obj
  */
 
-/*global document: true, localStorage: true, ext_bg: true */
+/*global $: true, localStorage: true, ext_bg: true */
 
 function Pref() {
     try {
@@ -20,25 +20,22 @@ function Pref() {
     }
 
     try {
-        document.getElementById('pref_proto_all').checked = tmp.all;
-        document.getElementById('pref_proto_http').checked = tmp.http;
-        document.getElementById('pref_proto_https').checked =
-            tmp.https;
-        document.getElementById('pref_proto_ftp').checked = tmp.ftp;
-        document.getElementById('pref_proto_file').checked = tmp.file;
+        $('pref_proto_all').checked = tmp.all;
+        $('pref_proto_http').checked = tmp.http;
+        $('pref_proto_https').checked = tmp.https;
+        $('pref_proto_ftp').checked = tmp.ftp;
+        $('pref_proto_file').checked = tmp.file;
 
-        document.getElementById('pref_proto_http').disabled =
-            document.getElementById('pref_proto_https').disabled =
-            document.getElementById('pref_proto_ftp').disabled =
-            document.getElementById('pref_proto_file').disabled =
-            document.getElementById('pref_proto_all').checked;
+        $('pref_proto_http').disabled =
+            $('pref_proto_https').disabled =
+            $('pref_proto_ftp').disabled =
+            $('pref_proto_file').disabled =
+            $('pref_proto_all').checked;
     } catch (e) {}
 
     try {
-        document.getElementById('pref_context_link').checked =
-            this.data.context.link;
-        document.getElementById('pref_context_page').checked =
-            this.data.context.page;
+        $('pref_context_link').checked = this.data.context.link;
+        $('pref_context_page').checked = this.data.context.page;
     } catch (e) {}
 }
 
@@ -51,24 +48,22 @@ Pref.prototype.onChgProto = function (proto) {
     var tmp = this.data.proto;
 
     if (proto === 'all') {
-        document.getElementById('pref_proto_http').disabled =
-            document.getElementById('pref_proto_https').disabled =
-            document.getElementById('pref_proto_ftp').disabled =
-            document.getElementById('pref_proto_file').disabled =
-            document.getElementById('pref_proto_all').checked;
+        $('pref_proto_http').disabled =
+            $('pref_proto_https').disabled =
+            $('pref_proto_ftp').disabled =
+            $('pref_proto_file').disabled =
+            $('pref_proto_all').checked;
     }
 
     tmp[proto] =
-        document.getElementById('pref_proto_' + proto).checked;
+        $('pref_proto_' + proto).checked;
 
     this.refresh();
 };
 
 Pref.prototype.onChgContext = function () {
-    this.data.context.link =
-        document.getElementById('pref_context_link').checked;
-    this.data.context.page =
-        document.getElementById('pref_context_page').checked;
+    this.data.context.link = $('pref_context_link').checked;
+    this.data.context.page = $('pref_context_page').checked;
 
     this.refresh();
     ext_bg.updateContext();

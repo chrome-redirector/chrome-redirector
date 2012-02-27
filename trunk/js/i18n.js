@@ -3,12 +3,11 @@
  */
 
 /*jslint plusplus: false */
-/*global document: true, window: true, navigator: true, console: true,
+/*global $: true, document: true, window: true, navigator: true,
   tmp: true, localStorage: true,
   xhrJson: true */
 
 function Lang() {
-    var re, flt, arr, a, b;
     try {
         this.data = JSON.parse(localStorage.LANG);
     } catch (e) {               // Default to browser's locale
@@ -50,9 +49,6 @@ Lang.prototype.apply = function (type) { // Apply i18n data to HTML
                                      this.i18n[attrArr[1]]);
             }
             break;
-        default:
-            console.log('Oops!');
-
         }
     }
 };
@@ -63,9 +59,7 @@ Lang.prototype.refresh = function () { // Refresh languages data
 };
 
 Lang.prototype.onSelLang = function (e) { // Language selector handler
-    if ((tmp =
-         document.getElementById('langSel').selectedIndex - 1) ===
-        -1) {
+    if ((tmp = $('langSel').selectedIndex - 1) === -1) {
         return;
     }
 
@@ -76,7 +70,7 @@ Lang.prototype.onSelLang = function (e) { // Language selector handler
 };
 
 Lang.prototype.loadI18n = function () { // Load the i18n data
-    var langList, i18nSet = {};
+    var langList, i18nSet = {}, a, b, re, flt;
 
     langList = xhrJson('/i18n/lang.json');
 
@@ -98,7 +92,7 @@ Lang.prototype.loadI18n = function () { // Load the i18n data
         for (var i = 0; i < this.avail.length; i++) {
             tmp = document.createElement('option');
             tmp.text = langList[this.avail[i]];
-            document.getElementById('langSel').add(tmp, null);
+            $('langSel').add(tmp, null);
         }
     } catch (e) {}
 

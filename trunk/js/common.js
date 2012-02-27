@@ -2,7 +2,7 @@
  * Common data
  */
 
-/*global chrome: true, document: true, tmp: true, DEBUG: true,
+/*global $: true, chrome: true, document: true, tmp: true, DEBUG: true,
   TYPE_REGEXP: true, TYPE_GLOB: true, TYPE_MANUAL: true,
   TYPE_BLOCK: true,
   XMLHttpRequest: true */
@@ -27,6 +27,10 @@ Object.prototype.merge = function (src) { // Merge obj from src
         }
     }
 };
+
+function $(id) {
+    return document.getElementById(id);
+}
 
 function glob2re(glob) {
     var escChar = '(){}[]^$.+*?|', re = [];
@@ -101,23 +105,23 @@ function getRedirUrl(url, rule) {
 }
 
 function iNotif(innerHTML) {
-    document.getElementById('layerNotif_disp').innerHTML = innerHTML;
-    document.getElementById('layerNotif').className = 'active';
+    $('layerNotif_disp').innerHTML = innerHTML;
+    $('layerNotif').className = 'active';
 }
 
 function notif(innerHTML) {     // Green
     iNotif(innerHTML);
-    document.getElementById('layerNotif').style.background = '#6f6';
+    $('layerNotif').style.background = '#6f6';
 }
 
 function warn(innerHTML) {      // Yellow
     iNotif(innerHTML);
-    document.getElementById('layerNotif').style.background = '#ff6';
+    $('layerNotif').style.background = '#ff6';
 }
 
 function err(innerHTML) {       // Orange
     iNotif(innerHTML);
-    document.getElementById('layerNotif').style.background = '#f60';
+    $('layerNotif').style.background = '#f60';
 }
 
 function xhrJson(file) {

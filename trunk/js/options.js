@@ -2,32 +2,31 @@
  * Interactive
  */
 
-/*global chrome: true, document: true, console: true, ext_bg: true,
-  RuleList: true, ruleList: true, Pref: true, myPref: true,
+/*global $: true chrome: true, ext_bg: true,
+  RuleList: true, ruleList: true,
+  Pref: true, myPref: true,
   Lang: true, lang: true,
   err: true */
 
 function switchNavTag(e) {      // Switch navigation Bar
     var tag = e.srcElement;
-    document.getElementById('navBar').getElementsByClassName(
-        "navTagSel")[0].className = "navTag";
+    $('navBar').getElementsByClassName("navTagSel")[0].className =
+        "navTag";
     tag.className = "navTag navTagSel";
 
-    document.getElementById('main').getElementsByClassName(
-        "mainview-sel")[0].className = "mainview";
+    $('main').getElementsByClassName("mainview-sel")[0].className =
+        "mainview";
 
     switch (tag.id) {
     case "prefTag":
-        document.getElementById('pref').className = "mainview-sel";
+        $('pref').className = "mainview-sel";
         break;
     case "ruleMgrTag":
-        document.getElementById('ruleMgr').className = "mainview-sel";
+        $('ruleMgr').className = "mainview-sel";
         break;
     case "docTag":
-        document.getElementById('doc').className = "mainview-sel";
+        $('doc').className = "mainview-sel";
         break;
-    default:
-        console.log('Oops!');
     }
 }
 
@@ -38,28 +37,19 @@ function onInit() {
     lang = new Lang();
 
     // Event listeners
-    document.getElementById('navTags').addEventListener(
-        "click",
-        switchNavTag,
-        false);
-    document.getElementById('ruleListTable').addEventListener(
-        "click",
-        ruleList.onSel.bind(ruleList),
-        false);
-    document.getElementById('ruleEdit_sel').addEventListener(
-        "change",
-        ruleList.selBuiltin.bind(ruleList),
-        false);
-    document.getElementById('ruleEdit').addEventListener(
+    $('navTags').addEventListener("click", switchNavTag, false);
+    $('ruleListTable').addEventListener(
+        "click", ruleList.onSel.bind(ruleList), false);
+    $('ruleEdit_sel').addEventListener(
+        "change", ruleList.selBuiltin.bind(ruleList), false);
+    $('ruleEdit').addEventListener(
         "change",
         function (e) {
             ruleList.chg = true;
         },
         false);
-    document.getElementById('langSel').addEventListener(
-        "change",
-        lang.onSelLang.bind(lang),
-        false);
+    $('langSel').addEventListener(
+        "change", lang.onSelLang.bind(lang), false);
 }
 
 function verifyUrl(url) {
