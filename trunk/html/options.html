@@ -116,14 +116,20 @@
 
           <!-- Backup rule list -->
           <section>
-            <h3 i18nT="RULEMGR-BAK-TITLE"></h3>
+            <h3 i18nT="RULEMGR-BAK-TITLE"
+                style="cursor: pointer;"
+                onclick="$('div_bak').style.height =
+                         ($('div_bak').offsetHeight === 0 ?
+                         '200px' : 0);"></h3>
 
-            <textarea id="ruleMgr_bak"></textarea><br />
-            <div class="div-center">
-              <input type="button" i18nP="value:BTN-BAK"
-                     onclick="ruleList.bak()" />
-              <input type="button" i18nP="value:BTN-RESTORE"
-                     onclick="ruleList.restore()" /><br />
+            <div id="div_bak" style="height: 0; overflow: auto;">
+              <textarea id="ruleMgr_bak"></textarea>
+              <div class="div-center">
+                <input type="button" i18nP="value:BTN-BAK"
+                       onclick="ruleList.bak()" />
+                <input type="button" i18nP="value:BTN-RESTORE"
+                       onclick="ruleList.restore()" />
+              </div>
             </div>
           </section>
         </div>
