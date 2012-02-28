@@ -12,22 +12,22 @@
   getRedirUrl: true, str2re: true, alert: true */
 
 function loadPref() {           // Load preferences data
-    prefData = (new Pref()).data;
+    prefData = (new Pref()).data; // All preferences data
 
-    if (prefData.proto.all) {
+    if (prefData.proto.all) {      // All protocols enabled
         validUrl = ['<all_urls>']; // Matches all protocols
     } else {
         validUrl = [];
-        if (prefData.proto.http) {
+        if (prefData.proto.http) { // http:// enabled
             validUrl.push('http://*/*');
         }
-        if (prefData.proto.https) {
+        if (prefData.proto.https) { // https:// enabled
             validUrl.push('https://*/*');
         }
-        if (prefData.proto.ftp) {
+        if (prefData.proto.ftp) { // ftp:// enabled
             validUrl.push('ftp://*/*');
         }
-        if (prefData.proto.file) {
+        if (prefData.proto.file) { // file:// enabled
             validUrl.push('file://*');
         }
     }
@@ -36,39 +36,38 @@ function loadPref() {           // Load preferences data
 function updateContext() {      // Update the context menu
     var parentLink, parentPage, idx;
 
-    function newTab(info, tab) {
+    function newTab(info, tab) { // Open a new tab
         chrome.tabs.create({
             url: getRedirUrl(
                 info.linkUrl,
-                ruleManual[info.menuItemId - 2]
+                ruleManual[info.menuItemId - newTab.idx - 1]
             )
         });
     }
 
-    function inTab(info, tab) {
+    function inTab(info, tab) { // Reload current tab
         chrome.tabs.update(tab.id, {
             url: getRedirUrl(
                 info.pageUrl,
-                ruleManual[
-                    info.menuItemId - (prefData.context.link ?
-                                       3 + ruleManual.length : 2)]
+                ruleManual[info.menuItemId - inTab.idx - 1]
             )
         });
     }
 
-    if (ruleManual.length === 0) {
+    if (ruleManual.length === 0) { // No manual rule
         return;
     }
 
     chrome.contextMenus.removeAll(); // Remove previous created menus
 
     if (prefData.context.link) { // Re-generate links' context menu
-        parentLink = chrome.contextMenus.create({
+        parentLink = chrome.contextMenus.create({ // Parent entry
             title: 'Open link with rule',
             contexts: ['link']
         });
 
-        for (var i = 0; i < ruleManual.length; i++) {
+        for (var i = 0; i < ruleManual.length; i++) { // Sub entries
+            newTab.idx = parentLink;
             chrome.contextMenus.create({
                 title: ruleManual[i].name,
                 contexts: ['link'],
@@ -79,11 +78,12 @@ function updateContext() {      // Update the context menu
     }
 
     if (prefData.context.page) { // Re-generate pages' context menu
-        parentPage = chrome.contextMenus.create({
+        parentPage = chrome.contextMenus.create({ // Parent entry
             title: 'Reload page with rule'
         });
 
-        for (var i = 0; i < ruleManual.length; i++) {
+        for (var i = 0; i < ruleManual.length; i++) { // Sub entries
+            inTab.idx = parentPage;
             chrome.contextMenus.create({
                 title: ruleManual[i].name,
                 parentId: parentPage,
@@ -96,12 +96,12 @@ function updateContext() {      // Update the context menu
 function loadRule() {         // Called when rule list needs update
     var rule;
 
-    ruleData = (new RuleList(false)).data;
+    ruleData = (new RuleList(false)).data; // All rules list data
 
     ruleAuto = [];              // Rules for auto redir
     ruleManual = [];            // Rules for manual redir
     for (var i = 0; i < ruleData.length; i++) {
-        rule = ruleData[i];   // Current rule
+        rule = ruleData[i];     // Current rule
 
         // Rule must be enabled
         if (! rule.hasOwnProperty('enabled') || ! rule.enabled) {
@@ -116,7 +116,7 @@ function loadRule() {         // Called when rule list needs update
             }
 
             try {
-                tmp = {
+                tmp = {         // Tmp manual rule, to be chked
                     name: rule.name,
                     sub: str2re(rule.sub),
                     repl: rule.repl.str,
@@ -131,19 +131,19 @@ function loadRule() {         // Called when rule list needs update
                 continue;
             }
 
-            ruleManual.push(tmp);
+            ruleManual.push(tmp); // Formally add to manual rule
             continue;
         }
 
         // For an auto rule
         try {
-            tmp = {
+            tmp = {             // Tmp auto rule, to be chked
                 match: str2re(rule.match),
                 sub: str2re(rule.sub),
                 repl: rule.repl.str,
                 decode: rule.repl.decode
             };
-            // RegExp syntax error
+            // Check match/sub to see if RegExp syntax error
             if (! tmp.match.hasOwnProperty('global')) {
                 alert(tmp.match.toString());
                 return;
@@ -156,10 +156,10 @@ function loadRule() {         // Called when rule list needs update
             continue;
         }
 
-        ruleAuto.push(tmp);
+        ruleAuto.push(tmp);     // Formally add to auto rule
     }
 
-    updateContext();
+    updateContext();            // Now referesh context menu
 }
 
 langNotif = (new Lang()).notif; // Load language settings
@@ -168,12 +168,12 @@ loadRule();                     // Load rule list
 
 chrome.webRequest.onBeforeRequest.addListener( // Auto redirect
     function (tmp) {
-        if (ruleAuto.length === 0) {
+        if (ruleAuto.length === 0) { // No auto rule
             return;
         }
 
         for (var i = 0; i < ruleAuto.length; i++) {
-            if (ruleAuto[i].match.test(tmp.url)) { // match
+            if (ruleAuto[i].match.test(tmp.url)) { // match this URL
                 if (ruleAuto[i].sub === null) {    // To block
                     return {cancel: true};
                 } else {        // To redirect

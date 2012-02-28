@@ -2,7 +2,8 @@
  * Common data
  */
 
-/*global $: true, chrome: true, document: true, tmp: true, DEBUG: true,
+/*global $: true, $$: true, chrome: true, document: true, tmp: true,
+  DEBUG: true,
   TYPE_REGEXP: true, TYPE_GLOB: true, TYPE_MANUAL: true,
   TYPE_BLOCK: true,
   XMLHttpRequest: true */
@@ -28,8 +29,12 @@ Object.prototype.merge = function (src) { // Merge obj from src
     }
 };
 
-function $(id) {
+function $(id) {                // Id selector
     return document.getElementById(id);
+}
+
+function $$() {                 // CSS-like selector
+    return document.querySelectorAll.apply(document, arguments);
 }
 
 function glob2re(glob) {

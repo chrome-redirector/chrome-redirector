@@ -2,30 +2,27 @@
  * Preferences obj
  */
 
-/*global $: true, localStorage: true, ext_bg: true */
+/*global $: true, $$: true, localStorage: true, ext_bg: true */
 
-function Pref() {
+function Pref() {               // Obj holds preferences data/method
     try {
         this.data = JSON.parse(localStorage.PREF);
     } catch (e) {
-        this.data = {
+        this.data = {           // Default settings
             proto: {all: true},
             context: {link: true, page: true}
         };
     }
 
-    var tmp = this.data.proto;
-    if (tmp.hasOwnProperty('all')) {
-        tmp.all = true;
-    }
+    var tmp = this.data.proto;  // Enabled protocols
 
-    try {
+    try {                       // Load protocols preferences to UI
         $('pref_proto_all').checked = tmp.all;
         $('pref_proto_http').checked = tmp.http;
         $('pref_proto_https').checked = tmp.https;
         $('pref_proto_ftp').checked = tmp.ftp;
         $('pref_proto_file').checked = tmp.file;
-
+        // Disable other protocols if `all' is checked
         $('pref_proto_http').disabled =
             $('pref_proto_https').disabled =
             $('pref_proto_ftp').disabled =
@@ -33,21 +30,21 @@ function Pref() {
             $('pref_proto_all').checked;
     } catch (e) {}
 
-    try {
+    try {                       // Load manual redirection pref to UI
         $('pref_context_link').checked = this.data.context.link;
         $('pref_context_page').checked = this.data.context.page;
     } catch (e) {}
 }
 
-Pref.prototype.refresh = function () {
+Pref.prototype.refresh = function () { // Save & reload pref data
     localStorage.PREF = JSON.stringify(this.data);
     ext_bg.loadPref();
 };
 
-Pref.prototype.onChgProto = function (proto) {
+Pref.prototype.onChgProto = function (proto) { // On protocols changed
     var tmp = this.data.proto;
 
-    if (proto === 'all') {
+    if (proto === 'all') {      // Select `all' -> disable all others
         $('pref_proto_http').disabled =
             $('pref_proto_https').disabled =
             $('pref_proto_ftp').disabled =
@@ -55,13 +52,12 @@ Pref.prototype.onChgProto = function (proto) {
             $('pref_proto_all').checked;
     }
 
-    tmp[proto] =
-        $('pref_proto_' + proto).checked;
+    tmp[proto] = $('pref_proto_' + proto).checked; // Save the checked
 
     this.refresh();
 };
 
-Pref.prototype.onChgContext = function () {
+Pref.prototype.onChgContext = function () { // On manual setting chged
     this.data.context.link = $('pref_context_link').checked;
     this.data.context.page = $('pref_context_page').checked;
 
