@@ -1,0 +1,249 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta http-equiv="Content-Type" content="text/html;
+                                             charset=utf-8">
+    <title i18nT="PAGE-TITLE"></title>
+    <script src="/js/common.js" type="text/javascript"></script>
+    <script src="/js/i18n.js" type="text/javascript"></script>
+    <script src="/js/pref.js" type="text/javascript"></script>
+    <script src="/js/rule.js" type="text/javascript"></script>
+    <script src="/js/options.js" type="text/javascript"></script>
+    <link rel="stylesheet" href="/css/options.css" type="text/css">
+  </head>
+
+  <body onload="onInit()">
+    <!-- Navigation bar -->
+    <div id="navBar">
+      <h1>Redirector</h1>
+
+      <ul id="navTags">
+        <li id="prefTag">
+          <a href="#pref" i18nT="NAVBAR-PREF"
+             onclick="switchNav('prefTag')"></a>
+        </li>
+        <li id="ruleMgrTag">
+          <a href="#ruleMgr" i18nT="NAVBAR-RULEMGR"
+             onclick="switchNav('ruleMgrTag')"></a>
+        </li>
+        <li id="docTag">
+          <a href="#doc" i18nT="NAVBAR-DOC"
+             onclick="switchNav('docTag')"></a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- The main display part -->
+    <div id="main-container"><div id="main">
+      <!-- Page for Preferences -->
+      <div id="pref">
+        <h1 i18nT="PREF-TITLE"></h1>
+
+        <!-- Language settings -->
+        <h3>Language</h3>
+        <section>
+          <select id="langSel">
+            <option>Change language...</option>
+          </select>
+        </section>
+
+        <!-- Proto settings -->
+        <h3 i18nT="PROTO-TITLE"></h3>
+        <section>
+          <input type="checkbox" id="pref_proto_all"
+                 onclick="myPref.onChgProto('all')" />
+          <label i18nT="PROTO-ALL"></label><br />
+          <input type="checkbox" id="pref_proto_http"
+                 onclick="myPref.onChgProto('http')" />
+          <label>HTTP://</label><br />
+          <input type="checkbox" id="pref_proto_https"
+                 onclick="myPref.onChgProto('https')" />
+          <label>HTTPS://</label><br />
+          <input type="checkbox" id="pref_proto_ftp"
+                 onclick="myPref.onChgProto('ftp')" />
+          <label>FTP://</label><br />
+          <input type="checkbox" id="pref_proto_file"
+                 onclick="myPref.onChgProto('file')" />
+          <label>FILE://</label><br />
+        </section>
+
+        <!-- Context menu settings -->
+        <h3 i18nT="CONTEXT-TITLE"></h3>
+        <section>
+          <input type="checkbox" id="pref_context_link"
+                 onclick="myPref.onChgContext()" />
+          <label i18nT="CONTEXT-LINK"></label><br />
+          <input type="checkbox" id="pref_context_page"
+                 onclick="myPref.onChgContext()" />
+          <label i18nT="CONTEXT-PAGE"></label><br />
+        </section>
+
+        <!-- <\!-- Misc settings -\-> -->
+        <!-- <h3 i18nT="MISC-TITLE"></h3> -->
+        <!-- <section> -->
+        <!-- </section> -->
+      </div>
+
+      <!-- Page for rules -->
+      <div id="ruleMgr" class="mainview">
+        <h1 i18nT="RULEMGR-TITLE"></h1>
+
+        <!-- Rules list -->
+        <h3 i18nT="LBL-TITLE"></h3>
+        <section>
+          <div class="div-center">
+            <input type="button" i18nP="value:BTN-ADD"
+                   onclick="ruleList.add()" />
+            <input type="button" i18nP="value:BTN-EDIT"
+                   onclick="ruleList.edit()" />
+            <input type="button" i18nP="value:BTN-DEL"
+                   onclick="ruleList.del()" />
+            <input type="button" i18nP="value:BTN-UP"
+                   onclick="ruleList.move(-1)" />
+            <input type="button" i18nP="value:BTN-DOWN"
+                   onclick="ruleList.move(1)" />
+          </div>
+
+          <table id="ruleListTable">
+            <colgroup>
+              <col width="4%">
+              <col width="24%" span="4">
+            </colgroup>
+            <tr>
+              <th i18nT="LBL-NAME" colspan="2"></th>
+              <th i18nT="LBL-MATCH"></th>
+              <th i18nT="LBL-SUB"></th>
+              <th i18nT="LBL-REPL"></th>
+            </tr>
+          </table>
+        </section>
+
+        <!-- Backup rule list -->
+        <h3 i18nT="RULEMGR-BAK-TITLE" style="cursor: pointer;"
+            onclick="$('div_bak').className =
+                     $('div_bak').offsetHeight === 0 ? 'show' : ''">
+        </h3>
+        <section>
+          <div id="div_bak">
+            <textarea id="ruleMgr_bak"></textarea>
+            <div class="div-center">
+              <input type="button" i18nP="value:BTN-BAK"
+                     onclick="ruleList.bak()" />
+              <input type="button" i18nP="value:BTN-RESTORE"
+                     onclick="ruleList.restore()" />
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Page for docs -->
+      <div id="doc" class="mainview">
+        <h1 i18nT="DOC-TITLE"></h1>
+
+        <section>
+          <h3>
+            <a href="/html/en.html" target="_blank">English</a>
+          </h3>
+          <h3>
+            <a href="/html/zh_CN.html" target="_blank">中文(简体)</a>
+          </h3>
+        </section>
+      </div>
+
+      <div id="overlay">
+        <!-- Rule Editor -->
+        <div id="layerFront">
+          <!-- Predefined rule selector -->
+          <select id="ruleEdit_sel">
+            <option i18nT="RULEEDIT-CURRENT"></option>
+          </select>
+
+          <!-- Main form -->
+          <form id="ruleEdit" onsubmit="return false;">
+            <section>
+              <!-- Rule name -->
+              <label i18nT="LBL-NAME"></label>
+              <input id="ruleEdit_name" placeholder="NAME" required autofocus="autofocus" />
+            </section>
+
+            <section>
+              <!-- Match pattern -->
+              <label i18nT="LBL-MATCH"></label>
+              <input id="ruleEdit_matchstr" placeholder="MATCH PATTERN" required />
+              <br />
+              <input type="checkbox" id="ruleEdit_matchcase" />
+              <label i18nT="LBL-IGNCASE"></label>
+              <select id="ruleEdit_matchtype"
+                      onchange="ruleList.onChgMatchType()">
+                <option selected="selected" i18nT="TYPE-REGEXP">
+                </option>
+                <option i18nT="TYPE-GLOB"></option>
+                <option i18nT="TYPE-MANUAL"></option>
+              </select>
+            </section>
+
+            <section>
+              <!-- Substitution -->
+              <label i18nT="LBL-SUB"></label>
+              <input id="ruleEdit_substr"
+                     placeholder="SUB STRING/REGEXP" required />
+              <br />
+              <input type="checkbox" id="ruleEdit_subglob" />
+              <label i18nT="LBL-SUBGLOB"></label>
+              <input type="checkbox" id="ruleEdit_subcase" />
+              <label i18nT="LBL-IGNCASE"></label>
+              <select id="ruleEdit_subtype"
+                      onchange="ruleList.onChgSubType()">
+                <option selected="selected" i18nT="TYPE-REGEXP">
+                </option>
+                <option i18nT="TYPE-GLOB"></option>
+                <option i18nT="TYPE-BLOCK"></option>
+              </select>
+            </section>
+
+            <section>
+              <!-- Replacement -->
+              <label i18nT="LBL-REPL"></label>
+              <input id="ruleEdit_repl" placeholder="REPLACEMENT" />
+              <br />
+              <input type="checkbox" id="ruleEdit_replDecode" />
+              <label i18nT="LBL-REPLDECODE">
+              </label>
+            </section>
+
+            <!-- Save/Cancel buttons -->
+            <section>
+              <div class="action-area">
+                <input type="submit" i18nP="value:BTN-SAVE"
+                       onclick="ruleList.save()" />
+                <input type="button" i18nP="value:BTN-CANCEL"
+                       onclick="ruleList.discard()" />
+              </div>
+            </section>
+          </form>
+
+          <hr />
+
+          <!-- Test form -->
+          <form onsubmit="return false;">
+            <section>
+              <label i18nT="LBL-TEST"></label>
+              <input id="ruleEdit_test" class="input-text"
+                     placeholder="TEST URL" required />
+              <div class="action-area">
+                <input type="submit" i18nP="value:BTN-TEST"
+                       onclick="ruleList.test()" />
+              </div>
+            </section>
+          </form>
+        </div>
+      </div>
+    </div></div>
+
+<!-- Notification layer -->
+<div id="layerNotif" onclick="this.className=''">
+  <div  class="div-center">
+    <div id="layerNotif_disp"></div>
+  </div>
+</body>
+</html>
