@@ -61,11 +61,12 @@ function glob2re(glob) {
         }
     }
 
-    glob = glob.replace(/\0/g, '\\\\'); // \0 -> \\
-    glob = glob.replace(/\f/g, '\\*');  // \f -> \*
-    glob = glob.replace(/\v/g, '\\?');  // \v -> \?
+    re = re.join('');
+    re = re.replace(/\0/g, '\\\\'); // \0 -> \\
+    re = re.replace(/\f/g, '\\*');  // \f -> \*
+    re = re.replace(/\v/g, '\\?');  // \v -> \?
 
-    return re.join('');
+    return re;
 }
 
 function str2re(proto) {        // Construct compiled regexp from str

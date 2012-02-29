@@ -67,7 +67,7 @@ RuleList.prototype.del = function () { // Delete a rule
 RuleList.prototype.edit = function () {
     this.update(this.sel);      // Fillin selected rule
 
-    $('layerBack').style.display = "block";
+    $('overlay').style.display = "block";
     $('layerFront').style.display = "block";
 };
 
@@ -256,7 +256,7 @@ RuleList.prototype.save = function () { // Save changes
     }
 
     $('layerFront').style.display = "none";
-    $('layerBack').style.display = "none";
+    $('overlay').style.display = "none";
     this.update(this.sel);
     this.chg = this.isNew = false;
 };
@@ -270,7 +270,7 @@ RuleList.prototype.discard = function () { // Discard changes
     }
 
     $('layerFront').style.display = "none";
-    $('layerBack').style.display = "none";
+    $('overlay').style.display = "none";
 };
 
 RuleList.prototype.test = function () { // Test the current rule

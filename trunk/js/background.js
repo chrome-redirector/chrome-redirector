@@ -54,11 +54,11 @@ function updateContext() {      // Update the context menu
         });
     }
 
+    chrome.contextMenus.removeAll(); // Remove previous created menus
+
     if (ruleManual.length === 0) { // No manual rule
         return;
     }
-
-    chrome.contextMenus.removeAll(); // Remove previous created menus
 
     if (prefData.context.link) { // Re-generate links' context menu
         parentLink = chrome.contextMenus.create({ // Parent entry

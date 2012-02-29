@@ -9,5 +9,5 @@
     "description": "Redirects URLs automatically/manually",
     "permissions": ["webRequest", "webRequestBlocking",
                     "contextMenus", "<all_urls>"],
-    "version": "2.2.9"
+    "version": "2.2.11"
 }

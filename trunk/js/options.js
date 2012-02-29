@@ -9,24 +9,15 @@
   Lang: true, lang: true,
   err: true */
 
-function switchNavTag(e) {      // Switch navigation Bar
-    var tag = e.srcElement;     // The tag clicked
-    $$('#navBar .navTagSel')[0].className = "navTag"; // Decolor prev
-    tag.className = "navTag navTagSel";               // Color clicked
+// Navbar
+function switchNav(tag) {
+    $('prefTag').className =
+        $('ruleMgrTag').className = $('docTag').className = '';
+    $(tag).className='selected';
 
-    $$('#main .mainview-sel')[0].className = "mainview"; // Hide all
-
-    switch (tag.id) {           // Show tag-id
-    case "prefTag":
-        $('pref').className = "mainview-sel";
-        break;
-    case "ruleMgrTag":
-        $('ruleMgr').className = "mainview-sel";
-        break;
-    case "docTag":
-        $('doc').className = "mainview-sel";
-        break;
-    }
+    $('main-container').className='.selected';
+    $('main-container').style.margin='0 -20px';
+    $('main-container').style.opacity=0;
 }
 
 function onInit() {                                // Option page init
@@ -35,8 +26,24 @@ function onInit() {                                // Option page init
     myPref = new Pref();                           // preferences obj
     lang = new Lang();                             // i18n obj
 
-    // Nav bar click event
-    $('navTags').addEventListener("click", switchNavTag, false);
+    // Navigation bar (work with switchNav)
+    $('main-container').addEventListener(
+        "webkitTransitionEnd",
+        function(e) {           // Fade in
+            $('main-container').className='';
+            $('main-container').style.margin='0 0';
+            $('main-container').style.opacity=1;
+        }, false);
+
+    // Rules editor animation
+    $('overlay').addEventListener('click',  function(e) {
+        if (e.srcElement.id === 'overlay') {
+            e.target.classList.add('shake');
+        }
+    }, false);
+    $('overlay').addEventListener('webkitAnimationEnd', function(e) {
+        e.target.classList.remove('shake');}, false);
+
     // Rules list click event
     $('ruleListTable').addEventListener(
         "click", ruleList.onSel.bind(ruleList), false);
@@ -53,6 +60,9 @@ function onInit() {                                // Option page init
     // Select language event
     $('langSel').addEventListener(
         "change", lang.onSelLang.bind(lang), false);
+
+    $$('#prefTag a')[0].click(); // Display the first tab
+    $('navTags').click();
 }
 
 function verifyUrl(url) {       // Verify a URL (Not strict enough)
