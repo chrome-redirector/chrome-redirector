@@ -1,0 +1,13 @@
+{
+    "background_page": "/html/background.html",
+    "options_page": "/html/options.html",
+    "icons": {
+        "16": "/icons/icon_16.png",
+        "128": "/icons/icon_128.png"
+    },
+    "name": "Redirector",
+    "description": "Redirects URLs automatically/manually",
+    "permissions": ["webRequest", "webRequestBlocking",
+                    "contextMenus", "<all_urls>"],
+    "version": "2.2.11"
+}
