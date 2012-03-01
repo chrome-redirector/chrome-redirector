@@ -67,12 +67,12 @@ function onInit() {                                // Option page init
 
 function verifyUrl(url) {       // Verify a URL (Not strict enough)
     if (! /^(https?|ftp|file):\/\//i.test(url)) { // Left out protocol
-        err(lang.i18n['URL-INVALID-PROTO']);
+        err(lang.i18n['URL_INVALID_PROTO']);
         return false;
     }
 
     if (/\s/i.test(url)) {      // Contains whitespaces
-        err(lang.i18n['URL-INVALID-CHAR']);
+        err(lang.i18n['URL_INVALID_CHAR']);
         return false;
     }
 

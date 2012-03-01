@@ -14,6 +14,16 @@ DEBUG = true;                   // Global debug symbol
 TYPE_REGEXP = 0;
 TYPE_GLOB = 1;
 TYPE_MANUAL = TYPE_BLOCK = 2;
+// Beta-begin
+TYPE_HDR = 3;
+function splitVl(str) {
+    str = str.replace(/\\\|/g, '\0');
+    str = str.split('|');
+    str = str.join('\f');
+    str = str.replace(/\0/g, '\\|');
+    return str.split('\f');
+}
+// Beta-end
 
 function DBG(msg) {
     if (DEBUG) {

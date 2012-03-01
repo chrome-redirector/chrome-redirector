@@ -100,6 +100,7 @@ function loadRule() {         // Called when rule list needs update
 
     ruleAuto = [];              // Rules for auto redir
     ruleManual = [];            // Rules for manual redir
+    ruleHdr = [];
     for (var i = 0; i < ruleData.length; i++) {
         rule = ruleData[i];     // Current rule
 
@@ -111,7 +112,7 @@ function loadRule() {         // Called when rule list needs update
         // For a manual rule
         if (rule.match.type === TYPE_MANUAL) {
             if (rule.sub.type === TYPE_BLOCK) {
-                alert(langNotif['MANUAL-BLOCK']);
+                alert(langNotif['MANUAL_BLOCK']);
                 continue;
             }
 
@@ -134,6 +135,34 @@ function loadRule() {         // Called when rule list needs update
             ruleManual.push(tmp); // Formally add to manual rule
             continue;
         }
+
+        // Beta-begin
+        // For a header rule
+        if (rule.sub.type === TYPE_HDR) {
+            try {
+                tmp = {
+                    match: str2re(rule.match),
+                    sub: splitVl(rule.sub.str),
+                    repl: splitVl(rule.repl.str)
+                };
+                // Check match to see if RegExp syntax error
+                if (! tmp.match.hasOwnProperty('global')) {
+                    alert(tmp.match.toString());
+                    return;
+                }
+                // Check if sub and repl are of the same size
+                if (tmp.sub.length !== tmp.repl.length) {
+                    alert('Sub, repl length mismatch!');
+                    // alert(langNotif['SUB_REPL_DIFF']);
+                }
+            } catch (e) {
+                continue;
+            }
+
+            ruleHdr.push(tmp);
+            continue;
+        }
+        // Beta-end
 
         // For an auto rule
         try {
@@ -202,3 +231,40 @@ chrome.webRequest.onBeforeRequest.addListener( // Auto redirect
 //     },
 //     {urls: validUrl}
 // );
+
+// Beta-begin
+chrome.webRequest.onBeforeSendHeaders.addListener(
+    function(tmp) {
+        var idx;
+
+        for (var i = 0; i < ruleHdr.length; i++) {
+            if (ruleHdr[i].match.test(tmp.url)) { // match this URL
+                for (var j = 0; j < tmp.requestHeaders.length; j++) {
+                    idx = ruleHdr[i].sub.indexOf(
+                        tmp.requestHeaders[j].name);
+
+                    if (idx === -1) { // Not for setting value
+                        idx = ruleHdr[i].sub.indexOf(
+                            '-' + tmp.requestHeaders[j].name);
+
+                        if (idx === -1) { // Not for deleting
+                            continue;
+                        }
+
+                        // Delete
+                        tmp.requestHeaders.splice(j, 1);
+                    } else {    // Setting value
+                        tmp.requestHeaders[j].value =
+                            ruleHdr[i].repl[idx];
+                    }
+                }
+
+                // console.log(tmp.requestHeaders);
+                return {requestHeaders: tmp.requestHeaders};
+            }
+        }
+    },
+    {urls: validUrl},
+    ["blocking", "requestHeaders"]
+);
+// Beta-end

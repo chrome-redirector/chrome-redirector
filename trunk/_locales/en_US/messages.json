@@ -19,6 +19,7 @@
     "TYPE_GLOB": {"message": "Wildcard"},
     "TYPE_MANUAL": {"message": "Manual"},
     "TYPE_BLOCK": {"message": "Block"},
+    "TYPE_HDR": {"message": "Header (beta)"},
     "LBL_TITLE": {"message": "Rules List"},
     "LBL_NAME": {"message": "Name"},
     "LBL_MATCH": {"message": "Match"},

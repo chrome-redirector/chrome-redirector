@@ -40,9 +40,9 @@ function RuleList(init) {
 RuleList.prototype.add = function () { // Add a rule
     this.data.push({                   // Default empty rule
         name: 'Untitled',
-        match: {str: ''},
-        sub: {str: ''},
-        repl: {str: ''}
+        match: {str: '', type: TYPE_REGEXP, modi: false},
+        sub: {str: '', type: TYPE_REGEXP, modi: false, modg: false},
+        repl: {str: '', decode: false}
     });
 
     $('ruleEdit_sel').selectedIndex = 0; // Reset builtin selector
@@ -95,22 +95,15 @@ RuleList.prototype.update = function (idx) {
 
     $('ruleEdit_matchstr').disabled = TYPE_MANUAL ===
         ($('ruleEdit_matchtype').selectedIndex = rule.match.type);
-    if (rule.match.hasOwnProperty('modi')) { // Ignore case option
-        $('ruleEdit_matchcase').checked = rule.match.modi;
-    }
+    $('ruleEdit_matchcase').checked = rule.match.modi;
 
     // Disable substitution if substitution's type is manual
     $('ruleEdit_substr').disabled = TYPE_BLOCK ===
         ($('ruleEdit_subtype').selectedIndex = rule.sub.type);
-    if (rule.sub.hasOwnProperty('modi')) { // Ignore case option
-        $('ruleEdit_subcase').checked = rule.sub.modi;
-    }
-    if (rule.sub.hasOwnProperty('modg')) { // Multi-match option
-        $('ruleEdit_subglob').checked = rule.sub.modg;
-    }
-    if (rule.repl.hasOwnProperty('decode') && rule.repl.decode) {
-        $('ruleEdit_replDecode').checked = true; // Decode option
-    }
+    $('ruleEdit_subcase').checked = rule.sub.modi;
+    $('ruleEdit_subglob').checked = rule.sub.modg;
+
+    $('ruleEdit_replDecode').checked = rule.repl.decode; // Decode
 
     this.onChgMatchType();      // Manually trigger these events
     this.onChgSubType();
@@ -143,7 +136,7 @@ RuleList.prototype.onSel = function (e) { // On a row selected
         elem = $$('#ruleListTable tr')[this.sel + 1]; // Default
     }
 
-    if (isChk) {
+    if (isChk) {                          // Checkbox clicked
         this.data[this.sel].enabled ^= 1; // Toggle the bool value
         this.refresh();
         return;
@@ -204,6 +197,19 @@ RuleList.prototype.onChgSubType = function () { // On chg sub type
         $('ruleEdit_replDecode').disabled =
         $('ruleEdit_subtype').selectedIndex === TYPE_BLOCK;
 
+    // Beta-begin
+    if (tmp === false) {        // Not block
+        tmp = $('ruleEdit_subcase').disabled =
+        $('ruleEdit_subglob').disabled =
+        $('ruleEdit_replDecode').disabled =
+        $('ruleEdit_subtype').selectedIndex === TYPE_HDR;
+
+        if (tmp === true) {     // combine next if statement, this should be ommitted
+            return;
+        }
+    }
+    // Beta-end
+
     // Select block -> sub pattern = BLOCK;
     // Else and previous not block, clear
     if (tmp === true) {
@@ -251,7 +257,7 @@ RuleList.prototype.save = function () { // Save changes
     try {                       // Save & chk
         this.refresh();
     } catch (e) {
-        err(lang.i18n['EXP-ERR']);
+        err(lang.i18n['EXP_ERR']);
         return;
     }
 
@@ -295,14 +301,14 @@ RuleList.prototype.test = function () { // Test the current rule
         }
 
         if (! tmp.test($('ruleEdit_test').value)) { // Not match
-            err(lang.i18n['TEST-NOTMATCH']);
+            err(lang.i18n['TEST_NOTMATCH']);
             return;
         }
     }
 
     if ($('ruleEdit_subtype').selectedIndex === TYPE_BLOCK) {
         // To block
-        notif(lang.i18n['TEST-BLOCK']);
+        notif(lang.i18n['TEST_BLOCK']);
         return;
     }
 
@@ -388,7 +394,7 @@ RuleList.prototype.move = function (inc) { // Change the priority
 RuleList.prototype.bak = function () { // Backup rule list
     $('ruleMgr_bak').value = JSON.stringify(this.data);
 
-    warn(lang.i18n['RULE-BAK']);
+    warn(lang.i18n['RULE_BAK']);
 };
 
 RuleList.prototype.restore = function () { // Restore rule list
@@ -396,14 +402,14 @@ RuleList.prototype.restore = function () { // Restore rule list
     tmp = $('ruleMgr_bak').value.replace(/^\s*/, '').replace(/\s*$/, '');
 
     if (tmp === '') {           // No input
-        err(lang.i18n['RULE-RESTORE-EMPTY']);
+        err(lang.i18n['RULE_RESTORE_EMPTY']);
         return;
     }
 
     try {                       // Restore & chk
         this.data = JSON.parse(tmp);
     } catch (e) {
-        err(lang.i18n['RULE-RESTORE-ERR']);
+        err(lang.i18n['RULE_RESTORE_ERR']);
         return;
     }
 
