@@ -107,6 +107,9 @@ label {
     right: 0;
     top: 0;
     z-index: 1;
+
+    margin: 0 0;
+    opacity: 1;
 }
 
 #main-container.selected {
@@ -238,14 +241,14 @@ input[type="text"], input:not([type]) {
     margin: 0;
     padding: 3px;
 
-    width: 88%;
+    width: 87%;
 }
 /* Text end */
 
 /* Textarea begin */
 textarea {
     height: 100px;
-    width: 99%;
+    width: 98%;
 
     border: 1px solid #BFBFBF;
     border-radius: 10px;

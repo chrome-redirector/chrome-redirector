@@ -61,8 +61,8 @@ function onInit() {                                // Option page init
     $('langSel').addEventListener(
         "change", lang.onSelLang.bind(lang), false);
 
+    // WARNING: Failed in Chrome17stable
     $$('#prefTag a')[0].click(); // Display the first tab
-    $('navTags').click();
 }
 
 function verifyUrl(url) {       // Verify a URL (Not strict enough)
