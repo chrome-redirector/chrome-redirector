@@ -242,28 +242,32 @@ chrome.webRequest.onBeforeRequest.addListener( // Auto redirect
 // Beta-begin
 chrome.webRequest.onBeforeSendHeaders.addListener(
     function(tmp) {
-        var idx;
+        var idx, addArr;
 
         for (var i = 0; i < ruleHdr.length; i++) {
             if (ruleHdr[i].match.test(tmp.url)) { // match this URL
                 for (var j = 0; j < tmp.requestHeaders.length; j++) {
-                    idx = ruleHdr[i].sub.indexOf(
-                        tmp.requestHeaders[j].name);
-
-                    if (idx === -1) { // Not for setting value
-                        idx = ruleHdr[i].sub.indexOf(
-                            '-' + tmp.requestHeaders[j].name);
-
-                        if (idx === -1) { // Not for deleting
-                            continue;
-                        }
-
-                        // Delete
-                        tmp.requestHeaders.splice(j, 1);
-                    } else {    // Setting value
+                    if ((idx = ruleHdr[i].sub.indexOf(
+                        tmp.requestHeaders[j].name)) !== -1) {
+                        // Modify header
                         tmp.requestHeaders[j].value =
                             ruleHdr[i].repl[idx];
+                    } else if ((idx = ruleHdr[i].sub.indexOf(
+                        '-' + tmp.requestHeaders[j].name)) !== -1) {
+                        // Delete header
+                        tmp.requestHeaders.splice(j, 1);
                     }
+                }
+
+                // Add headers
+                addArr = ruleHdr[i].sub.filter(function (t) {
+                    return /^\+/.test(t);});
+                for (var k = 0; k < addArr.length; k++) {
+                    tmp.requestHeaders.push({
+                        name: addArr[k].replace('+', ''),
+                        value: ruleHdr[i].repl[
+                            ruleHdr[i].sub.indexOf(addArr[k])]
+                    });
                 }
 
                 // console.log(tmp.requestHeaders);

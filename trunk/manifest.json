@@ -10,5 +10,5 @@
     "permissions": ["webRequest", "webRequestBlocking",
                     "contextMenus", "<all_urls>"],
     "default_locale": "en_US",
-    "version": "2.2.13.2"
+    "version": "2.2.13.3"
 }
