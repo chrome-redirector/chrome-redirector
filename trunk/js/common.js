@@ -18,7 +18,7 @@ TYPE_MANUAL = TYPE_BLOCK = 2;
 TYPE_HDR = 3;
 function splitVl(str) {
     str = str.replace(/\\\|/g, '\0');
-    str = str.split('|');
+    str = str.split(/\s*\|\s*/);
     str = str.join('\f');
     str = str.replace(/\0/g, '\\|');
     return str.split('\f');
