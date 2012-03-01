@@ -177,12 +177,19 @@ RuleList.prototype.onChgMatchType = function () { // On chg match type
     // Disable several componets when select manual
     tmp = $('ruleEdit_matchstr').disabled =
         $('ruleEdit_matchcase').disabled =
+        $$('#ruleEdit_subtype>option')[TYPE_BLOCK].disabled =
+        $$('#ruleEdit_subtype>option')[TYPE_HDR].disabled =
         $('ruleEdit_matchtype').selectedIndex === TYPE_MANUAL;
 
     // Select manual -> match pattern = MANUAL;
     // Else and previous not manual, clear
     if (tmp === true) {
         $('ruleEdit_matchstr').value = 'MANUAL';
+
+        if ($('ruleEdit_subtype').selectedIndex === TYPE_BLOCK ||
+            $('ruleEdit_subtype').selectedIndex === TYPE_HDR) {
+            $('ruleEdit_subtype').selectedIndex = TYPE_REGEXP;
+        }
     } else if ($('ruleEdit_matchstr').value === 'MANUAL') {
         $('ruleEdit_matchstr').value = '';
     }

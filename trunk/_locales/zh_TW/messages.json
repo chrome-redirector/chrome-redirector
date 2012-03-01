@@ -40,8 +40,7 @@
     "BTN_RESTORE": {"message": "還原"},
     "BTN_TEST": {"message": "測試"},
 
-    "EXP_ERR": {"message": "語法錯誤或程式出錯！"},
-    "MANUAL_BLOCK": {"message": "手動重定向不能屏蔽URL"},
+    "EXP_ERR": {"message": "語法錯誤！"},
     "TEST_NOTMATCH": {"message": "測試URL不匹配！"},
     "TEST_BLOCK": {"message": "測試URL將被屏蔽"},
     "TEST_DEST": {"message": "重定向至："},

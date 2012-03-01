@@ -91,6 +91,18 @@ function updateContext() {      // Update the context menu
             });
         }
     }
+
+    chrome.contextMenus.create({ // Open options page
+        title: 'Options...',
+        contexts: ['link', 'page'],
+        onclick: function() {
+            chrome.tabs.create({
+                url: 'chrome-extension://' +
+                    chrome.i18n.getMessage('@@extension_id') +
+                    '/html/options.html'
+            });
+        }
+    });
 }
 
 function loadRule() {         // Called when rule list needs update
@@ -111,11 +123,6 @@ function loadRule() {         // Called when rule list needs update
 
         // For a manual rule
         if (rule.match.type === TYPE_MANUAL) {
-            if (rule.sub.type === TYPE_BLOCK) {
-                alert(langNotif['MANUAL_BLOCK']);
-                continue;
-            }
-
             try {
                 tmp = {         // Tmp manual rule, to be chked
                     name: rule.name,
