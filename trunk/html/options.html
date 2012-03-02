@@ -5,6 +5,7 @@
                                              charset=utf-8">
     <title i18nT="PAGE_TITLE"></title>
     <script src="/js/common.js" type="text/javascript"></script>
+    <script src="/js/prompt.js" type="text/javascript"></script>
     <script src="/js/i18n.js" type="text/javascript"></script>
     <script src="/js/pref.js" type="text/javascript"></script>
     <script src="/js/rule.js" type="text/javascript"></script>
@@ -12,7 +13,7 @@
     <link rel="stylesheet" href="/css/options.css" type="text/css">
   </head>
 
-  <body onload="onInit()">
+  <body onload="$f.initOpt()">
     <!-- Navigation bar -->
     <div id="navBar">
       <h1>Redirector</h1>
@@ -20,15 +21,15 @@
       <ul id="navTags">
         <li id="prefTag">
           <a href="#pref" i18nT="NAVBAR_PREF"
-             onclick="switchNav('prefTag')"></a>
+             onclick="$f.switchNav('prefTag')"></a>
         </li>
         <li id="ruleMgrTag">
           <a href="#ruleMgr" i18nT="NAVBAR_RULEMGR"
-             onclick="switchNav('ruleMgrTag')"></a>
+             onclick="$f.switchNav('ruleMgrTag')"></a>
         </li>
         <li id="docTag">
           <a href="#doc" i18nT="NAVBAR_DOC"
-             onclick="switchNav('docTag')"></a>
+             onclick="$f.switchNav('docTag')"></a>
         </li>
       </ul>
     </div>
@@ -52,19 +53,19 @@
           <h3 i18nT="PROTO_TITLE"></h3>
           <section>
             <input type="checkbox" id="pref_proto_all"
-                   onclick="myPref.onChgProto('all')" />
+                   onclick="$v.pref.onChgProto('all')" />
             <label i18nT="PROTO_ALL"></label><br />
             <input type="checkbox" id="pref_proto_http"
-                   onclick="myPref.onChgProto('http')" />
+                   onclick="$v.pref.onChgProto('http')" />
             <label>HTTP://</label><br />
             <input type="checkbox" id="pref_proto_https"
-                   onclick="myPref.onChgProto('https')" />
+                   onclick="$v.pref.onChgProto('https')" />
             <label>HTTPS://</label><br />
             <input type="checkbox" id="pref_proto_ftp"
-                   onclick="myPref.onChgProto('ftp')" />
+                   onclick="$v.pref.onChgProto('ftp')" />
             <label>FTP://</label><br />
             <input type="checkbox" id="pref_proto_file"
-                   onclick="myPref.onChgProto('file')" />
+                   onclick="$v.pref.onChgProto('file')" />
             <label>FILE://</label><br />
           </section>
 
@@ -72,10 +73,10 @@
           <h3 i18nT="CONTEXT_TITLE"></h3>
           <section>
             <input type="checkbox" id="pref_context_link"
-                   onclick="myPref.onChgContext()" />
+                   onclick="$v.pref.onChgContext()" />
             <label i18nT="CONTEXT_LINK"></label><br />
             <input type="checkbox" id="pref_context_page"
-                   onclick="myPref.onChgContext()" />
+                   onclick="$v.pref.onChgContext()" />
             <label i18nT="CONTEXT_PAGE"></label><br />
           </section>
 
@@ -94,15 +95,15 @@
           <section>
             <div class="div-center">
               <input type="button" i18nP="value:BTN_ADD"
-                     onclick="ruleList.add()" />
+                     onclick="$v.ruleList.add()" />
               <input type="button" i18nP="value:BTN_EDIT"
-                     onclick="ruleList.edit()" />
+                     onclick="$v.ruleList.edit()" />
               <input type="button" i18nP="value:BTN_DEL"
-                     onclick="ruleList.del()" />
+                     onclick="$v.ruleList.del()" />
               <input type="button" i18nP="value:BTN_UP"
-                     onclick="ruleList.move(-1)" />
+                     onclick="$v.ruleList.move(-1)" />
               <input type="button" i18nP="value:BTN_DOWN"
-                     onclick="ruleList.move(1)" />
+                     onclick="$v.ruleList.move(1)" />
             </div>
 
             <table id="ruleListTable">
@@ -129,9 +130,9 @@
               <textarea id="ruleMgr_bak"></textarea>
               <div class="div-center">
                 <input type="button" i18nP="value:BTN_BAK"
-                       onclick="ruleList.bak()" />
+                       onclick="$v.ruleList.bak()" />
                 <input type="button" i18nP="value:BTN_RESTORE"
-                       onclick="ruleList.restore()" />
+                       onclick="$v.ruleList.restore()" />
               </div>
             </div>
           </section>
@@ -154,49 +155,42 @@
         <div id="overlay">
           <!-- Rule Editor -->
           <div id="layerFront">
-            <!-- Predefined rule selector -->
-            <select id="ruleEdit_sel">
-              <option i18nT="RULEEDIT_CURRENT"></option>
-            </select>
-
+            <section>
+              <h1 i18nT="RULE_EDITOR"></h1>
+            </section>
             <!-- Main form -->
-            <form id="ruleEdit" onsubmit="return false;">
-              <section>
+            <form id="ruleEdit" onsubmit="return false;"
+                  autocomplete="off">
+              <section id="ruleEdit_name">
                 <!-- Rule name -->
-                <label i18nT="LBL_NAME"></label>
-                <input id="ruleEdit_name" placeholder="NAME" required
-                       autofocus="autofocus" />
+                <h3 i18nT="LBL_NAME"></h3>
+                <br />
+                <input id="ruleEdit_namestr" placeholder="NAME"
+                       required />
               </section>
 
-              <section>
+              <section id="ruleEdit_match">
                 <!-- Match pattern -->
-                <label i18nT="LBL_MATCH"></label>
-                <input id="ruleEdit_matchstr"
-                       placeholder="MATCH PATTERN" required />
-                <br />
-                <input type="checkbox" id="ruleEdit_matchcase" />
-                <label i18nT="LBL_IGNCASE"></label>
+                <h3 i18nT="LBL_MATCH"></h3>
                 <select id="ruleEdit_matchtype"
-                        onchange="ruleList.onChgMatchType()">
+                        onchange="$v.ruleList.onChgMatchType()">
                   <option selected="selected" i18nT="TYPE_REGEXP">
                   </option>
                   <option i18nT="TYPE_GLOB"></option>
                   <option i18nT="TYPE_MANUAL"></option>
                 </select>
+                <input type="checkbox" id="ruleEdit_matchcase" />
+                <label i18nT="LBL_IGNCASE"></label>
+                <br />
+                <input id="ruleEdit_matchstr"
+                       placeholder="MATCH PATTERN" required />
               </section>
 
-              <section>
+              <section id="ruleEdit_sub">
                 <!-- Substitution -->
-                <label i18nT="LBL_SUB"></label>
-                <input id="ruleEdit_substr"
-                       placeholder="SUB STRING/REGEXP" required />
-                <br />
-                <input type="checkbox" id="ruleEdit_subglob" />
-                <label i18nT="LBL_SUBGLOB"></label>
-                <input type="checkbox" id="ruleEdit_subcase" />
-                <label i18nT="LBL_IGNCASE"></label>
+                <h3 i18nT="LBL_SUB"></h3>
                 <select id="ruleEdit_subtype"
-                        onchange="ruleList.onChgSubType()">
+                        onchange="$v.ruleList.onChgSubType()">
                   <option selected="selected" i18nT="TYPE_REGEXP">
                   </option>
                   <option i18nT="TYPE_GLOB"></option>
@@ -205,25 +199,31 @@
                   <option i18nT="TYPE_HDR"></option>
                   <!-- Beta-end -->
                 </select>
+                <input type="checkbox" id="ruleEdit_subcase" />
+                <label i18nT="LBL_IGNCASE"></label>
+                <input type="checkbox" id="ruleEdit_subglob" />
+                <label i18nT="LBL_SUBGLOB"></label>
+                <br />
+                <input id="ruleEdit_substr"
+                       placeholder="SUB STRING/REGEXP" required />
               </section>
 
-              <section>
+              <section id="ruleEdit_repl">
                 <!-- Replacement -->
-                <label i18nT="LBL_REPL"></label>
-                <input id="ruleEdit_repl" placeholder="REPLACEMENT" />
-                <br />
+                <h3 i18nT="LBL_REPL"></h3>
                 <input type="checkbox" id="ruleEdit_replDecode" />
-                <label i18nT="LBL_REPLDECODE">
-                </label>
+                <label i18nT="LBL_REPLDECODE"></label>
+                <br />
+                <input id="ruleEdit_replstr" placeholder="REPLACEMENT" />
               </section>
 
               <!-- Save/Cancel buttons -->
               <section>
                 <div class="action-area">
                   <input type="submit" i18nP="value:BTN_SAVE"
-                         onclick="ruleList.save()" />
+                         onclick="$v.ruleList.save()" />
                   <input type="button" i18nP="value:BTN_CANCEL"
-                         onclick="ruleList.discard()" />
+                         onclick="$v.ruleList.discard()" />
                 </div>
               </section>
             </form>
@@ -231,14 +231,15 @@
             <hr />
 
             <!-- Test form -->
-            <form onsubmit="return false;">
-              <section>
-                <label i18nT="LBL_TEST"></label>
-                <input id="ruleEdit_test" class="input-text"
+            <form onsubmit="return false;" autocomplete="on">
+              <section id="ruleEdit_test">
+                <h3 i18nT="LBL_TEST"></h3>
+                <br />
+                <input id="ruleEdit_teststr" class="input-text"
                        placeholder="TEST URL" required />
                 <div class="action-area">
                   <input type="submit" i18nP="value:BTN_TEST"
-                         onclick="ruleList.test()" />
+                         onclick="$v.ruleList.test()" />
                 </div>
               </section>
             </form>

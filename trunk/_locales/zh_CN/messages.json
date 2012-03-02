@@ -28,6 +28,7 @@
     "LBL_IGNCASE": {"message": "忽略大小写"},
     "LBL_SUBGLOB": {"message": "多次替换"},
     "LBL_REPLDECODE": {"message": "解码URL"},
+    "RULE_EDITOR": {"message": "规则编辑器"},
 
     "BTN_SAVE": {"message": "保存"},
     "BTN_CANCEL": {"message": "取消"},

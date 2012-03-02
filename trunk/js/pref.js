@@ -2,9 +2,10 @@
  * Preferences obj
  */
 
-/*global $: true, $$: true, localStorage: true, ext_bg: true */
+/*global $: true, $$: true, $v: true, $f: true, tmp: true,
+  Pref: true, localStorage: true*/
 
-function Pref() {               // Obj holds preferences data/method
+Pref = function () {            // Obj holds preferences data/method
     try {
         this.data = JSON.parse(localStorage.PREF);
     } catch (e) {
@@ -34,11 +35,11 @@ function Pref() {               // Obj holds preferences data/method
         $('pref_context_link').checked = this.data.context.link;
         $('pref_context_page').checked = this.data.context.page;
     } catch (e) {}
-}
+};
 
 Pref.prototype.refresh = function () { // Save & reload pref data
     localStorage.PREF = JSON.stringify(this.data);
-    ext_bg.loadPref();
+    $v.ext_bg.$f.loadPref();
 };
 
 Pref.prototype.onChgProto = function (proto) { // On protocols changed
@@ -62,5 +63,5 @@ Pref.prototype.onChgContext = function () { // On manual setting chged
     this.data.context.page = $('pref_context_page').checked;
 
     this.refresh();
-    ext_bg.updateContext();
+    $v.ext_bg.$f.updateContext();
 };

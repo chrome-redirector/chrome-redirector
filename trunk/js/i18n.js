@@ -3,12 +3,11 @@
  */
 
 /*jslint plusplus: false */
-/*global $: true, $$: true,
-  document: true, window: true, navigator: true,
-  tmp: true,
-  localStorage: true, xhrJson: true */
+/*global $: true, $$: true, $v: true, $f: true, tmp: true,
+  Lang: true,
+  document: true, window: true, navigator: true, localStorage: true*/
 
-function Lang() {               // Obj holds language data/methods
+Lang = function () {            // Obj holds language data/methods
     try {
         this.data = JSON.parse(localStorage.LANG);
     } catch (e) {               // Default to browser's locale
@@ -18,7 +17,7 @@ function Lang() {               // Obj holds language data/methods
     this.loadI18n();            // Load the i18n data
     this.apply('i18nT');        // Translate HTML texts
     this.apply('i18nP');        // Translate HTML properties
-}
+};
 
 Lang.prototype.apply = function (type) { // Apply i18n data to HTML
     var elem, it, attr, attrArr;
@@ -44,7 +43,7 @@ Lang.prototype.apply = function (type) { // Apply i18n data to HTML
             if (this.i18n.hasOwnProperty(attr)) {
                 it.textContent = this.i18n[attr];
             } else {            // I18n file broken
-                DBG('Oops!');
+                $f.dbg('Oops!');
             }
             break;
         case 'i18nP':           // Translate properties
@@ -53,7 +52,7 @@ Lang.prototype.apply = function (type) { // Apply i18n data to HTML
             if (this.i18n.hasOwnProperty(attrArr[1])) {
                 it.setAttribute(attrArr[0], this.i18n[attrArr[1]]);
             } else {            // I18n file broken
-                DBG('Oops!');
+                $f.dbg('Oops!');
             }
             break;
         }
@@ -79,7 +78,7 @@ Lang.prototype.onSelLang = function (e) { // Language selector handler
 Lang.prototype.loadI18n = function () { // Load the i18n data
     var langList, i18nSet = {}, a, b, re, flt;
 
-    langList = xhrJson('/_locales/lang.json'); // Available languages
+    langList = $f.xhrJson('/_locales/lang.json'); // Available languages
 
     for (var i in langList) {
         if (! langList.hasOwnProperty(i)) {
@@ -87,7 +86,7 @@ Lang.prototype.loadI18n = function () { // Load the i18n data
         }
 
         try {                   // Determine if a locale available
-            i18nSet[i] = xhrJson('/_locales/' + i + '/messages.json');
+            i18nSet[i] = $f.xhrJson('/_locales/' + i + '/messages.json');
         } catch (e) {
             delete i18nSet[i];  // Delete empty entry
         }
@@ -111,7 +110,7 @@ Lang.prototype.loadI18n = function () { // Load the i18n data
         // RegExp to test if a locale belong to the same language
         re = new RegExp('^' + this.data.langTag.split('_')[0] +
                         '(_\\w+)?$');
-        // Array filter: e.g. zh_HK will select only [zh, zh_CN...]
+        // Obj filter: e.g. zh_HK will select only [zh:, zh_CN:, ...]
         flt = function (obj) {
             return Object.keys(obj).filter(function (t) {
                 return re.test(t);

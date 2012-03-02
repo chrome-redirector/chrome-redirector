@@ -29,6 +29,7 @@
     "LBL_IGNCASE": {"message": "Ignore case"},
     "LBL_SUBGLOB": {"message": "Global match"},
     "LBL_REPLDECODE": {"message": "Decode URL"},
+    "RULE_EDITOR": {"message": "Rule Editor"},
 
     "BTN_SAVE": {"message": "Save"},
     "BTN_CANCEL": {"message": "Cancel"},
@@ -45,7 +46,7 @@
     "TEST_NOTMATCH": {"message": "Test URL is not matched!"},
     "TEST_BLOCK": {"message": "Test URL will be blocked"},
     "TEST_DEST": {"message": "Redirect to: "},
-    "RULE_BAK": {"message": "Please copy & save the text in textarea"},
+    "RULE_BAK": {"message": "Please copy&save the text in textarea"},
     "RULE_RESTORE_EMPTY": {"message": "You didn't paste the text!"},
     "RULE_RESTORE_ERR": {"message": "Unable to restore!"},
     "URL_INVALID_PROTO": {"message": "URL has no valid protocol"},

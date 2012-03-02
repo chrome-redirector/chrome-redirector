@@ -2,34 +2,8 @@
  * Common data
  */
 
-/*global $: true, $$: true, chrome: true, document: true, tmp: true,
-  DEBUG: true,
-  TYPE_REGEXP: true, TYPE_GLOB: true, TYPE_MANUAL: true,
-  TYPE_BLOCK: true,
-  XMLHttpRequest: true */
-
-DEBUG = true;                   // Global debug symbol
-// DEBUG = false;
-
-TYPE_REGEXP = 0;
-TYPE_GLOB = 1;
-TYPE_MANUAL = TYPE_BLOCK = 2;
-// Beta-begin
-TYPE_HDR = 3;
-function splitVl(str) {
-    str = str.replace(/\\\|/g, '\0');
-    str = str.split(/\s*\|\s*/);
-    str = str.join('\f');
-    str = str.replace(/\0/g, '\\|');
-    return str.split('\f');
-}
-// Beta-end
-
-function DBG(msg) {
-    if (DEBUG) {
-        chrome.extension.getBackgroundPage().console.log('DBG>', msg);
-    }
-}
+/*global $: true, $$: true, $v: true, $f: true, tmp: true,
+  chrome: true, document: true, XMLHttpRequest: true */
 
 Object.prototype.merge = function (src) { // Merge obj from src
     for (var prop in src) {
@@ -47,7 +21,35 @@ function $$() {                 // CSS-like selector
     return document.querySelectorAll.apply(document, arguments);
 }
 
-function glob2re(glob) {
+$v = {type: {}};                        // Global values set
+$f = {};                                // Global functions set
+
+$v.debug = true;                // Global debug symbol
+// $v.debug = false;
+
+$v.type.regexp = 0;
+$v.type.glob = 1;
+$v.type.manual = $v.type.block = 2;
+// Beta-begin
+$v.type.hdr = 3;
+$f.splitVl = function (str) {
+    str = str.replace(/\\\\/g, '\0');
+    str = str.replace(/\\\|/g, '\f');
+    str = str.split(/\s*\|\s*/);
+    str = str.join('\v');
+    str = str.replace(/\f/g, '\\|');
+    str = str.replace(/\0/g, '\\\\');
+    return str.split('\v');
+};
+// Beta-end
+
+$f.dbg = function (msg) {
+    if ($v.debug === true) {
+        chrome.extension.getBackgroundPage().console.log('DBG>', msg);
+    }
+};
+
+$f.glob2re = function (glob) {
     var escChar = '(){}[]^$.+*?|', re = [];
 
     glob = glob.replace(/\\\\/g, '\0'); // \\ -> \0
@@ -77,19 +79,19 @@ function glob2re(glob) {
     re = re.replace(/\v/g, '\\?');  // \v -> \?
 
     return re;
-}
+};
 
-function str2re(proto) {        // Construct compiled regexp from str
+$f.str2re = function (proto) {        // Construct compiled regexp from str
     var str, mod;
     str = proto.str;
 
     if (proto.hasOwnProperty('type')) {
-        if (proto.type === TYPE_BLOCK) {
+        if (proto.type === $v.type.block) {
             return;
         }
 
-        if (proto.type === TYPE_GLOB) {
-            str = glob2re(str);
+        if (proto.type === $v.type.glob) {
+            str = $f.glob2re(str);
         }
     }
 
@@ -109,40 +111,40 @@ function str2re(proto) {        // Construct compiled regexp from str
     }
 
     return tmp;
-}
+};
 
-function getRedirUrl(url, rule) {
+$f.getRedirUrl = function (url, rule) {
     var tmp = url.replace(rule.sub, rule.repl);
     if (rule.decode) {
         tmp = decodeURIComponent(tmp);
     }
 
     return tmp;
-}
+};
 
-function iNotif(innerHTML) {
+$f.iNotif = function (innerHTML) {
     $('layerNotif_disp').innerHTML = innerHTML;
     $('layerNotif').className = 'active';
-}
+};
 
-function notif(innerHTML) {     // Green
-    iNotif(innerHTML);
+$f.notif = function (innerHTML) {     // Green
+    $f.iNotif(innerHTML);
     $('layerNotif').style.background = '#6f6';
-}
+};
 
-function warn(innerHTML) {      // Yellow
-    iNotif(innerHTML);
+$f.warn = function (innerHTML) {      // Yellow
+    $f.iNotif(innerHTML);
     $('layerNotif').style.background = '#ff6';
-}
+};
 
-function err(innerHTML) {       // Orange
-    iNotif(innerHTML);
+$f.err = function (innerHTML) {       // Orange
+    $f.iNotif(innerHTML);
     $('layerNotif').style.background = '#f60';
-}
+};
 
-function xhrJson(file) {
+$f.xhrJson = function (file) {
     var xhr = new XMLHttpRequest();
     xhr.open('GET', file, false);
     xhr.send();
     return JSON.parse(xhr.responseText);
-}
+};

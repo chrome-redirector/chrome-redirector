@@ -3,16 +3,10 @@
  */
 
 /*jslint plusplus: false */
-/*global $: true, $$: true,
-  document: true, window: true, localStorage: true,
-  tmp: true,
-  lang: true, ruleList: true, ext_bg: true,
-  TYPE_REGEXP: true, TYPE_GLOB: true, TYPE_MANUAL: true,
-  TYPE_BLOCK: true,
-  err: true, notif: true, warn: true,
-  xhrJson: true, verifyUrl: true, str2re: true, getRedirUrl: true */
+/*global $: true, $$: true, $v: true, $f: true, tmp: true,
+  RuleList: true, document: true, window: true, localStorage: true*/
 
-function RuleList(init) {
+RuleList = function (init) {
     try {
         this.data = JSON.parse(localStorage.RULELIST);
     } catch (e) {
@@ -35,17 +29,15 @@ function RuleList(init) {
     this.loadBuiltin();         // Load builtin rules
     this.chg = this.isNew = false; // No new or changed rules
     this.sel = undefined;          // No rule selected
-}
+};
 
 RuleList.prototype.add = function () { // Add a rule
     this.data.push({                   // Default empty rule
-        name: 'Untitled',
-        match: {str: '', type: TYPE_REGEXP, modi: false},
-        sub: {str: '', type: TYPE_REGEXP, modi: false, modg: false},
+        name: '',
+        match: {str: '', type: $v.type.regexp, modi: false},
+        sub: {str: '', type: $v.type.regexp, modi: false, modg: false},
         repl: {str: '', decode: false}
     });
-
-    $('ruleEdit_sel').selectedIndex = 0; // Reset builtin selector
 
     this.sel = this.data.length - 1; // Select the last row
     $('ruleListTable').insertRow(-1).innerHTML =
@@ -58,7 +50,7 @@ RuleList.prototype.add = function () { // Add a rule
 
 RuleList.prototype.del = function () { // Delete a rule
     this.data.splice(this.sel, 1); // Delete data
-    this.refresh();
+    this.refresh(true);
     $('ruleListTable').deleteRow(this.sel + 1); // Delete display
 
     this.sel = undefined;       // No rule selected
@@ -88,17 +80,17 @@ RuleList.prototype.update = function (idx) {
 
     // Fillin info
     row[0].children[0].checked = rule.enabled;
-    row[1].innerText = $('ruleEdit_name').value = rule.name;
+    row[1].innerText = $('ruleEdit_namestr').value = rule.name;
     row[2].innerText = $('ruleEdit_matchstr').value = rule.match.str;
     row[3].innerText = $('ruleEdit_substr').value = rule.sub.str;
-    row[4].innerText = $('ruleEdit_repl').value = rule.repl.str;
+    row[4].innerText = $('ruleEdit_replstr').value = rule.repl.str;
 
-    $('ruleEdit_matchstr').disabled = TYPE_MANUAL ===
+    $('ruleEdit_matchstr').disabled = $v.type.manual ===
         ($('ruleEdit_matchtype').selectedIndex = rule.match.type);
     $('ruleEdit_matchcase').checked = rule.match.modi;
 
     // Disable substitution if substitution's type is manual
-    $('ruleEdit_substr').disabled = TYPE_BLOCK ===
+    $('ruleEdit_substr').disabled = $v.type.block ===
         ($('ruleEdit_subtype').selectedIndex = rule.sub.type);
     $('ruleEdit_subcase').checked = rule.sub.modi;
     $('ruleEdit_subglob').checked = rule.sub.modg;
@@ -138,7 +130,7 @@ RuleList.prototype.onSel = function (e) { // On a row selected
 
     if (isChk) {                          // Checkbox clicked
         this.data[this.sel].enabled ^= 1; // Toggle the bool value
-        this.refresh();
+        this.refresh(true);
         return;
     }
 
@@ -150,26 +142,31 @@ RuleList.prototype.onSel = function (e) { // On a row selected
 
 RuleList.prototype.loadBuiltin = function (e) { // Load built-in rules
     try {
-        this.builtinRule = xhrJson('/conf/rule.json');
+        this.builtinRule = $f.xhrJson('/conf/rule.json');
     } catch (e) {
         this.builtinRule = [];
     }
 
     this.builtin = [];
+    this.builtinPrompt = [];
     for (var i = 0; i < this.builtinRule.length; i++) {
-        tmp = document.createElement('option');
-        tmp.text = this.builtinRule[i].name;
-        $('ruleEdit_sel').add(tmp, null); // Append to rule selector
         this.builtin.push(this.builtinRule[i]); // Append to record
+        this.builtinPrompt.push({
+            msg: this.builtinRule[i].name,
+            desc: ''
+        });
     }
 };
 
 RuleList.prototype.selBuiltin = function (e) { // On click builtin rule
-    if ($('ruleEdit_sel').selectedIndex === 0) {
-        this.update(this.sel); // Restore the current rule
-    } else {
-        this.update(this.builtin[
-            parseInt($('ruleEdit_sel').selectedIndex, 10) - 1]);
+    var links = $$('#ruleEdit_nameprompt a');
+    var hovered = $$('#ruleEdit_nameprompt a:hover,a.seleted')[0];
+
+    for (var i = 0; i < links.length; i++) {
+        if (links[i] === hovered) {
+            this.update(this.builtin[i]);
+            return;
+        }
     }
 };
 
@@ -177,18 +174,18 @@ RuleList.prototype.onChgMatchType = function () { // On chg match type
     // Disable several componets when select manual
     tmp = $('ruleEdit_matchstr').disabled =
         $('ruleEdit_matchcase').disabled =
-        $$('#ruleEdit_subtype>option')[TYPE_BLOCK].disabled =
-        $$('#ruleEdit_subtype>option')[TYPE_HDR].disabled =
-        $('ruleEdit_matchtype').selectedIndex === TYPE_MANUAL;
+        $$('#ruleEdit_subtype>option')[$v.type.block].disabled =
+        $$('#ruleEdit_subtype>option')[$v.type.hdr].disabled =
+        $('ruleEdit_matchtype').selectedIndex === $v.type.manual;
 
     // Select manual -> match pattern = MANUAL;
     // Else and previous not manual, clear
     if (tmp === true) {
         $('ruleEdit_matchstr').value = 'MANUAL';
 
-        if ($('ruleEdit_subtype').selectedIndex === TYPE_BLOCK ||
-            $('ruleEdit_subtype').selectedIndex === TYPE_HDR) {
-            $('ruleEdit_subtype').selectedIndex = TYPE_REGEXP;
+        if ($('ruleEdit_subtype').selectedIndex === $v.type.block ||
+            $('ruleEdit_subtype').selectedIndex === $v.type.hdr) {
+            $('ruleEdit_subtype').selectedIndex = $v.type.regexp;
         }
     } else if ($('ruleEdit_matchstr').value === 'MANUAL') {
         $('ruleEdit_matchstr').value = '';
@@ -200,48 +197,54 @@ RuleList.prototype.onChgSubType = function () { // On chg sub type
     tmp = $('ruleEdit_substr').disabled =
         $('ruleEdit_subcase').disabled =
         $('ruleEdit_subglob').disabled =
-        $('ruleEdit_repl').disabled =
+        $('ruleEdit_replstr').disabled =
         $('ruleEdit_replDecode').disabled =
-        $('ruleEdit_subtype').selectedIndex === TYPE_BLOCK;
-
-    // Beta-begin
-    if (tmp === false) {        // Not block
-        tmp = $('ruleEdit_subcase').disabled =
-        $('ruleEdit_subglob').disabled =
-        $('ruleEdit_replDecode').disabled =
-        $('ruleEdit_subtype').selectedIndex === TYPE_HDR;
-
-        if (tmp === true) {     // combine next if statement, this should be ommitted
-            return;
-        }
-    }
-    // Beta-end
+        $('ruleEdit_subtype').selectedIndex === $v.type.block;
 
     // Select block -> sub pattern = BLOCK;
     // Else and previous not block, clear
     if (tmp === true) {
         $('ruleEdit_substr').value = 'BLOCK';
-        $('ruleEdit_repl').value = 'N/A';
+        $('ruleEdit_replstr').value = 'N/A';
     } else {
+        // Beta-begin
+        tmp = $('ruleEdit_subcase').disabled =
+            $('ruleEdit_subglob').disabled =
+            $('ruleEdit_replDecode').disabled =
+            $('ruleEdit_subtype').selectedIndex === $v.type.hdr;
+
+        if (tmp === true) { // Selected hdr
+            $v.prompt_sub.update('ruleEdit_sub', 'header');
+            return;
+        }
+        // Beta-end
+
         if ($('ruleEdit_substr').value === 'BLOCK') {
             $('ruleEdit_substr').value = '';
         }
-        if ($('ruleEdit_repl').value === 'N/A') {
-            $('ruleEdit_repl').value = '';
+        if ($('ruleEdit_replstr').value === 'N/A') {
+            $('ruleEdit_replstr').value = '';
+        }
+
+        if ($('ruleEdit_subtype').selectedIndex === $v.type.regexp) {
+            $v.prompt_sub.update('ruleEdit_sub', 'regexp');
+        } else if ($('ruleEdit_subtype').selectedIndex ===
+                   $v.type.glob) {
+            $v.prompt_sub.update('ruleEdit_sub', 'wildcard');
         }
     }
 };
 
 RuleList.prototype.save = function () { // Save changes
     // Return when empty
-    if ($('ruleEdit_name').value === '' ||
+    if ($('ruleEdit_namestr').value === '' ||
         $('ruleEdit_matchstr').value === '' ||
         $('ruleEdit_substr').value === '') {
         return;
     }
 
     // Name
-    this.data[this.sel].name = $('ruleEdit_name').value;
+    this.data[this.sel].name = $('ruleEdit_namestr').value;
     // Match
     this.data[this.sel].match = {
         str: $('ruleEdit_matchstr').value,
@@ -257,14 +260,11 @@ RuleList.prototype.save = function () { // Save changes
     };
     // Replacement
     this.data[this.sel].repl = {
-        str: $('ruleEdit_repl').value,
+        str: $('ruleEdit_replstr').value,
         decode: $('ruleEdit_replDecode').checked
     };
 
-    try {                       // Save & chk
-        this.refresh();
-    } catch (e) {
-        err(lang.i18n['EXP_ERR']);
+    if (this.refresh() !== true) {
         return;
     }
 
@@ -287,67 +287,74 @@ RuleList.prototype.discard = function () { // Discard changes
 };
 
 RuleList.prototype.test = function () { // Test the current rule
-    var url, sub, repl, decode, result, innerHTML, t1, t2;
+    var url, sub, repl, decode, result, innerHTML;
 
-    if ($('ruleEdit_test').value === '' ||
-        ! verifyUrl($('ruleEdit_test').value)) { // Chk input
+    if ($('ruleEdit_teststr').value === '' ||
+        ! $f.verifyUrl($('ruleEdit_teststr').value)) { // Chk input
         return;
     }
 
-    if ($('ruleEdit_matchtype').selectedIndex !== TYPE_MANUAL) {
+    // Beta-begin
+    if ($('ruleEdit_subtype').selectedIndex === $v.type.hdr) {
+        $f.err('Test for header manipulation is not supported yet!');
+        return;
+    }
+    // Beta-end
+
+    if ($('ruleEdit_matchtype').selectedIndex !== $v.type.manual) {
         // Chk match
-        tmp = str2re({
+        tmp = $f.str2re({
             str: $('ruleEdit_matchstr').value,
             type: $('ruleEdit_matchtype').selectedIndex,
             modi: $('ruleEdit_matchcase').checked
         });
 
         if (! tmp.hasOwnProperty('global')) { // RegExp syntax error
-            err(tmp.toString());
+            $f.err(tmp.toString());
             return;
         }
 
-        if (! tmp.test($('ruleEdit_test').value)) { // Not match
-            err(lang.i18n['TEST_NOTMATCH']);
+        if (! tmp.test($('ruleEdit_teststr').value)) { // Not match
+            $f.err($v.lang.i18n.TEST_NOTMATCH);
             return;
         }
     }
 
-    if ($('ruleEdit_subtype').selectedIndex === TYPE_BLOCK) {
+    if ($('ruleEdit_subtype').selectedIndex === $v.type.block) {
         // To block
-        notif(lang.i18n['TEST_BLOCK']);
+        $f.notif($v.lang.i18n.TEST_BLOCK);
         return;
     }
 
     // The test URL
-    url = $('ruleEdit_test').value;
-    sub = str2re({              // Substitute pattern
+    url = $('ruleEdit_teststr').value;
+    sub = $f.str2re({              // Substitute pattern
         str: $('ruleEdit_substr').value,
         type: $('ruleEdit_subtype').selectedIndex,
         modi: $('ruleEdit_subcase').checked,
         modg: $('ruleEdit_subglob').checked
     });
     if (! sub.hasOwnProperty('global')) { // RegExp syntax error
-        err(sub.toString());
+        $f.err(sub.toString());
         return;
     }
 
     // Replacement
-    repl = $('ruleEdit_repl').value;
+    repl = $('ruleEdit_replstr').value;
     // Whether decode
     decode = $('ruleEdit_replDecode').checked;
-    result = getRedirUrl(url, {           // Replace result
+    result = $f.getRedirUrl(url, {           // Replace result
         sub: sub,
         repl: repl,
         decode: decode
     });
 
-    if (! verifyUrl(result)) {  // Verify the result
+    if (! $f.verifyUrl(result)) {  // Verify the result
         return;
     }
 
     // Colorizing the original URL
-    tmp = getRedirUrl(url, {    // Mark substitute position
+    tmp = $f.getRedirUrl(url, {    // Mark substitute position
         sub: sub,
         repl: '\f$&\v',
         decode: decode
@@ -361,7 +368,7 @@ RuleList.prototype.test = function () { // Test the current rule
     innerHTML += '<div style="color:blue">&darr;</div>';
 
     // Colorizing the final URL
-    tmp = getRedirUrl(url, { // Mark replacement position
+    tmp = $f.getRedirUrl(url, { // Mark replacement position
         sub: sub,
         repl: '\f' + repl + '\v',
         decode: decode
@@ -372,12 +379,23 @@ RuleList.prototype.test = function () { // Test the current rule
         ).replace(/\v/g, '</span>') + '</pre>';
 
     // Output
-    notif(innerHTML);
+    $f.notif(innerHTML);
 };
 
-RuleList.prototype.refresh = function () { // Refresh the rule list
-    localStorage.RULELIST = JSON.stringify(ruleList.data);
-    ext_bg.loadRule();
+RuleList.prototype.refresh = function (force) { // Refresh the list
+    if (typeof force === 'undefined') {
+        tmp = $v.ext_bg.$f.loadRule([
+            this.data[this.sel]]);     // Dry run
+        if (typeof tmp === 'string') { // Error occurred (Err str)
+            $f.err(tmp);
+            return;
+        }
+    }
+
+    localStorage.RULELIST = JSON.stringify(this.data);
+    $v.ext_bg.$f.loadRule();
+
+    return true;
 };
 
 RuleList.prototype.move = function (inc) { // Change the priority
@@ -395,13 +413,13 @@ RuleList.prototype.move = function (inc) { // Change the priority
 
     this.onSel();
 
-    this.refresh();
+    this.refresh(true);
 };
 
 RuleList.prototype.bak = function () { // Backup rule list
     $('ruleMgr_bak').value = JSON.stringify(this.data);
 
-    warn(lang.i18n['RULE_BAK']);
+    $f.warn($v.lang.i18n.RULE_BAK);
 };
 
 RuleList.prototype.restore = function () { // Restore rule list
@@ -409,17 +427,17 @@ RuleList.prototype.restore = function () { // Restore rule list
     tmp = $('ruleMgr_bak').value.replace(/^\s*/, '').replace(/\s*$/, '');
 
     if (tmp === '') {           // No input
-        err(lang.i18n['RULE_RESTORE_EMPTY']);
+        $f.err($v.lang.i18n.RULE_RESTORE_EMPTY);
         return;
     }
 
     try {                       // Restore & chk
         this.data = JSON.parse(tmp);
     } catch (e) {
-        err(lang.i18n['RULE_RESTORE_ERR']);
+        $f.err($v.lang.i18n.RULE_RESTORE_ERR);
         return;
     }
 
-    this.refresh();
+    this.refresh(true);
     window.location.reload();
 };

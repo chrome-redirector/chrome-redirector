@@ -164,11 +164,6 @@ select:hover {
     -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     color: #333;
 }
-
-
-#ruleEdit_sel {
-    width: 100%;
-}
 /* Selector end */
 
 /* Button begin */
@@ -236,12 +231,12 @@ input[type="checkbox"] {
 input[type="text"], input:not([type]) {
     border: 1px solid #BFBFBF;
     border-radius: 2px;
-    font: inherit;
-    font-size: inherit;
     margin: 0;
     padding: 3px;
 
-    width: 87%;
+    font: 15px "DejaVu Sans Mono",monospace;
+    width: 99%;
+    height: 20px;
 }
 /* Text end */
 
@@ -283,8 +278,8 @@ section {
 }
 
 form section {
-    -webkit-padding-start: 0;
-    text-align: right;
+    /* -webkit-padding-start: 0; */
+    /* text-align: right; */
 }
 /* Section end */
 
@@ -297,11 +292,11 @@ form section {
     position: relative;
 
     display:none;
-    max-width: 70%;
-    margin: 0 auto;
+    width: 70%;
+    margin-left: 15%;
+    margin-top: 0;
     z-index: 21;
-    border-bottom-left-radius: 5px;
-    border-bottom-right-radius: 5px;
+    border-radius: 5px;
 }
 
 #overlay {
@@ -421,3 +416,50 @@ th {
     -webkit-animation-timing-function: ease-in-out;
 }
 /* Animation end */
+
+/* Prompt begin */
+.prompt {
+    background-color: rgba(20, 20, 20, 0.9);
+    margin-top: 28px;
+    float: left;
+    display: none;
+    text-align: left;
+    position: absolute;
+    z-index: 51;
+    border: 1px solid #BFBFBF;
+    border-radius: 2px;
+    max-width: 70%;
+    min-width: 5%;
+    max-height: 50ex;
+    overflow: auto;
+}
+
+.prompt ul {
+    list-style-type: none;
+    padding: 0;
+    -webkit-margin-before: 0;
+    -webkit-margin-after: 0;
+}
+
+.prompt a span {
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.prompt a span:first-child {
+    color: #0f0;
+    max-width: 25%;
+}
+
+.prompt a span:last-child {
+    float: right;
+    color: #ff0;
+    max-width: 70%;
+}
+
+.prompt a:hover span, .prompt a.selected span {
+    background-color: #f00;
+    color: #fff;
+}
+/* Prompt end */
