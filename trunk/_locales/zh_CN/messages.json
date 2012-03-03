@@ -32,13 +32,14 @@
 
     "BTN_SAVE": {"message": "保存"},
     "BTN_CANCEL": {"message": "取消"},
-    "BTN_ADD": {"message": "添加"},
+    "BTN_NEW": {"message": "新建"},
     "BTN_DEL": {"message": "删除"},
     "BTN_EDIT": {"message": "编辑"},
     "BTN_UP": {"message": "上移"},
     "BTN_DOWN": {"message": "下移"},
     "BTN_BAK": {"message": "备份"},
     "BTN_RESTORE": {"message": "还原"},
+    "BTN_APPEND": {"message": "追加"},
     "BTN_TEST": {"message": "测试"},
 
     "EXP_ERR": {"message": "表达式有误！"},

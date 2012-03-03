@@ -76,16 +76,29 @@ Prompt.prototype.init = function (id, list, code) {
     $(id).insertBefore(node, $(txt));
 
     $(txt).onfocus = function () {
+        if ($(node.id) === null) {
+            return;
+        }
         $(node.id).style.display='inline';
     }
     $(txt).onblur = function () {
+        if ($(node.id) === null) {
+            return;
+        }
+
         if ($(node.id).hovered !== true) {
             $(node.id).style.display='none';
         }
     }
 
     $(txt).onclick = function (e) {
-        var maxNum = Math.floor((this.offsetWidth - 5) / 9),
+        var maxNum, num;
+
+        if ($(node.id) === null) {
+            return;
+        }
+
+        maxNum = Math.floor((this.offsetWidth - 5) / 9);
         num = this.selectionStart;
         num = num > maxNum ? maxNum : num;
 
@@ -93,7 +106,13 @@ Prompt.prototype.init = function (id, list, code) {
     }
 
     $(txt).onkeydown = function (e) {
-        var maxNum = Math.floor((this.offsetWidth - 5) / 9),
+        var maxNum, num;
+
+        if ($(node.id) === null) {
+            return;
+        }
+
+        maxNum = Math.floor((this.offsetWidth - 5) / 9);
         num = this.selectionStart;
         num = num > maxNum ? maxNum : num;
 

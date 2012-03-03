@@ -439,7 +439,7 @@ RuleList.prototype.bak = function () { // Backup rule list
     $f.warn($v.lang.i18n.RULE_BAK);
 };
 
-RuleList.prototype.restore = function () { // Restore rule list
+RuleList.prototype.restore = function (append) { // Restore rule list
     // Remove leading and trailing whitespaces
     tmp = $('ruleMgr_bak').value.replace(/^\s*/, '').replace(/\s*$/, '');
 
@@ -449,7 +449,11 @@ RuleList.prototype.restore = function () { // Restore rule list
     }
 
     try {                       // Restore & chk
-        this.data = JSON.parse(tmp);
+        if (typeof append === 'undefined') { // Override
+            this.data = JSON.parse(tmp);
+        } else {                // Append
+            this.data = this.data.concat(JSON.parse(tmp));
+        }
     } catch (e) {
         $f.err($v.lang.i18n.RULE_RESTORE_ERR);
         return;

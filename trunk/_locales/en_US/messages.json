@@ -33,13 +33,14 @@
 
     "BTN_SAVE": {"message": "Save"},
     "BTN_CANCEL": {"message": "Cancel"},
-    "BTN_ADD": {"message": "Add"},
+    "BTN_NEW": {"message": "New"},
     "BTN_DEL": {"message": "Delete"},
     "BTN_EDIT": {"message": "Edit"},
     "BTN_UP": {"message": "Up"},
     "BTN_DOWN": {"message": "Down"},
     "BTN_BAK": {"message": "Backup"},
     "BTN_RESTORE": {"message": "Restore"},
+    "BTN_APPEND": {"message": "Append"},
     "BTN_TEST": {"message": "Test"},
 
     "EXP_ERR": {"message": "Expression(s) may be incorrect!"},

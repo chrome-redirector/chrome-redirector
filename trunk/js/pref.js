@@ -88,11 +88,18 @@ Pref.prototype.onChgPrompt = function () {
         $v.prompt_repl = new Prompt('ruleEdit_repl', 'repl');
         $v.prompt_test = new Prompt('ruleEdit_test', 'url');
     } else {
-        delete $v.prompt_name;
-        delete $v.prompt_match;
-        delete $v.prompt_sub;
-        delete $v.prompt_repl;
-        delete $v.prompt_test;
+        try {
+            $('ruleEdit_name').removeChild($('ruleEdit_nameprompt'));
+            delete $v.prompt_name;
+            $('ruleEdit_match').removeChild($('ruleEdit_matchprompt'));
+            delete $v.prompt_match;
+            $('ruleEdit_sub').removeChild($('ruleEdit_subprompt'));
+            delete $v.prompt_sub;
+            $('ruleEdit_repl').removeChild($('ruleEdit_replprompt'));
+            delete $v.prompt_repl;
+            $('ruleEdit_test').removeChild($('ruleEdit_testprompt'));
+            delete $v.prompt_test;
+        } catch (e) {}
     }
 
     this.refresh();
