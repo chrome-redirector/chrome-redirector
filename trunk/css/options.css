@@ -228,7 +228,7 @@ input[type="checkbox"] {
 /* Checkbox end */
 
 /* Text begin */
-input[type="text"], input:not([type]) {
+input[type="text"], input[type="url"], input:not([type]) {
     border: 1px solid #BFBFBF;
     border-radius: 2px;
     margin: 0;
@@ -374,11 +374,11 @@ td {
     text-overflow: ellipsis;
 }
 
-td+td+td,td+td+td+td+td {
+td:nth-child(odd) {
     background: #ccc;
 }
 
-td,td+td,td+td+td+td {
+td:first-child, td:nth-child(even) {
     background: #eee;
 }
 
@@ -430,8 +430,6 @@ th {
     border-radius: 2px;
     max-width: 70%;
     min-width: 10%;
-    max-height: 50ex;
-    overflow: auto;
 }
 
 .prompt ul {
@@ -441,25 +439,45 @@ th {
     -webkit-margin-after: 0;
 }
 
-.prompt a span {
+.prompt li:hover, .prompt li.selected {
+    background-color: #f00;
+}
+
+.prompt li span {
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
 
-.prompt a span:first-child {
+.prompt li span:first-child {
     color: #555;
     max-width: 25%;
 }
 
-.prompt a span:last-child {
+.prompt li span:last-child {
+    color: #0f0;
     float: right;
-    color: #ff0;
     max-width: 70%;
 }
 
-.prompt a:hover span, .prompt a.selected span {
-    background-color: #f00;
+.prompt li:hover span {
+    color: #fff;
+}
+.prompt li.selected span {
     color: #fff;
 }
 /* Prompt end */
+
+/* Test begin */
+#div_test {
+    height: 0;
+    opacity: 0;
+    margin-top: -10px;
+    -webkit-transition: opacity 200ms ease-out;
+}
+
+#div_test.show {
+    height: 120px;
+    opacity: 1;
+}
+/* Test end */

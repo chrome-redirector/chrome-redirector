@@ -11,6 +11,7 @@ Object.prototype.merge = function (src) { // Merge obj from src
             this[prop] = src[prop];
         }
     }
+    return this;
 };
 
 function $(id) {                // Id selector

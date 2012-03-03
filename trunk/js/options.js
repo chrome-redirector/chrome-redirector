@@ -58,7 +58,9 @@ $f.initOpt = function () {                         // Option page init
         "change", $v.lang.onSelLang.bind($v.lang), false);
 
     // WARNING: Failed in Chrome17stable
-    $$('#prefTag a')[0].click(); // Display the first tab
+    // Display the first tab
+    $$('#prefTag a')[0].onclick();
+    document.location.href = '#pref';
 };
 
 $f.verifyUrl = function (url) { // Verify a URL (Not strict enough)

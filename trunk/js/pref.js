@@ -83,10 +83,10 @@ Pref.prototype.onChgPrompt = function () {
             'ruleEdit_name',
             $v.ruleList.builtinPrompt,
             $v.ruleList.selBuiltin.bind($v.ruleList));
-        $v.prompt_match = new Prompt('ruleEdit_match', 'regexp');
-        $v.prompt_sub = new Prompt('ruleEdit_sub', 'regexp');
-        $v.prompt_repl = new Prompt('ruleEdit_repl', 'repl');
-        $v.prompt_test = new Prompt('ruleEdit_test', 'url');
+        $v.prompt_match = new Prompt('ruleEdit_match', []);
+        $v.prompt_sub = new Prompt('ruleEdit_sub', []);
+        $v.prompt_repl = new Prompt('ruleEdit_repl', []);
+        $v.prompt_test = new Prompt('ruleEdit_test', []);
     } else {
         try {
             $('ruleEdit_name').removeChild($('ruleEdit_nameprompt'));
