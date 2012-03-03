@@ -89,9 +89,6 @@ Prompt.prototype.init = function (id, list, code) {
         num = this.selectionStart;
         num = num > maxNum ? maxNum : num;
 
-        this.blur();
-        this.focus();
-
         $(node.id).style.marginLeft = num * 9 + 5 + 'px';
     }
 
@@ -162,6 +159,7 @@ Prompt.prototype.init = function (id, list, code) {
                     links[i].className = '';
                 }
             }
+            e.preventDefault(); // Prevent scrolling up
             break;
         case 34:                // PgDn
             var links = $$('#' + node.id + ' a');
@@ -173,9 +171,15 @@ Prompt.prototype.init = function (id, list, code) {
                     links[i].className = '';
                 }
             }
+            e.preventDefault(); // Prevent scrolling down
             break;
         case 27:                // Esc
             $(node.id).style.display = 'none';
+            return;
+            break;
+        case 9:                 // Tab
+            $(node.id).style.display = 'inline';
+            e.preventDefault(); // Prevent jumping to next tabIndex
             return;
             break;
         case 16:                // Shift
@@ -207,19 +211,108 @@ Prompt.prototype.init = function (id, list, code) {
             num++;
         }
 
-        this.blur();
-        this.focus();
-
         $(node.id).style.marginLeft = num * 9 + 5 + 'px';
     }
 }
 
 Prompt.prototype.data = {
     'regexp': [
-        // {
-        //     'msg': '',
-        //     'desc': ''
-        // },
+        {
+            'msg': '\\',
+            'desc': ''
+        },
+        {
+            'msg': '^',
+            'desc': ''
+        },
+        {
+            'msg': '$',
+            'desc': ''
+        },
+        {
+            'msg': '.',
+            'desc': ''
+        },
+        {
+            'msg': '*',
+            'desc': ''
+        },
+        {
+            'msg': '+',
+            'desc': ''
+        },
+        {
+            'msg': '?',
+            'desc': ''
+        },
+        {
+            'msg': '{',
+            'desc': ''
+        },
+        {
+            'msg': '}',
+            'desc': ''
+        },
+        {
+            'msg': '|',
+            'desc': ''
+        },
+        {
+            'msg': '[',
+            'desc': ''
+        },
+        {
+            'msg': '[^',
+            'desc': ''
+        },
+        {
+            'msg': ']',
+            'desc': ''
+        },
+        {
+            'msg': '(',
+            'desc': ''
+        },
+        {
+            'msg': ')',
+            'desc': ''
+        },
+        {
+            'msg': '(?:',
+            'desc': ''
+        },
+        {
+            'msg': '(?!',
+            'desc': ''
+        },
+        {
+            'msg': '(?=',
+            'desc': ''
+        },
+        {
+            'msg': '\\b',
+            'desc': ''
+        },
+        {
+            'msg': '\\B',
+            'desc': ''
+        },
+        {
+            'msg': '\\w',
+            'desc': ''
+        },
+        {
+            'msg': '\\W',
+            'desc': ''
+        },
+        {
+            'msg': '\\d',
+            'desc': ''
+        },
+        {
+            'msg': '\\D',
+            'desc': ''
+        },
     ],
 
     'wildcard': [

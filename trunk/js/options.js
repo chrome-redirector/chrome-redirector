@@ -20,18 +20,9 @@ $f.initOpt = function () {                         // Option page init
     $v.ext_bg = chrome.extension.getBackgroundPage(); // Background page
     $v.pref = new Pref();         // preferences obj
     $v.lang = new Lang();         // i18n obj
-
-    $v.prompt_match = new Prompt('ruleEdit_match', 'regexp');
-    $v.prompt_sub = new Prompt('ruleEdit_sub', 'regexp');
-    $v.prompt_repl = new Prompt('ruleEdit_repl', 'repl');
-    $v.prompt_test = new Prompt('ruleEdit_test', 'url');
-
     $v.ruleList = new RuleList(); // rules list obj
 
-    $v.prompt_name = new Prompt(
-        'ruleEdit_name',
-        $v.ruleList.builtinPrompt,
-        $v.ruleList.selBuiltin.bind($v.ruleList));
+    $v.pref.onChgPrompt();      // Will create prompts objs
 
     // Navigation bar (work with $f.switchNav)
     $('main-container').addEventListener(

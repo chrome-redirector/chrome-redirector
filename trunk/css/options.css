@@ -419,7 +419,7 @@ th {
 
 /* Prompt begin */
 .prompt {
-    background-color: rgba(20, 20, 20, 0.9);
+    background-color: rgba(255, 255, 255, 0.9);
     margin-top: 28px;
     float: left;
     display: none;
@@ -429,7 +429,7 @@ th {
     border: 1px solid #BFBFBF;
     border-radius: 2px;
     max-width: 70%;
-    min-width: 5%;
+    min-width: 10%;
     max-height: 50ex;
     overflow: auto;
 }
@@ -448,7 +448,7 @@ th {
 }
 
 .prompt a span:first-child {
-    color: #0f0;
+    color: #555;
     max-width: 25%;
 }
 

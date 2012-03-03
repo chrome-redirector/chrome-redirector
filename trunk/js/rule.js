@@ -187,8 +187,21 @@ RuleList.prototype.onChgMatchType = function () { // On chg match type
             $('ruleEdit_subtype').selectedIndex === $v.type.hdr) {
             $('ruleEdit_subtype').selectedIndex = $v.type.regexp;
         }
-    } else if ($('ruleEdit_matchstr').value === 'MANUAL') {
-        $('ruleEdit_matchstr').value = '';
+    } else {
+        if ($('ruleEdit_matchstr').value === 'MANUAL') {
+            $('ruleEdit_matchstr').value = '';
+        }
+
+        if (typeof $v.prompt_match !== 'undefined' &&
+            $v.pref.data.prompt === true) {
+            if ($('ruleEdit_matchtype').selectedIndex ===
+                $v.type.regexp) {
+                $v.prompt_match.update('ruleEdit_match', 'regexp');
+            } else if ($('ruleEdit_matchtype').selectedIndex ===
+                       $v.type.glob) {
+                $v.prompt_match.update('ruleEdit_match', 'wildcard');
+            }
+        }
     }
 };
 
@@ -207,17 +220,16 @@ RuleList.prototype.onChgSubType = function () { // On chg sub type
         $('ruleEdit_substr').value = 'BLOCK';
         $('ruleEdit_replstr').value = 'N/A';
     } else {
-        // Beta-begin
         tmp = $('ruleEdit_subcase').disabled =
             $('ruleEdit_subglob').disabled =
             $('ruleEdit_replDecode').disabled =
             $('ruleEdit_subtype').selectedIndex === $v.type.hdr;
 
-        if (tmp === true) { // Selected hdr
+        if (tmp === true && typeof $v.prompt_sub !== 'undefined' &&
+            $v.pref.data.prompt === true) { // Selected hdr
             $v.prompt_sub.update('ruleEdit_sub', 'header');
             return;
         }
-        // Beta-end
 
         if ($('ruleEdit_substr').value === 'BLOCK') {
             $('ruleEdit_substr').value = '';
@@ -226,11 +238,15 @@ RuleList.prototype.onChgSubType = function () { // On chg sub type
             $('ruleEdit_replstr').value = '';
         }
 
-        if ($('ruleEdit_subtype').selectedIndex === $v.type.regexp) {
-            $v.prompt_sub.update('ruleEdit_sub', 'regexp');
-        } else if ($('ruleEdit_subtype').selectedIndex ===
-                   $v.type.glob) {
-            $v.prompt_sub.update('ruleEdit_sub', 'wildcard');
+        if (typeof $v.prompt_sub !== 'undefined' &&
+            $v.pref.data.prompt === true) {
+            if ($('ruleEdit_subtype').selectedIndex ===
+                $v.type.regexp) {
+                $v.prompt_sub.update('ruleEdit_sub', 'regexp');
+            } else if ($('ruleEdit_subtype').selectedIndex ===
+                       $v.type.glob) {
+                $v.prompt_sub.update('ruleEdit_sub', 'wildcard');
+            }
         }
     }
 };
@@ -418,6 +434,7 @@ RuleList.prototype.move = function (inc) { // Change the priority
 
 RuleList.prototype.bak = function () { // Backup rule list
     $('ruleMgr_bak').value = JSON.stringify(this.data);
+    $('ruleMgr_bak').select();
 
     $f.warn($v.lang.i18n.RULE_BAK);
 };

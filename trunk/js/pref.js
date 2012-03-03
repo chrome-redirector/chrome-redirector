@@ -11,8 +11,15 @@ Pref = function () {            // Obj holds preferences data/method
     } catch (e) {
         this.data = {           // Default settings
             proto: {all: true},
-            context: {link: true, page: true}
+            context: {link: true, page: true},
+            prompt: true
         };
+    }
+
+    // !Backward compatible!
+    if (typeof this.data.prompt === 'undefined') {
+        this.data.prompt = true;
+        this.refresh();
     }
 
     var tmp = this.data.proto;  // Enabled protocols
@@ -34,6 +41,10 @@ Pref = function () {            // Obj holds preferences data/method
     try {                       // Load manual redirection pref to UI
         $('pref_context_link').checked = this.data.context.link;
         $('pref_context_page').checked = this.data.context.page;
+    } catch (e) {}
+
+    try {                       // Load prompts pref to UI
+        $('pref_prompt').checked = this.data.prompt;
     } catch (e) {}
 };
 
@@ -64,4 +75,25 @@ Pref.prototype.onChgContext = function () { // On manual setting chged
 
     this.refresh();
     $v.ext_bg.$f.updateContext();
+};
+
+Pref.prototype.onChgPrompt = function () {
+    if (this.data.prompt = $('pref_prompt').checked === true) {
+        $v.prompt_name = new Prompt(
+            'ruleEdit_name',
+            $v.ruleList.builtinPrompt,
+            $v.ruleList.selBuiltin.bind($v.ruleList));
+        $v.prompt_match = new Prompt('ruleEdit_match', 'regexp');
+        $v.prompt_sub = new Prompt('ruleEdit_sub', 'regexp');
+        $v.prompt_repl = new Prompt('ruleEdit_repl', 'repl');
+        $v.prompt_test = new Prompt('ruleEdit_test', 'url');
+    } else {
+        delete $v.prompt_name;
+        delete $v.prompt_match;
+        delete $v.prompt_sub;
+        delete $v.prompt_repl;
+        delete $v.prompt_test;
+    }
+
+    this.refresh();
 };
