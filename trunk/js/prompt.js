@@ -156,17 +156,67 @@ Prompt.prototype.refresh = function (id) { // Refresh prompt data
         break;
     case 'ruleEdit_test':
         if ($('ruleEdit_subtype').selectedIndex !== $v.type.hdr) {
-            list =              // URLs
+            switch (frag) {
+            case '':
+                list =          // URLs
                 [{'msg': 'http://', 'desc': ''},
                  {'msg': 'https://', 'desc': ''},
                  {'msg': 'ftp://', 'desc': ''},
                  {'msg': 'file://', 'desc': ''}];
+                break;
+            case 'h':
+                list =
+                [{'msg': 'ttp://', 'desc': ''},
+                 {'msg': 'ttps://', 'desc': ''}];
+                break;
+            case 'ht':
+                list =
+                [{'msg': 'tp://', 'desc': ''},
+                 {'msg': 'tps://', 'desc': ''}];
+                break;
+            case 'htt':
+                list =
+                [{'msg': 'p://', 'desc': ''},
+                 {'msg': 'ps://', 'desc': ''}];
+                break;
+            case 'http':
+                list =
+                [{'msg': '://', 'desc': ''},
+                 {'msg': 's://', 'desc': ''}];
+                break;
+            case 'f':
+                list =
+                [{'msg': 'tp://', 'desc': ''},
+                 {'msg': 'ile://', 'desc': ''}];
+                break;
+            case 'ft':
+                list =
+                    [{'msg': 'p://', 'desc': ''}];
+                break;
+            case 'fi':
+                list =
+                    [{'msg': 'le://', 'desc': ''}];
+                break;
+            case 'fil':
+                list =
+                    [{'msg': 'e://', 'desc': ''}];
+                break;
+            case 'https': case 'ftp': case 'file':
+                list =
+                    [{'msg': '://', 'desc': ''}];
+                break;
+            default:
+                if ((/^\w*:$/).test(frag)) {
+                    list =
+                        [{'msg': '//', 'desc': ''}];
+                }
+            }
         }
         break;
     }
 
     this.update(id, list);      // Update prompt
-}
+};
 
 Prompt.prototype.update = function (id, list, code) { // Update prompt
     // id: section id; list: prompt data; code: execute after update
@@ -242,27 +292,28 @@ Prompt.prototype.init = function (id, list, code) { // Init prompts
                 menu[i].className = '';
             }
         }
-    }
+    };
 
     $(txt).onfocus = function () { // On get focused
-        if ($(node.id) === null) {
+        if ($(node.id) === null) { // Prompts disabled
             return;
         }
-        $(node.id).style.display='inline';
+        $(node.id).style.display = 'inline';
         $v['prompt_' + id.replace('ruleEdit_', '')].refresh(id);
 
         this.selectedIndex = 0;
-        this.colorize();
     };
 
     $(txt).onblur = function () { // On blured
-        if ($(node.id) === null) {
+        if ($(node.id) === null) { // Prompts disabled
             return;
         }
 
         if ($(node.id).hovered !== true) {
-            $(node.id).style.display='none';
+            $(node.id).style.display = 'none';
         }
+
+        this.selectedIndex = undefined;
     };
 
     $(txt).onclick = function (e) { // On clicked
@@ -277,6 +328,9 @@ Prompt.prototype.init = function (id, list, code) { // Init prompts
         num = num > maxNum ? maxNum : num;
         // Move prompts to correct position
         $(node.id).style.marginLeft = num * 9 + 5 + 'px';
+        $v['prompt_' + id.replace('ruleEdit_', '')].refresh(id);
+
+        this.colorize();
     };
 
     $(txt).onkeyup = function (e) { // On key released
@@ -363,30 +417,11 @@ Prompt.prototype.init = function (id, list, code) { // Init prompts
             this.selectedIndex = 0;
             e.preventDefault(); // Prevent jumping to next tabIndex
             return;
-        case 16:                // Shift
-        case 17:                // Ctrl
-        case 18:                // Alt
-        case 19:                // Pause
-        case 20:                // CapsLk
-        case 45:                // Insert
-        case 46:                // Delete
-        case 91:                // Win-left
-        case 92:                // Win-right
-        case 112:               // F1
-        case 113:               // F2
-        case 114:               // F3
-        case 115:               // F4
-        case 116:               // F5
-        case 117:               // F6
-        case 118:               // F7
-        case 119:               // F8
-        case 120:               // F9
-        case 121:               // F10
-        case 122:               // F11
-        case 123:               // F12
-        case 144:               // NmLk
-        case 145:               // ScrLk
-            // Other keys with no input
+        case 16: case 17: case 18: case 19: case 20:
+        case 45: case 46: case 91: case 92:
+        case 112: case 113: case 114: case 115: case 116: case 117:
+        case 118: case 119: case 120: case 121: case 122: case 123:
+        case 144: case 145:     // Other keys with no input
             break;
         default:                // Other key
             num++;
