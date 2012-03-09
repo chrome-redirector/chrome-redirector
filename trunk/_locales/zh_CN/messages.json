@@ -45,12 +45,9 @@
     "BTN_APPEND": {"message": "追加"},
     "BTN_TEST": {"message": "测试"},
 
-    "EXP_ERR": {"message": "表达式有误！"},
     "TEST_NOTMATCH": {"message": "测试URL不匹配！"},
     "TEST_BLOCK": {"message": "测试URL将被屏蔽"},
-    "TEST_DEST": {"message": "重定向至："},
-    "RULE_BAK": {"message": "请复制文本框中的文字保存以备用"},
-    "RULE_RESTORE_EMPTY": {"message": "请粘贴文本！"},
+    "NO_INPUT_FILE": {"message": "请指定文件!"},
     "RULE_RESTORE_ERR": {"message": "无法还原！"},
     "URL_INVALID_PROTO": {"message": "URL协议错误"},
     "URL_INVALID_CHAR": {"message": "URL包含有非法字符"}

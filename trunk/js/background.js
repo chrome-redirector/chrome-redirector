@@ -286,5 +286,5 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
         }
     },
     {urls: $v.validUrl},
-    ["blocking", "requestHeaders"]
+    ['blocking', 'requestHeaders']
 );

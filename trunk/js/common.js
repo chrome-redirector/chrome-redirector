@@ -32,6 +32,12 @@ Object.prototype.merge = function (src) { // Merge obj from src
     return this;
 };
 
+Element.prototype.mouseClick = function () {
+    var e = document.createEvent('MouseEvents');
+    e.initEvent('click', true, true);
+    this.dispatchEvent(e);
+}
+
 function $(id) {                // Id selector
     return document.getElementById(id);
 }
@@ -164,4 +170,14 @@ $f.xhrJson = function (file) {
     xhr.open('GET', file, false);
     xhr.send();
     return JSON.parse(xhr.responseText);
+};
+
+$f.readFile = function (file, callback) {
+    var reader = new FileReader();
+
+    reader.onload = function (e) {
+        callback(e.target.result);
+    }
+
+    reader.readAsText(file);
 };

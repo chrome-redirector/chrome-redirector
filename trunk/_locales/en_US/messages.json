@@ -45,12 +45,9 @@
     "BTN_APPEND": {"message": "Append"},
     "BTN_TEST": {"message": "Test"},
 
-    "EXP_ERR": {"message": "Expression(s) may be incorrect!"},
     "TEST_NOTMATCH": {"message": "Test URL is not matched!"},
     "TEST_BLOCK": {"message": "Test URL will be blocked"},
-    "TEST_DEST": {"message": "Redirect to: "},
-    "RULE_BAK": {"message": "Please copy&save the text in textarea"},
-    "RULE_RESTORE_EMPTY": {"message": "You didn't paste the text!"},
+    "NO_INPUT_FILE": {"message": "No file specified!"},
     "RULE_RESTORE_ERR": {"message": "Unable to restore!"},
     "URL_INVALID_PROTO": {"message": "URL has no valid protocol"},
     "URL_INVALID_CHAR": {"message": "URL contains invalid characters"}

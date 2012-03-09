@@ -75,10 +75,8 @@ $f.initOpt = function () {                         // Option page init
     $('langSel').addEventListener(
         "change", $v.lang.onSelLang.bind($v.lang), false);
 
-    // WARNING: Failed in Chrome17stable
     // Display the first tab
-    $$('#prefTag a')[0].onclick();
-    document.location.href = '#pref';
+    $$('#prefTag a')[0].mouseClick();
 };
 
 $f.verifyUrl = function (url) { // Verify a URL (Not strict enough)

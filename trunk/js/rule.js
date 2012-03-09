@@ -429,31 +429,44 @@ RuleList.prototype.move = function (inc) { // Change the priority
 };
 
 RuleList.prototype.bak = function () { // Backup rule list
-    $('ruleMgr_bak').value = JSON.stringify(this.data);
-    $('ruleMgr_bak').select();
+    var link = document.createElement('a'); // Tmp link
+    link.href = 'data:application/x-download;charset=utf-8,' +
+        JSON.stringify(this.data); // Download file (backup)
+    link.download = 'Redirector_' +
+        (new Date()).toISOString().replace(
+                /^(.{10}).(.{8}).*$/, '$1_$2'
+        ) + '.rlst';            // Download filename
 
-    $f.warn($v.lang.i18n.RULE_BAK);
+    link.mouseClick();          // Simulate mouse click to download
 };
 
 RuleList.prototype.restore = function (append) { // Restore rule list
-    var tmp = $('ruleMgr_bak').value;
-
-    if ((/^\s*$/).test(tmp)) {  // No input
-        $f.err($v.lang.i18n.RULE_RESTORE_EMPTY);
-        return;
+    if (typeof append === 'undefined') {         // Override
+        var files = $('ruleEdit_restoreFile').files;
+    } else {                    // Append
+        var files = $('ruleEdit_appendFile').files;
     }
 
-    try {                                    // Restore & chk
-        if (typeof append === 'undefined') { // Override
-            this.data = JSON.parse(tmp);
-        } else {                // Append
-            this.data = this.data.concat(JSON.parse(tmp));
+    if (files.length === 0) {   // No input file
+        $f.err($v.lang.i18n.NO_INPUT_FILE);
+        return;
+    } else {
+        var file = files[0];
+    }
+
+    if (typeof append === 'undefined') {
+        this.data = [];
+    }
+
+    $f.readFile(file, (function (data) {
+        try {
+            var tmp = JSON.parse(data);
+
+            this.data = this.data.concat(tmp);
+            this.refresh(true);
+            location.reload();
+        } catch (e) {
+            $f.err($v.lang.i18n.RULE_RESTORE_ERR);
         }
-    } catch (e) {
-        $f.err($v.lang.i18n.RULE_RESTORE_ERR);
-        return;
-    }
-
-    this.refresh(true);
-    location.reload();
+    }).bind(this));
 };

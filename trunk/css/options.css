@@ -219,6 +219,23 @@ input[type="button"], input[type="submit"] {
     min-width: 4em;
     padding: 3px 12px;
 }
+
+input[type="file"] {
+    -webkit-border-radius: 3px;
+    -webkit-user-select: none;
+    color: #222;
+}
+
+input[type="file"] {
+    -webkit-border-radius: 3px;
+    -webkit-user-select: none;
+    color: #444;
+    font-family: inherit;
+    font-size: inherit;
+    margin-bottom: 0;
+    min-width: 4em;
+    padding: 3px 12px;
+}
 /* Button end */
 
 /* Checkbox begin */
@@ -258,34 +275,6 @@ input[type="text"], input[type="url"], input:not([type]) {
     height: 20px;
 }
 /* Text end */
-
-/* Textarea begin */
-textarea {
-    height: 100px;
-    width: 98%;
-
-    border: 1px solid #BFBFBF;
-    border-radius: 10px;
-    font: inherit;
-    font-size: inherit;
-    margin: 0;
-    padding: 3px;
-
-    box-shadow: 0 3px 15px rgba(0, 0, 0, 0.1), 0 3px 57px rgba(0, 0, 0, 0.1);
-}
-
-#div_bak {
-    height: 0;
-    opacity: 0;
-    -webkit-transition: opacity 200ms ease-out;
-    overflow: auto;
-}
-
-#div_bak.show {
-    height: 200px;
-    opacity: 1;
-}
-/* Textarea end */
 
 /* Section begin */
 section {
@@ -413,6 +402,20 @@ th {
     background: #a99 !important;
 }
 /* Table end */
+
+/* Backup begin */
+#div_bak {
+    height: 0;
+    opacity: 0;
+    -webkit-transition: opacity 200ms ease-out;
+    overflow: auto;
+}
+
+#div_bak.show {
+    height: 200px;
+    opacity: 1;
+}
+/* Backup end */
 
 /* Animation begin */
 @-webkit-keyframes shake {
