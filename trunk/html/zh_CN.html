@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Redirector指南"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-02-25"/>
+<meta name="generated" content="2012-03-08"/>
 <meta name="author" content="Cyril Feng"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -96,6 +96,8 @@
 
 <div id="content">
 <h1 class="title">Redirector指南</h1>
+
+
 
 
 
@@ -364,6 +366,16 @@
 
 </li>
 </ul>
+<ul>
+<li id="sec-4-4-3-4">请求头<br/>
+     这个选项用来修改“HTTP请求头”。
+     这时 <i>被替换式</i> 应是要修改的请求头的名字。
+     如果一个请求头不存在，那么它会被创建。
+     要删除一个请求头，请在名称前放置减号 <code>-</code> 。
+     如有多条请求头要修改，用竖线 <code>|</code> 分隔。
+
+</li>
+</ul>
 </div>
 
 </div>
@@ -385,6 +397,11 @@
 </ul>
 
 
+<p>
+    值得注意的是，若 <i>被替换式</i> 是请求头类型的，则替换式应当是对应的值，也用竖线 <code>|</code> 分隔。
+    若值中包括字面意义的竖线 <code>|</code> ，请使用 <code>\|</code> 代替。
+    对于要删除的请求头，对应的值可以留空。
+</p>
 </div>
 </div>
 
@@ -902,7 +919,7 @@
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-02-25</p>
+<p class="date">Date: 2012-03-08</p>
 <p class="author">Author: Cyril Feng</p>
 <p class="creator">Org version 7.8.03 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>

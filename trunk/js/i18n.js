@@ -1,11 +1,27 @@
-/**
- * Internationalization
- */
+/* Internationalization.
 
-/*jslint plusplus: false */
-/*global $: true, $$: true, $v: true, $f: true, tmp: true,
-  Lang: true,
-  document: true, window: true, navigator: true, localStorage: true*/
+   Copyright (C) 2010-2012.
+
+   This file is part of Redirector.
+
+   Redirector is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Redirector is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Redirector.  If not, see <http://www.gnu.org/licenses/>.
+
+   From Cyril Feng. */
+
+/*jslint browser: true, onevar: false, plusplus: false*/
+/*global $: true, $$: true, $v: true, $f: true*/
+/*global localStorage: true, Lang: true*/
 
 Lang = function () {            // Obj holds language data/methods
     try {
@@ -20,15 +36,13 @@ Lang = function () {            // Obj holds language data/methods
 };
 
 Lang.prototype.apply = function (type) { // Apply i18n data to HTML
-    var elem, it, attr, attrArr;
-
-    elem = $$('[' + type + ']'); // All elements need to be modified
+    var elem = $$('[' + type + ']'); // All elements need to be mod
 
     for (var i = 0; i < elem.length; i++) {
-        it = elem[i];
+        var it = elem[i];
 
         try {
-            attr = it.getAttribute(type);
+            var attr = it.getAttribute(type);
         } catch (e) {
             continue;
         }
@@ -47,7 +61,7 @@ Lang.prototype.apply = function (type) { // Apply i18n data to HTML
             }
             break;
         case 'i18nP':           // Translate properties
-            attrArr = attr.split(":"); // Fmt of attr: prop:val
+            var attrArr = attr.split(":"); // Fmt of attr: prop:val
 
             if (this.i18n.hasOwnProperty(attrArr[1])) {
                 it.setAttribute(attrArr[0], this.i18n[attrArr[1]]);
@@ -61,10 +75,11 @@ Lang.prototype.apply = function (type) { // Apply i18n data to HTML
 
 Lang.prototype.refresh = function () { // Refresh languages data
     localStorage.LANG = JSON.stringify(this.data);
-    window.location.reload();   // Reload options page
+    location.reload();          // Reload options page
 };
 
 Lang.prototype.onSelLang = function (e) { // Language selector handler
+    var tmp;
     if ((tmp = $('langSel').selectedIndex - 1) === -1) { // From 2nd
         return;
     }
@@ -76,19 +91,18 @@ Lang.prototype.onSelLang = function (e) { // Language selector handler
 };
 
 Lang.prototype.loadI18n = function () { // Load the i18n data
-    var langList, i18nSet = {}, a, b, re, flt;
+    var i18nSet = {};
 
-    langList = $f.xhrJson('/_locales/lang.json'); // Available languages
+    var langList = $f.xhrJson('/_locales/lang.json'); // Avail languages
 
     for (var i in langList) {
-        if (! langList.hasOwnProperty(i)) {
-            continue;
-        }
-
-        try {                   // Determine if a locale available
-            i18nSet[i] = $f.xhrJson('/_locales/' + i + '/messages.json');
-        } catch (e) {
-            delete i18nSet[i];  // Delete empty entry
+        if (langList.hasOwnProperty(i)) {
+            try {                   // Determine if a locale available
+                i18nSet[i] =
+                    $f.xhrJson('/_locales/' + i + '/messages.json');
+            } catch (e) {
+                delete i18nSet[i];  // Delete empty entry
+            }
         }
     }
 
@@ -96,22 +110,22 @@ Lang.prototype.loadI18n = function () { // Load the i18n data
         this.avail = Object.keys(i18nSet).sort(); // Avail langs
         // Append options to the language selector
         for (var i = 0; i < this.avail.length; i++) {
-            tmp = document.createElement('option');
+            var tmp = document.createElement('option');
             tmp.text = langList[this.avail[i]];
             $('langSel').add(tmp, null);
         }
     } catch (e) {}
 
-    a = i18nSet;                // Shortcuts
-    b = this.i18n = a.en_US;    // en_US is the fallback locale
+    var a = i18nSet;            // Shortcuts
+    var b = this.i18n = a.en_US; // en_US is the fallback locale
     if (a.hasOwnProperty(this.data.langTag)) { // User locale avail
         b.merge(a[this.data.langTag]);
     } else {                    // Find a suitable locale
         // RegExp to test if a locale belong to the same language
-        re = new RegExp('^' + this.data.langTag.split('_')[0] +
+        var re = new RegExp('^' + this.data.langTag.split('_')[0] +
                         '(_\\w+)?$');
         // Obj filter: e.g. zh_HK will select only [zh:, zh_CN:, ...]
-        flt = function (obj) {
+        var flt = function (obj) {
             return Object.keys(obj).filter(function (t) {
                 return re.test(t);
             }).sort();

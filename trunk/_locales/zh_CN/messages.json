@@ -21,6 +21,7 @@
     "TYPE_GLOB": {"message": "通配符"},
     "TYPE_MANUAL": {"message": "手动"},
     "TYPE_BLOCK": {"message": "屏蔽"},
+    "TYPE_HDR": {"message": "请求头"},
     "LBL_TITLE": {"message": "规则列表"},
     "LBL_NAME": {"message": "名称"},
     "LBL_MATCH": {"message": "匹配"},

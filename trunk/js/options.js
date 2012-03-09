@@ -1,9 +1,27 @@
-/**
- * Interactive
- */
+/* Interactivity.
 
-/*global $: true, $$: true, $v: true, $f: true, tmp: true,
-  chrome: true, RuleList: true, Pref: true, Lang: true*/
+   Copyright (C) 2010-2012.
+
+   This file is part of Redirector.
+
+   Redirector is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Redirector is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Redirector.  If not, see <http://www.gnu.org/licenses/>.
+
+   From Cyril Feng. */
+
+/*jslint browser: true, onevar: false, plusplus: false*/
+/*global $: true, $$: true, $v: true, $f: true*/
+/*global chrome: true, RuleList: true, Pref: true, Lang: true*/
 
 // Navbar
 $f.switchNav = function (tag) {
@@ -17,7 +35,7 @@ $f.switchNav = function (tag) {
 };
 
 $f.initOpt = function () {                         // Option page init
-    $v.ext_bg = chrome.extension.getBackgroundPage(); // Background page
+    $v.ext_bg = chrome.extension.getBackgroundPage(); // Bg page
     $v.pref = new Pref();         // preferences obj
     $v.lang = new Lang();         // i18n obj
     $v.ruleList = new RuleList(); // rules list obj

@@ -21,6 +21,7 @@
     "TYPE_GLOB": {"message": "萬用字元"},
     "TYPE_MANUAL": {"message": "手动"},
     "TYPE_BLOCK": {"message": "屏蔽"},
+    "TYPE_HDR": {"message": "請求頭"},
     "LBL_TITLE": {"message": "規則列表"},
     "LBL_NAME": {"message": "名稱"},
     "LBL_MATCH": {"message": "匹配"},

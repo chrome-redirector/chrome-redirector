@@ -1,10 +1,27 @@
-/**
- * Rule list obj
- */
+/* Rule list obj.
 
-/*jslint plusplus: false */
-/*global $: true, $$: true, $v: true, $f: true, tmp: true,
-  RuleList: true, document: true, window: true, localStorage: true*/
+   Copyright (C) 2010-2012.
+
+   This file is part of Redirector.
+
+   Redirector is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Redirector is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Redirector.  If not, see <http://www.gnu.org/licenses/>.
+
+   From Cyril Feng. */
+
+/*jslint browser: true, onevar: false, plusplus: false*/
+/*global $: true, $$: true, $v: true, $f: true*/
+/*global localStorage: true, RuleList: true*/
 
 RuleList = function (init) {
     try {
@@ -26,7 +43,7 @@ RuleList = function (init) {
         this.update(i);         // Fillin data
     }
 
-    this.loadBuiltin();         // Load builtin rules
+    this.loadBuiltin();            // Load builtin rules
     this.chg = this.isNew = false; // No new or changed rules
     this.sel = undefined;          // No rule selected
 };
@@ -49,7 +66,7 @@ RuleList.prototype.add = function () { // Add a rule
 };
 
 RuleList.prototype.del = function () { // Delete a rule
-    this.data.splice(this.sel, 1); // Delete data
+    this.data.splice(this.sel, 1);     // Delete data
     this.refresh(true);
     $('ruleListTable').deleteRow(this.sel + 1); // Delete display
 
@@ -65,17 +82,16 @@ RuleList.prototype.edit = function () {
 
 // Make multiple updates according to idx (rule obj or rule num)
 RuleList.prototype.update = function (idx) {
-    var rule, row;
     if (typeof idx === 'object') { // idx may be a rule obj specified
-        rule = idx;
-        row = $$('#ruleListTable tr')[this.sel + 1].children;
+        var rule = idx;
+        var row = $$('#ruleListTable tr')[this.sel + 1].children;
     } else {
         if (this.data.length === 0) { // No rule
             return;
         }
         // Current rule & row
-        rule = this.data[idx];
-        row = $$('#ruleListTable tr')[parseInt(idx, 10) + 1].children;
+        var rule = this.data[idx];
+        var row = $$('#ruleListTable tr')[parseInt(idx, 10) + 1].children;
     }
 
     // Fillin info
@@ -102,19 +118,17 @@ RuleList.prototype.update = function (idx) {
 };
 
 RuleList.prototype.onSel = function (e) { // On a row selected
-    var elem, isChk;
-
-    tmp = $$('#ruleListTable .sel-td');    // All selected cells
+    var tmp = $$('#ruleListTable .sel-td');    // All selected cells
     for (var i = 0; i < tmp.length; i++) { // Decolor all cells
         tmp[i].className = '';
     }
 
     // Get selected row (<tr>...</tr>)
     if (e instanceof Object) {
-        elem = e.srcElement;
-        while (! /^tr$/i.test(elem.tagName)) { // Searching for <tr>
+        var elem = e.srcElement;
+        while (! /^tr$/i.test(elem.tagName)) {   // Searching for <tr>
             if (/^input$/i.test(elem.tagName)) { // Clicked the chkbox
-                isChk = true;
+                var isChk = true;
             } else if (/^(th|body)$/i.test(elem.tagName)) { // Outside
                 this.sel = undefined;
                 return;
@@ -128,7 +142,7 @@ RuleList.prototype.onSel = function (e) { // On a row selected
         elem = $$('#ruleListTable tr')[this.sel + 1]; // Default
     }
 
-    if (isChk) {                          // Checkbox clicked
+    if (typeof isChk !== 'undefined' && isChk === true) { // Chkbox
         this.data[this.sel].enabled ^= 1; // Toggle the bool value
         this.refresh(true);
         return;
@@ -158,11 +172,11 @@ RuleList.prototype.loadBuiltin = function (e) { // Load built-in rules
     }
 };
 
-RuleList.prototype.selBuiltin = function (e) { // On click builtin rule
+RuleList.prototype.selBuiltin = function (e) { // On choose builtin
     var links = $$('#ruleEdit_nameprompt li');
     var hovered =
         $$('#ruleEdit_nameprompt li:hover,' +
-           '#ruleEdit_nameprompt a.seleted')[0];
+           '#ruleEdit_nameprompt li.selected')[0];
 
     for (var i = 0; i < links.length; i++) {
         if (links[i] === hovered) {
@@ -174,7 +188,7 @@ RuleList.prototype.selBuiltin = function (e) { // On click builtin rule
 
 RuleList.prototype.onChgMatchType = function () { // On chg match type
     // Disable several componets when select manual
-    tmp = $('ruleEdit_matchstr').disabled =
+    var tmp = $('ruleEdit_matchstr').disabled =
         $('ruleEdit_matchcase').disabled =
         $$('#ruleEdit_subtype>option')[$v.type.block].disabled =
         $$('#ruleEdit_subtype>option')[$v.type.hdr].disabled =
@@ -203,7 +217,7 @@ RuleList.prototype.onChgMatchType = function () { // On chg match type
 
 RuleList.prototype.onChgSubType = function () { // On chg sub type
     // Disable several componets when select block
-    tmp = $('ruleEdit_substr').disabled =
+    var tmp = $('ruleEdit_substr').disabled =
         $('ruleEdit_subcase').disabled =
         $('ruleEdit_subglob').disabled =
         $('ruleEdit_replstr').disabled =
@@ -287,23 +301,20 @@ RuleList.prototype.discard = function () { // Discard changes
 };
 
 RuleList.prototype.test = function () { // Test the current rule
-    var url, sub, repl, decode, result, innerHTML;
-
     if ($('ruleEdit_teststr').value === '' ||
         ! $f.verifyUrl($('ruleEdit_teststr').value)) { // Chk input
         return;
     }
 
-    // Beta-begin
+    // Don't test substitution of type header
     if ($('ruleEdit_subtype').selectedIndex === $v.type.hdr) {
         $f.err('Test for header manipulation is not supported yet!');
         return;
     }
-    // Beta-end
 
     if ($('ruleEdit_matchtype').selectedIndex !== $v.type.manual) {
         // Chk match
-        tmp = $f.str2re({
+        var tmp = $f.str2re({
             str: $('ruleEdit_matchstr').value,
             type: $('ruleEdit_matchtype').selectedIndex,
             modi: $('ruleEdit_matchcase').checked
@@ -327,8 +338,8 @@ RuleList.prototype.test = function () { // Test the current rule
     }
 
     // The test URL
-    url = $('ruleEdit_teststr').value;
-    sub = $f.str2re({              // Substitute pattern
+    var url = $('ruleEdit_teststr').value;
+    var sub = $f.str2re({       // Substitute pattern
         str: $('ruleEdit_substr').value,
         type: $('ruleEdit_subtype').selectedIndex,
         modi: $('ruleEdit_subcase').checked,
@@ -340,26 +351,26 @@ RuleList.prototype.test = function () { // Test the current rule
     }
 
     // Replacement
-    repl = $('ruleEdit_replstr').value;
+    var repl = $('ruleEdit_replstr').value;
     // Whether decode
-    decode = $('ruleEdit_replDecode').checked;
-    result = $f.getRedirUrl(url, {           // Replace result
+    var decode = $('ruleEdit_replDecode').checked;
+    var result = $f.getRedirUrl(url, { // Replace result
         sub: sub,
         repl: repl,
         decode: decode
     });
 
-    if (! $f.verifyUrl(result)) {  // Verify the result
+    if (! $f.verifyUrl(result)) { // Verify the result
         return;
     }
 
     // Colorizing the original URL
-    tmp = $f.getRedirUrl(url, {    // Mark substitute position
+    var tmp = $f.getRedirUrl(url, { // Mark substitute position
         sub: sub,
         repl: '\f$&\v',
         decode: decode
     });
-    innerHTML = '<pre>' +
+    var innerHTML = '<pre>' +
         tmp.split('').join('<wbr>').replace( // Force wrapping
             /\f/g, '<span style="color:red">'
         ).replace(/\v/g, '</span>') + '</pre>';
@@ -368,7 +379,7 @@ RuleList.prototype.test = function () { // Test the current rule
     innerHTML += '<div style="color:blue">&darr;</div>';
 
     // Colorizing the final URL
-    tmp = $f.getRedirUrl(url, { // Mark replacement position
+    var tmp = $f.getRedirUrl(url, { // Mark replacement position
         sub: sub,
         repl: '\f' + repl + '\v',
         decode: decode
@@ -384,8 +395,9 @@ RuleList.prototype.test = function () { // Test the current rule
 
 RuleList.prototype.refresh = function (force) { // Refresh the list
     if (typeof force === 'undefined') {
-        tmp = $v.ext_bg.$f.loadRule([
-            this.data[this.sel]]);     // Dry run
+        var tmp = $v.ext_bg.$f.loadRule(
+            [this.data[this.sel]]
+        );                             // Dry run
         if (typeof tmp === 'string') { // Error occurred (Err str)
             $f.err(tmp);
             return;
@@ -424,15 +436,14 @@ RuleList.prototype.bak = function () { // Backup rule list
 };
 
 RuleList.prototype.restore = function (append) { // Restore rule list
-    // Remove leading and trailing whitespaces
-    tmp = $('ruleMgr_bak').value.replace(/^\s*/, '').replace(/\s*$/, '');
+    var tmp = $('ruleMgr_bak').value;
 
-    if (tmp === '') {           // No input
+    if ((/^\s*$/).test(tmp)) {  // No input
         $f.err($v.lang.i18n.RULE_RESTORE_EMPTY);
         return;
     }
 
-    try {                       // Restore & chk
+    try {                                    // Restore & chk
         if (typeof append === 'undefined') { // Override
             this.data = JSON.parse(tmp);
         } else {                // Append
@@ -444,5 +455,5 @@ RuleList.prototype.restore = function (append) { // Restore rule list
     }
 
     this.refresh(true);
-    window.location.reload();
+    location.reload();
 };

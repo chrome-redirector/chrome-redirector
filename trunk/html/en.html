@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Redirector Guide"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-02-25"/>
+<meta name="generated" content="2012-03-08"/>
 <meta name="author" content="Cyril Feng"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -96,6 +96,8 @@
 
 <div id="content">
 <h1 class="title">Redirector Guide</h1>
+
+
 
 
 
@@ -389,6 +391,18 @@
 
 </li>
 </ul>
+<ul>
+<li id="sec-4-4-3-4">Header<br/>
+     This option allows you to modify "HTTP request headers".
+     <i>Substitution</i> stands for the name of the header to be modified.
+     If a header is not found, then it'll be created.
+     To delete a header,
+     place a minus sign <code>-</code> in front of its name.
+     To modify multiple headers,
+     seperate thme by vertical lines <code>|</code>.
+
+</li>
+</ul>
 </div>
 
 </div>
@@ -414,6 +428,12 @@
 </ul>
 
 
+<p>
+    Note that <i>Replacement</i> for <i>Substitution</i> of type header differs.
+    Here it's the corresponding values of headers also seperated by <code>|</code>.
+    Use <code>\|</code> instead if a value contains a literal <code>|</code>.
+    You may leave the value blank if header is to be deleted.
+</p>
 </div>
 </div>
 
@@ -976,7 +996,7 @@ While you get: https://www.google.com/ -&gt; https://www.google.com/??
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-02-25</p>
+<p class="date">Date: 2012-03-08</p>
 <p class="author">Author: Cyril Feng</p>
 <p class="creator">Org version 7.8.03 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>

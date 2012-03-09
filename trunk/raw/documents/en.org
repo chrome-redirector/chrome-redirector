@@ -1,7 +1,30 @@
+#+BEGIN_COMMENT
+User guide (English).
+
+Copyright (C) 2010-2012.
+
+This file is part of Redirector.
+
+Redirector is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Redirector is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Redirector.  If not, see <http://www.gnu.org/licenses/>.
+
+From Cyril Feng.
+#+END_COMMENT
+
 #+TITLE:     Redirector Guide
 #+AUTHOR:    Cyril Feng
 #+EMAIL:     CyrilFeng@gmail.com
-#+DATE:      2012-02-25
+#+DATE:      2012-03-08
 #+DESCRIPTION:
 #+KEYWORDS:
 #+LANGUAGE:  en
@@ -148,6 +171,15 @@
 **** Block
      Instead of redirecting a URL, you may alternatively block it.
 
+**** Header
+     This option allows you to modify "HTTP request headers".
+     /Substitution/ stands for the name of the header to be modified.
+     If a header is not found, then it'll be created.
+     To delete a header,
+     place a minus sign ~-~ in front of its name.
+     To modify multiple headers,
+     seperate thme by vertical lines ~|~.
+
 *** Replacement
     A /Replacement/ is what used to replace the /Substitution/.
     You may simply use a string,
@@ -160,6 +192,11 @@
     which results in the encoded characters of the final URL replaced
     with the corresponding ones, e.g.
     - ~http%3A%2F%2Fwww.google.com%2F~ to ~http://www.google.com/~.
+
+    Note that /Replacement/ for /Substitution/ of type header differs.
+    Here it's the corresponding values of headers also seperated by ~|~.
+    Use ~\|~ instead if a value contains a literal ~|~.
+    You may leave the value blank if header is to be deleted.
 
 ** Test
    You are encouraged to test every rules you composed,

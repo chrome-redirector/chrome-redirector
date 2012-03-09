@@ -1,33 +1,51 @@
-/**
- * Prompt obj
- */
+/* Prompt obj.
 
-/*jslint plusplus: false */
-/*global $: true, $$: true, $v: true, $f: true, tmp: true,
-  Prompt: true, document: true*/
+   Copyright (C) 2010-2012.
+
+   This file is part of Redirector.
+
+   Redirector is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Redirector is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Redirector.  If not, see <http://www.gnu.org/licenses/>.
+
+   From Cyril Feng. */
+
+/*jslint browser: true, onevar: false, plusplus: false*/
+/*global $: true, $$: true, $v: true, $f: true*/
+/*global Prompt: true*/
 
 Prompt = function (id, list, code) {  // Prompt obj
     this.init(id, list, code);
 };
 
 Prompt.prototype.refresh = function (id) { // Refresh prompt data
-    var pos, value, frag, last, list = [];
+    var list = [];
 
-    pos = $(id + 'str').selectionStart; // Cursor position
-    value = $(id + 'str').value;        // Input text
-    frag = value.substring(0, pos);     // Text before cursor
-    frag = frag.replace(/\\\\/g, '\0'); // \\ => \0
+    var pos = $(id + 'str').selectionStart; // Cursor position
+    var value = $(id + 'str').value;        // Input text
+    var frag = value.substring(0, pos);     // Text before cursor
+    frag = frag.replace(/\\\\/g, '\x00'); // \\ => \0
     // Long escaped char => \f
     frag =
         frag.replace(/\\(\d{3}|x[a-zA-Z\d]{2}|u[a-zA-Z\d]{4})/g,
                      '\f');
-    frag = frag.replace(/\\(?!b)./ig, '\f'); // Escaped char => \f
-    last = value.substr(pos - 1, 1);         // Last character
+    frag = frag.replace(/\\(?!b)\w/ig, '\f'); // Escaped char => \f
+    var last = value.substr(pos - 1, 1);         // Last character
 
     switch (id) {
     case 'ruleEdit_name':       // Prompts for name is consistent
         return;
-    case 'ruleEdit_match': case 'ruleEdit_sub':
+    case 'ruleEdit_match':
+    case 'ruleEdit_sub':
         switch ($(id + 'type').selectedIndex) { // Input type
         case $v.type.regexp:    // RegExp
             if ((/\{\d+$/).test(frag)) { // {...
@@ -35,18 +53,18 @@ Prompt.prototype.refresh = function (id) { // Refresh prompt data
                     [{'msg': ',', 'desc': ''},
                      {'msg': '}', 'desc': ''}]
                 );
-            } if ((/\{\d+,\d+$/).test(frag)) { // {...,...
+            } else if ((/\{\d+,\d+$/).test(frag)) { // {...,...
                 list = list.concat(
                     [{'msg': '}', 'desc': ''}]
                 );
-            } else if ((/\[[^\]]*$/).test(frag)) { // [...
-                if (last === '\[') {
+            } else if ((/\[(?!\w*\[\w*)$/).test(frag)) { // [...
+                if (last === '[') {
                     list = list.concat([{'msg': '^', 'desc': ''}]);
                 }
 
                 list = list.concat(this.re.esc);
             } else {                          // ( or common context
-                if ((/\((?!\?$)[^\)]+$/).test(frag)) { // (...
+                if ((/\((?!\?$|\w*\)\w*)$/).test(frag)) { // (...
                     list = list.concat([{'msg': ')', 'desc': ''}]);
                 }
 
@@ -100,12 +118,19 @@ Prompt.prototype.refresh = function (id) { // Refresh prompt data
                     list = list.concat(this.re.com);
                     list = list.concat(this.re.esc);
                     break;
-                case '': case '^': case '|':
-                case '*': case '+': case '?': case '}':
+                case '':
+                case '^':
+                case '|':
+                case '*':
+                case '+':
+                case '?':
+                case '}':
                     list = list.concat(this.re.com);
                     list = list.concat(this.re.esc);
                     break;
-                case '$': case '{': case ',':
+                case '$':
+                case '{':
+                case ',':
                     break;
                 default:
                     list = list.concat(this.re.qt);
@@ -116,7 +141,9 @@ Prompt.prototype.refresh = function (id) { // Refresh prompt data
             break;
         case $v.type.glob:      // Globbing
             switch (last) {
-            case '': case '*': case '?':
+            case '':
+            case '*':
+            case '?':
                 list = [];
                 break;
             default:
@@ -144,11 +171,15 @@ Prompt.prototype.refresh = function (id) { // Refresh prompt data
                  {'msg': prefix + '\'', 'desc': ''}];
 
             // Add $n
-            if ($('ruleEdit_subtype').selectedIndex === $v.type.regexp) {
-                var arrParen = $('ruleEdit_substr').value.match(/\(/g);
+            if ($('ruleEdit_subtype').selectedIndex ===
+                $v.type.regexp) {
+                var arrParen =
+                    $('ruleEdit_substr').value.match(/\(/g);
                 if (arrParen !== null) {
                     for (var i = 1; i <= arrParen.length; i++) {
-                        list = list.concat([{'msg': prefix + i, 'desc': ''}]);
+                        list = list.concat(
+                            [{'msg': prefix + i, 'desc': ''}]
+                        );
                     }
                 }
             }
@@ -201,7 +232,9 @@ Prompt.prototype.refresh = function (id) { // Refresh prompt data
                 list =
                     [{'msg': 'e://', 'desc': ''}];
                 break;
-            case 'https': case 'ftp': case 'file':
+            case 'https':
+            case 'ftp':
+            case 'file':
                 list =
                     [{'msg': '://', 'desc': ''}];
                 break;
@@ -220,31 +253,31 @@ Prompt.prototype.refresh = function (id) { // Refresh prompt data
 
 Prompt.prototype.update = function (id, list, code) { // Update prompt
     // id: section id; list: prompt data; code: execute after update
-    var prompt, html = document.createElement('ul'), dom, hrefs;
+    var html = document.createElement('ul');
     var txt = id + 'str';       // Input textbox
     var onClick = function () { // Function called when clicked
         // Text to be inserted
         var text = this.getElementsByTagName('span')[0].innerText;
         // Cursor postion after insertion
-        var index = $(txt).selectionStart + text.length;
+        var idx = $(txt).selectionStart + text.length;
         $(txt).value =          // Insert
             $(txt).value.substring(0, $(txt).selectionStart) +
             text +
             $(txt).value.substring($(txt).selectionStart);
         // Set cursor
-        $(txt).selectionStart = $(txt).selectionEnd = index;
+        $(txt).selectionStart = $(txt).selectionEnd = idx;
 
         if (typeof code !== 'undefined') { // Execute code
             code();
         }
 
         $(txt).onclick();       // Update cursor position
-        $(txt).selectedIndex = 0; // Select the first menu entry
-        return text.length;       // Used by <Enter>
+        $(txt).selectedIdx = 0; // Select the first menu entry
+        return text.length;     // Used by <Enter>
     };
 
     for (var i = 0; i < list.length; i++) { // Built up menu
-        dom = document.createElement('li');
+        var dom = document.createElement('li');
         dom.onclick = onClick;
         dom.innerHTML = '<span>' + list[i].msg + '</span>' +
             '<span>&nbsp;' + list[i].desc + '</span>';
@@ -273,7 +306,7 @@ Prompt.prototype.init = function (id, list, code) { // Init prompts
             menu[i].className = '';
         }
 
-        $(txt).selectedIndex = undefined;
+        $(txt).selectedIdx = undefined;
     };
 
     node.onmouseout = function () {
@@ -286,7 +319,7 @@ Prompt.prototype.init = function (id, list, code) { // Init prompts
     $(txt).colorize = function () { // Highlight selected
         var menu = $$('#' + node.id + ' li');
         for (var i = 0; i < menu.length; i++) {
-            if (i === this.selectedIndex) {
+            if (i === this.selectedIdx) {
                 menu[i].className = 'selected';
             } else {
                 menu[i].className = '';
@@ -301,7 +334,7 @@ Prompt.prototype.init = function (id, list, code) { // Init prompts
         $(node.id).style.display = 'inline';
         $v['prompt_' + id.replace('ruleEdit_', '')].refresh(id);
 
-        this.selectedIndex = 0;
+        this.selectedIdx = 0;
     };
 
     $(txt).onblur = function () { // On blured
@@ -313,18 +346,16 @@ Prompt.prototype.init = function (id, list, code) { // Init prompts
             $(node.id).style.display = 'none';
         }
 
-        this.selectedIndex = undefined;
+        this.selectedIdx = undefined;
     };
 
     $(txt).onclick = function (e) { // On clicked
-        var maxNum, num;
-
-        if ($(node.id) === null) { // Prompts disabled
+        if ($(node.id) === null) {  // Prompts disabled
             return;
         }
 
-        maxNum = Math.floor((this.offsetWidth - 5) / 9); // Max num
-        num = this.selectionStart;                       // Real num
+        var maxNum = Math.floor((this.offsetWidth - 5) / 9); // Max
+        var num = this.selectionStart;                       // Real
         num = num > maxNum ? maxNum : num;
         // Move prompts to correct position
         $(node.id).style.marginLeft = num * 9 + 5 + 'px';
@@ -347,25 +378,26 @@ Prompt.prototype.init = function (id, list, code) { // Init prompts
             $v['prompt_' + id.replace('ruleEdit_', '')].refresh(id);
         }
         this.colorize();
-    }
+    };
 
     $(txt).onkeydown = function (e) { // On key pressed down
-        var maxNum, num;
-
-        if ($(node.id) === null) { // Prompts disabled
+        if ($(node.id) === null) {    // Prompts disabled
             return;
         }
 
-        maxNum = Math.floor((this.offsetWidth - 5) / 9);
-        num = this.selectionStart;
+        var maxNum = Math.floor((this.offsetWidth - 5) / 9);
+        var num = this.selectionStart;
         num = num > maxNum ? maxNum : num;
 
         switch (e.keyCode) {
         case 13:                // Enter
             var menu = $$('#' + node.id + ' li');
-            if (this.selectedIndex !== undefined &&
-                menu[this.selectedIndex] !== undefined) {
-                num += menu[this.selectedIndex].onclick();
+            if (typeof this.selectedIdx !== 'undefined' &&
+                menu[this.selectedIdx] !== undefined) {
+                var tmp = menu[this.selectedIdx].onclick();
+                if (id !== 'ruleEdit_name') {
+                    num += tmp;
+                }
             }
             e.preventDefault(); // Prevent submitting the form
             break;
@@ -387,34 +419,36 @@ Prompt.prototype.init = function (id, list, code) { // Init prompts
             num = 0;
             break;
         case 38:                // Up
-            if (this.selectedIndex === undefined ||
-                --this.selectedIndex < 0) {
-                this.selectedIndex = $$('#' + node.id + ' li').length - 1;
+            if (this.selectedIdx === undefined ||
+                --this.selectedIdx < 0) {
+                this.selectedIdx =
+                    $$('#' + node.id + ' li').length - 1;
             }
             e.preventDefault(); // Prevent cursor moving to beginning
             break;
         case 40:                // Down
-            if (this.selectedIndex === undefined ||
-                ++this.selectedIndex >= $$('#' + node.id + ' li').length) {
-                this.selectedIndex = 0;
+            if (this.selectedIdx === undefined ||
+                ++this.selectedIdx >=
+                $$('#' + node.id + ' li').length) {
+                this.selectedIdx = 0;
             }
             e.preventDefault(); // Prevent cursor moving to end
             break;
         case 33:                // PgUp
-            this.selectedIndex = 0;
+            this.selectedIdx = 0;
             e.preventDefault(); // Prevent scrolling up
             break;
         case 34:                // PgDn
-            this.selectedIndex = $$('#' + node.id + ' li').length - 1;
+            this.selectedIdx = $$('#' + node.id + ' li').length - 1;
             e.preventDefault(); // Prevent scrolling down
             break;
         case 27:                // Esc
             $(node.id).style.display = 'none';
-            this.selectedIndex = undefined;
+            this.selectedIdx = undefined;
             return;
         case 9:                 // Tab
             $(node.id).style.display = 'inline';
-            this.selectedIndex = 0;
+            this.selectedIdx = 0;
             e.preventDefault(); // Prevent jumping to next tabIndex
             return;
         case 16: case 17: case 18: case 19: case 20:
@@ -429,13 +463,13 @@ Prompt.prototype.init = function (id, list, code) { // Init prompts
 
         $(node.id).style.marginLeft = num * 9 + 5 + 'px';
         this.colorize();
-    }
+    };
 };
 
 Prompt.prototype.re = {         // Prompts for RegExp
     'com': [                    // Common chars
         {'msg': '.', 'desc': ''},
-        {'msg': '\\', 'desc': ''},
+        {'msg': '\\', 'desc': ''}
     ],
 
     'esc': [                    // Escape sequences
@@ -484,20 +518,8 @@ Prompt.prototype.header = [     // Prompts for headers
     {'msg': 'Accept-Language',
      'desc': 'Acceptable languages for response'
     },
-    {'msg': 'Authorization',
-     'desc': 'Authentication credentials for HTTP authentication'
-    },
-    {'msg': 'Cache-Control',
-     'desc': 'Used to specify directives that MUST be obeyed by all caching mechanisms along the request/response chain'
-    },
-    {'msg': 'Connection',
-     'desc': 'What type of connection the user-agent would prefer'
-    },
     {'msg': 'Cookie',
      'desc': 'an HTTP cookie previously sent by the server with Set-Cookie'
-    },
-    {'msg': 'Content-Length',
-     'desc': 'The length of the request body in octets (8-bit bytes)'
     },
     {'msg': 'Content-MD5',
      'desc': 'A Base64-encoded binary MD5 sum of the content of the request body'
@@ -514,32 +536,14 @@ Prompt.prototype.header = [     // Prompts for headers
     {'msg': 'From',
      'desc': 'The email address of the user making the request'
     },
-    {'msg': 'Host',
-     'desc': 'The domain name of the server (for virtual hosting)'
-    },
     {'msg': 'If-Match',
      'desc': 'Only perform the action if the client supplied entity matches the same entity on the server.'
-    },
-    {'msg': 'If-Modified-Since',
-     'desc': 'Allows a 304 Not Modified to be returned if content is unchanged'
-    },
-    {'msg': 'If-None-Match',
-     'desc': 'Allows a 304 Not Modified to be returned if content is unchanged, see HTTP ETag'
-    },
-    {'msg': 'If-Range',
-     'desc': 'If the entity is unchanged, send me the part(s) that I am missing; otherwise, send me the entire new entity'
     },
     {'msg': 'If-Unmodified-Since',
      'desc': 'Only send the response if the entity has not been modified since a specific time.'
     },
     {'msg': 'Max-Forwards',
      'desc': 'Limit the number of times the message can be forwarded through proxies or gateways.'
-    },
-    {'msg': 'Pragma',
-     'desc': 'Implementation-specific headers that may have various effects anywhere along the request-response chain.'
-    },
-    {'msg': 'Proxy-Authorization',
-     'desc': 'Authorization credentials for connecting to a proxy.'
     },
     {'msg': 'Range',
      'desc': 'Request only part of an entity. Bytes are numbered from 0.'

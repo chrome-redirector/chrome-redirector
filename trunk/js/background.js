@@ -1,10 +1,27 @@
-/**
- * Background
- */
+/* Background script.
 
-/*jslint plusplus: false */
-/*global $: true, $$: true, $v: true, $f: true, tmp: true,
-  chrome: true, RuleList: true, Pref: true*/
+   Copyright (C) 2010-2012.
+
+   This file is part of Redirector.
+
+   Redirector is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Redirector is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Redirector.  If not, see <http://www.gnu.org/licenses/>.
+
+   From Cyril Feng. */
+
+/*jslint browser: true, onevar: false, plusplus: false*/
+/*global $: true, $$: true, $v: true, $f: true*/
+/*global chrome: true, RuleList: true, Pref: true*/
 
 $f.loadPref = function () {           // Load preferences data
     $v.prefData = (new Pref()).data; // All preferences data
@@ -29,8 +46,6 @@ $f.loadPref = function () {           // Load preferences data
 };
 
 $f.updateContext = function () {      // Update the context menu
-    var parentLink, parentPage, idx;
-
     function newTab(info, tab) { // Open a new tab
         chrome.tabs.create({
             url: $f.getRedirUrl(
@@ -53,7 +68,7 @@ $f.updateContext = function () {      // Update the context menu
 
     if ($v.ruleManual.length > 0) { // No manual rule
         if ($v.prefData.context.link) { // Links' context menu enabled
-            parentLink = chrome.contextMenus.create({ // Parent entry
+            var parentLink = chrome.contextMenus.create({ // Parent
                 title: 'Open link with rule',
                 contexts: ['link']
             });
@@ -70,7 +85,7 @@ $f.updateContext = function () {      // Update the context menu
         }
 
         if ($v.prefData.context.page) { // Pages' context menu enabled
-            parentPage = chrome.contextMenus.create({ // Parent entry
+            var parentPage = chrome.contextMenus.create({ // Parent
                 title: 'Reload page with rule'
             });
 
@@ -99,8 +114,7 @@ $f.updateContext = function () {      // Update the context menu
 };
 
 $f.loadRule = function (data) { // Called when rule list needs update
-    var dry = false, ruleData, rule;
-
+    var dry = false;
     if (typeof data !== 'undefined') {
         dry = true;             // Dry run
     } else {
@@ -113,7 +127,7 @@ $f.loadRule = function (data) { // Called when rule list needs update
         $v.ruleHdr = [];        // Rules for http request header
     }
     for (var i = 0; i < data.length; i++) {
-        rule = data[i];     // Current rule
+        var rule = data[i];     // Current rule
 
         // Rule must be enabled
         if (dry === false &&
@@ -124,7 +138,7 @@ $f.loadRule = function (data) { // Called when rule list needs update
         // For a manual rule
         if (rule.match.type === $v.type.manual) {
             try {
-                tmp = {         // Tmp manual rule, to be chked
+                var tmp = {     // Tmp manual rule, to be chked
                     name: rule.name,
                     sub: $f.str2re(rule.sub),
                     repl: rule.repl.str,
@@ -139,16 +153,15 @@ $f.loadRule = function (data) { // Called when rule list needs update
             }
 
             if (dry !== true) {
-                $v.ruleManual.push(tmp); // Formally add to manual rule
+                $v.ruleManual.push(tmp); // Add to manual rule
                 continue;
             }
         }
 
-        // Beta-begin
         // For a header rule
         if (rule.sub.type === $v.type.hdr) {
             try {
-                tmp = {
+                var tmp = {
                     match: $f.str2re(rule.match),
                     sub: $f.splitVl(rule.sub.str),
                     repl: $f.splitVl(rule.repl.str)
@@ -170,11 +183,10 @@ $f.loadRule = function (data) { // Called when rule list needs update
                 continue;
             }
         }
-        // Beta-end
 
         // For an auto rule
         try {
-            tmp = {             // Tmp auto rule, to be chked
+            var tmp = {             // Tmp auto rule, to be chked
                 match: $f.str2re(rule.match),
                 sub: $f.str2re(rule.sub),
                 repl: rule.repl.str,
@@ -209,7 +221,7 @@ chrome.webRequest.onBeforeRequest.addListener( // Auto redirect
         }
 
         for (var i = 0; i < $v.ruleAuto.length; i++) {
-            if ($v.ruleAuto[i].match.test(tmp.url)) { // match this URL
+            if ($v.ruleAuto[i].match.test(tmp.url)) { // Match
                 if ($v.ruleAuto[i].sub === null) {    // To block
                     return {cancel: true};
                 } else {        // To redirect
@@ -239,43 +251,36 @@ chrome.webRequest.onBeforeRequest.addListener( // Auto redirect
 //     {urls: $v.validUrl}
 // );
 
-// Beta-begin
 chrome.webRequest.onBeforeSendHeaders.addListener(
     function (tmp) {
-        var flt, idx, addArr;
-
-        flt = function (arr) {
-            arr.filter(function (t) {
-                return (/^\+/).test(t);
-            });
-        };
-
         for (var i = 0; i < $v.ruleHdr.length; i++) {
-            if ($v.ruleHdr[i].match.test(tmp.url)) { // match this URL
+            var currentRule = $v.ruleHdr[i];
+            if (currentRule.match.test(tmp.url)) { // match this URL
+                var currentHeaders = [];
                 for (var j = 0; j < tmp.requestHeaders.length; j++) {
-                    if ((idx = $v.ruleHdr[i].sub.indexOf(
-                        tmp.requestHeaders[j].name)) !== -1) {
-                        // Modify header
-                        tmp.requestHeaders[j].value =
-                            $v.ruleHdr[i].repl[idx];
-                    } else if ((idx = $v.ruleHdr[i].sub.indexOf(
-                        '-' + tmp.requestHeaders[j].name)) !== -1) {
-                        // Delete header
-                        tmp.requestHeaders.splice(j, 1);
+                    currentHeaders.push(tmp.requestHeaders[j].name);
+                }
+
+                for (var j = 0; j < currentRule.sub.length; j++) {
+                    var idx;
+                    if ((idx = currentHeaders.indexOf(
+                        currentRule.sub[j])) !== -1) { // Exists
+                        tmp.requestHeaders[idx].value =
+                            currentRule.repl[j];
+                    } else if ((idx = currentHeaders.indexOf(
+                        '-' + currentRule.sub[j])) !== -1) { // To del
+                        tmp.requestHeaders.splice(idx, 1);
+                    } else {    // To create
+                        if ((/^(?!-)/).test(currentRule.sub[j])) {
+                            // Do not create headers with name `-...'
+                            tmp.requestHeaders.push({
+                                name: currentRule.sub[j],
+                                value: currentRule.repl[j]
+                            });
+                        }
                     }
                 }
 
-                // Add headers
-                addArr = flt($v.ruleHdr[i].sub);
-                for (var k = 0; k < addArr.length; k++) {
-                    tmp.requestHeaders.push({
-                        name: addArr[k].replace('+', ''),
-                        value: $v.ruleHdr[i].repl[
-                            $v.ruleHdr[i].sub.indexOf(addArr[k])]
-                    });
-                }
-
-                // console.log(tmp.requestHeaders);
                 return {requestHeaders: tmp.requestHeaders};
             }
         }
@@ -283,4 +288,3 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
     {urls: $v.validUrl},
     ["blocking", "requestHeaders"]
 );
-// Beta-end

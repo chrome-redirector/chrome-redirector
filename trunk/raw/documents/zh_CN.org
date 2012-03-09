@@ -1,7 +1,30 @@
+#+BEGIN_COMMENT
+User guide (Simplified Chinese).
+
+Copyright (C) 2010-2012.
+
+This file is part of Redirector.
+
+Redirector is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Redirector is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Redirector.  If not, see <http://www.gnu.org/licenses/>.
+
+From Cyril Feng.
+#+END_COMMENT
+
 #+TITLE:     Redirector指南
 #+AUTHOR:    Cyril Feng
 #+EMAIL:     CyrilFeng@gmail.com
-#+DATE:      2012-02-25
+#+DATE:      2012-03-08
 #+DESCRIPTION:
 #+KEYWORDS:
 #+LANGUAGE:  zh-CN
@@ -124,6 +147,13 @@
 **** 屏蔽
      /Redirector/ 除了重定向，也可以屏蔽一条请求。
 
+**** 请求头
+     这个选项用来修改“HTTP请求头”。
+     这时 /被替换式/ 应是要修改的请求头的名字。
+     如果一个请求头不存在，那么它会被创建。
+     要删除一个请求头，请在名称前放置减号 ~-~ 。
+     如有多条请求头要修改，用竖线 ~|~ 分隔。
+
 *** 替换式
     /替换式/ 用作 /被替换式/ 的填充。
     你可以使用普通的字符串，不过注意 ~$~ 应写作 ~$$~ ，因为
@@ -132,6 +162,10 @@
 
     /解码URL/ 选项用作解码最终URL中被编码的字符，比如
     - ~http%3A%2F%2Fwww.google.com%2F~ 译为 ~http://www.google.com/~ 。
+
+    值得注意的是，若 /被替换式/ 是请求头类型的，则替换式应当是对应的值，也用竖线 ~|~ 分隔。
+    若值中包括字面意义的竖线 ~|~ ，请使用 ~\|~ 代替。
+    对于要删除的请求头，对应的值可以留空。
 
 ** 测试
    你应当测试每条编写的规则，否则可能会导致 /Cr/ 假死或者抱怨"He's Dead, Jim!"。

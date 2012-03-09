@@ -1,9 +1,27 @@
-/**
- * Common data
- */
+/* Common data.
 
-/*global $: true, $$: true, $v: true, $f: true, tmp: true,
-  chrome: true, document: true, XMLHttpRequest: true */
+   Copyright (C) 2010-2012.
+
+   This file is part of Redirector.
+
+   Redirector is free software: you can redistribute it and/or modify
+   it under the terms of the GNU General Public License as published by
+   the Free Software Foundation, either version 3 of the License, or
+   (at your option) any later version.
+
+   Redirector is distributed in the hope that it will be useful,
+   but WITHOUT ANY WARRANTY; without even the implied warranty of
+   MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+   GNU General Public License for more details.
+
+   You should have received a copy of the GNU General Public License
+   along with Redirector.  If not, see <http://www.gnu.org/licenses/>.
+
+   From Cyril Feng. */
+
+/*jslint browser: true, onevar: false, plusplus: false*/
+/*global $: true, $$: true, $v: true, $f: true*/
+/*global chrome: true*/
 
 Object.prototype.merge = function (src) { // Merge obj from src
     for (var prop in src) {
@@ -31,18 +49,7 @@ $v.debug = true;                // Global debug symbol
 $v.type.regexp = 0;
 $v.type.glob = 1;
 $v.type.manual = $v.type.block = 2;
-// Beta-begin
 $v.type.hdr = 3;
-$f.splitVl = function (str) {
-    str = str.replace(/\\\\/g, '\0');
-    str = str.replace(/\\\|/g, '\f');
-    str = str.split(/\s*\|\s*/);
-    str = str.join('\v');
-    str = str.replace(/\f/g, '\\|');
-    str = str.replace(/\0/g, '\\\\');
-    return str.split('\v');
-};
-// Beta-end
 
 $f.dbg = function (msg) {
     if ($v.debug === true) {
@@ -50,12 +57,22 @@ $f.dbg = function (msg) {
     }
 };
 
+$f.splitVl = function (str) {
+    str = str.replace(/\\\\/g, '\x00');
+    str = str.replace(/\\\|/g, '\f');
+    str = str.split(/\s*\|\s*/);
+    str = str.join('\v');
+    str = str.replace(/\f/g, '\\|');
+    str = str.replace(/\0/g, '\\\\');
+    return str.split('\v');
+};
+
 $f.glob2re = function (glob) {
     var escChar = '(){}[]^$.+*?|', re = [];
 
-    glob = glob.replace(/\\\\/g, '\0'); // \\ -> \0
-    glob = glob.replace(/\\\*/g, '\f'); // \* -> \f
-    glob = glob.replace(/\\\?/g, '\v'); // \? -> \v
+    glob = glob.replace(/\\\\/g, '\x00'); // \\ -> \0
+    glob = glob.replace(/\\\*/g, '\f');   // \* -> \f
+    glob = glob.replace(/\\\?/g, '\v');   // \? -> \v
 
     glob = glob.split('');
     for (var i = 0; i < glob.length; i++) {
@@ -82,9 +99,8 @@ $f.glob2re = function (glob) {
     return re;
 };
 
-$f.str2re = function (proto) {        // Construct compiled regexp from str
-    var str, mod;
-    str = proto.str;
+$f.str2re = function (proto) {  // Construct compiled regexp from str
+    var str = proto.str;
 
     if (proto.hasOwnProperty('type')) {
         if (proto.type === $v.type.block) {
@@ -96,7 +112,7 @@ $f.str2re = function (proto) {        // Construct compiled regexp from str
         }
     }
 
-    mod = '';
+    var mod = '';
     if (proto.hasOwnProperty('modi') && proto.modi) {
         mod += 'i';
     }
@@ -105,7 +121,7 @@ $f.str2re = function (proto) {        // Construct compiled regexp from str
     }
 
     try {
-        tmp = new RegExp(str, mod);
+        var tmp = new RegExp(str, mod);
         tmp.compile(tmp);
     } catch (e) {
         return e;
@@ -128,17 +144,17 @@ $f.iNotif = function (innerHTML) {
     $('layerNotif').className = 'active';
 };
 
-$f.notif = function (innerHTML) {     // Green
+$f.notif = function (innerHTML) { // Green
     $f.iNotif(innerHTML);
     $('layerNotif').style.background = '#6f6';
 };
 
-$f.warn = function (innerHTML) {      // Yellow
+$f.warn = function (innerHTML) { // Yellow
     $f.iNotif(innerHTML);
     $('layerNotif').style.background = '#ff6';
 };
 
-$f.err = function (innerHTML) {       // Orange
+$f.err = function (innerHTML) { // Orange
     $f.iNotif(innerHTML);
     $('layerNotif').style.background = '#f60';
 };
