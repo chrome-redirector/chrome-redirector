@@ -68,7 +68,7 @@ Pref = function () {            // Obj holds preferences data/method
 
 Pref.prototype.refresh = function () { // Save & reload pref data
     localStorage.PREF = JSON.stringify(this.data);
-    $v.ext_bg.$f.loadPref();
+    $v.ext_bg.loadPref();
 };
 
 Pref.prototype.onChgProto = function (proto) { // On protocols changed
@@ -92,7 +92,7 @@ Pref.prototype.onChgContext = function () { // On manual setting chged
     this.data.context.page = $('pref_context_page').checked;
 
     this.refresh();
-    $v.ext_bg.$f.updateContext();
+    $v.ext_bg.updateContext();
 };
 
 Pref.prototype.onChgPrompt = function () {

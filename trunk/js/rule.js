@@ -395,7 +395,7 @@ RuleList.prototype.test = function () { // Test the current rule
 
 RuleList.prototype.refresh = function (force) { // Refresh the list
     if (typeof force === 'undefined') {
-        var tmp = $v.ext_bg.$f.loadRule(
+        var tmp = $v.ext_bg.loadRule(
             [this.data[this.sel]]
         );                             // Dry run
         if (typeof tmp === 'string') { // Error occurred (Err str)
@@ -405,7 +405,7 @@ RuleList.prototype.refresh = function (force) { // Refresh the list
     }
 
     localStorage.RULELIST = JSON.stringify(this.data);
-    $v.ext_bg.$f.loadRule();
+    $v.ext_bg.loadRule();
 
     return true;
 };

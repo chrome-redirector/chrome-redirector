@@ -21,9 +21,61 @@
 
 /*jslint browser: true, onevar: false, plusplus: false*/
 /*global $: true, $$: true, $v: true, $f: true*/
-/*global chrome: true, RuleList: true, Pref: true*/
+/*global chrome: true, localStorage: true, RuleList: true, Pref: true*/
 
-$f.loadPref = function () {           // Load preferences data
+var onBeforeRequestListener = function (tmp) {
+    if ($v.ruleAuto.length === 0) { // No auto rule
+        return;
+    }
+
+    for (var i = 0; i < $v.ruleAuto.length; i++) {
+        if ($v.ruleAuto[i].match.test(tmp.url)) { // Match
+            if ($v.ruleAuto[i].sub === null) {    // To block
+                return {cancel: true};
+            } else {        // To redirect
+                return {redirectUrl:
+                        $f.getRedirUrl(tmp.url, $v.ruleAuto[i])};
+            }
+        }
+    }
+};
+
+var onBeforeSendHeadersListener = function (tmp) {
+    for (var i = 0; i < $v.ruleHdr.length; i++) {
+        var currentRule = $v.ruleHdr[i];
+        if (currentRule.match.test(tmp.url)) { // match this URL
+            var currentHeaders = [];
+            for (var j = 0; j < tmp.requestHeaders.length; j++) {
+                currentHeaders.push(tmp.requestHeaders[j].name);
+            }
+
+            for (var j = 0; j < currentRule.sub.length; j++) {
+                var idx;
+                if ((idx = currentHeaders.indexOf(
+                    currentRule.sub[j])) !== -1) { // Exists
+                    tmp.requestHeaders[idx].value =
+                        currentRule.repl[j];
+                } else if ((idx = currentHeaders.indexOf(
+                    currentRule.sub[j].replace(/^-/, '')
+                )) !== -1) { // To del
+                    tmp.requestHeaders.splice(idx, 1);
+                } else {    // To create
+                    if ((/^(?!-)/).test(currentRule.sub[j])) {
+                        // Do not create headers with name `-...'
+                        tmp.requestHeaders.push({
+                            name: currentRule.sub[j],
+                            value: currentRule.repl[j]
+                        });
+                    }
+                }
+            }
+
+            return {requestHeaders: tmp.requestHeaders};
+        }
+    }
+};
+
+var loadPref = function () {           // Load preferences data
     $v.prefData = (new Pref()).data; // All preferences data
 
     if ($v.prefData.proto.all) {      // All protocols enabled
@@ -45,64 +97,80 @@ $f.loadPref = function () {           // Load preferences data
     }
 };
 
-$f.updateContext = function () {      // Update the context menu
-    function newTab(info, tab) { // Open a new tab
-        chrome.tabs.create({
-            url: $f.getRedirUrl(
-                info.linkUrl,
-                $v.ruleManual[info.menuItemId - newTab.idx - 1]
-            )
-        });
-    }
+var updateContext = function () {      // Update the context menu
+    var onClick = function (info, tab) {
+        var rule = $v.ruleManual[
+            info.menuItemId - info.parentMenuItemId - 1
+        ];
 
-    function inTab(info, tab) { // Reload current tab
-        chrome.tabs.update(tab.id, {
-            url: $f.getRedirUrl(
-                info.pageUrl,
-                $v.ruleManual[info.menuItemId - inTab.idx - 1]
-            )
-        });
-    }
+        if (info.hasOwnProperty('srcUrl')) {
+            chrome.tabs.create({
+                url: $f.getRedirUrl(info.srcUrl, rule)
+            });
+        } else if (info.hasOwnProperty('linkUrl')) {
+            chrome.tabs.create({
+                url: $f.getRedirUrl(info.linkUrl, rule)
+            });
+        } else {
+            chrome.tabs.update(tab.id, {
+                url: $f.getRedirUrl(info.pageUrl, rule)
+            });
+        }
+    };
 
-    chrome.contextMenus.removeAll(); // Remove previous created menus
+    chrome.contextMenus.removeAll(); // Remove previous menus
 
-    if ($v.ruleManual.length > 0) { // No manual rule
+    if ($v.status === true && $v.ruleManual.length > 0) {
         if ($v.prefData.context.link) { // Links' context menu enabled
             var parentLink = chrome.contextMenus.create({ // Parent
-                title: 'Open link with rule',
-                contexts: ['link']
+                title: 'Open in new tab with rule...',
+                contexts: ['link', 'image']
             });
 
             for (var i = 0; i < $v.ruleManual.length; i++) { // Sub
-                newTab.idx = parentLink;
                 chrome.contextMenus.create({
                     title: $v.ruleManual[i].name,
-                    contexts: ['link'],
+                    contexts: ['link', 'image'],
                     parentId: parentLink,
-                    onclick: newTab
+                    onclick: onClick
                 });
             }
         }
 
         if ($v.prefData.context.page) { // Pages' context menu enabled
             var parentPage = chrome.contextMenus.create({ // Parent
-                title: 'Reload page with rule'
+                title: 'Reload current page with rule...',
+                contexts: ['page', 'frame']
             });
 
             for (var i = 0; i < $v.ruleManual.length; i++) { // Sub
-                inTab.idx = parentPage;
                 chrome.contextMenus.create({
                     title: $v.ruleManual[i].name,
+                    contexts: ['page', 'frame'],
                     parentId: parentPage,
-                    onclick: inTab
+                    onclick: onClick
                 });
             }
         }
     }
 
+    var title = $v.status === true ? 'Enabled' : 'Disabled';
+    chrome.contextMenus.create({ // Open options page
+        type: 'checkbox',
+        title: title,
+        checked: $v.status,
+        contexts: ['all'],
+        onclick: function (info) {
+            $v.status = info.checked;
+            localStorage.STATUS = JSON.stringify($v.status);
+            updateContext();
+            init();
+        }
+    });
+
     chrome.contextMenus.create({ // Open options page
         title: 'Options...',
-        contexts: ['link', 'page'],
+        contexts: ['all'],
         onclick: function () {
             chrome.tabs.create({
                 url: 'chrome-extension://' +
@@ -113,7 +181,7 @@ $f.updateContext = function () {      // Update the context menu
     });
 };
 
-$f.loadRule = function (data) { // Called when rule list needs update
+var loadRule = function (data) { // Called when rule list needs update
     var dry = false;
     if (typeof data !== 'undefined') {
         dry = true;             // Dry run
@@ -208,84 +276,56 @@ $f.loadRule = function (data) { // Called when rule list needs update
         }
     }
 
-    $f.updateContext();            // Now referesh context menu
+    updateContext();            // Now referesh context menu
 };
 
-$f.loadPref();                     // Load preferences data
-$f.loadRule();                     // Load rule list
+var onInit = function () {
+    if ($v.status === true) {
+        chrome.webRequest.onBeforeRequest.addListener( // Auto redir
+            onBeforeRequestListener, {urls: $v.validUrl}, ['blocking']
+        );
 
-chrome.webRequest.onBeforeRequest.addListener( // Auto redirect
-    function (tmp) {
-        if ($v.ruleAuto.length === 0) { // No auto rule
-            return;
+        chrome.webRequest.onBeforeSendHeaders.addListener(
+            onBeforeSendHeadersListener,
+            {urls: $v.validUrl},
+            ['blocking', 'requestHeaders']
+        );
+    } else {
+        if (chrome.webRequest.onBeforeRequest.hasListener(
+            onBeforeRequestListener)) {
+            chrome.webRequest.onBeforeRequest.removeListener(
+                onBeforeRequestListener
+            );
         }
 
-        for (var i = 0; i < $v.ruleAuto.length; i++) {
-            if ($v.ruleAuto[i].match.test(tmp.url)) { // Match
-                if ($v.ruleAuto[i].sub === null) {    // To block
-                    return {cancel: true};
-                } else {        // To redirect
-                    return {redirectUrl:
-                            $f.getRedirUrl(tmp.url, $v.ruleAuto[i])};
-                }
-            }
+        if (chrome.webRequest.onBeforeSendHeaders.hasListener(
+            onBeforeSendHeadersListener)) {
+            chrome.webRequest.onBeforeSendHeaders.removeListener(
+                onBeforeSendHeadersListener
+            );
         }
-    },
-    {urls: $v.validUrl},
-    ['blocking']
-);
+    }
+};
 
-// errLog = '';                    // Error log
-// // Error of auto redirect
-// chrome.webRequest.onErrorOccurred.addListener(
-//     function (err) {
-//         // Only handle errors in normal main_frame & normal tab
-//         if (err.frameId !== 0 || err.tabId < 0 ||
-//             err.type !== 'main_frame') {
-//             return;
-//         }
+try {
+    $v.status = JSON.parse(localStorage.STATUS);
+} catch (e) {
+    $v.status = true;
+    localStorage.STATUS = JSON.stringify(true);
+}
 
-//         // $f.dbg(err);               // Write debug info
-//         errLog += JSON.stringify(err);
-//     },
-//     {urls: $v.validUrl}
-// );
+loadPref();                     // Load preferences data
+loadRule();                     // Load rule list
+onInit();
 
-chrome.webRequest.onBeforeSendHeaders.addListener(
-    function (tmp) {
-        for (var i = 0; i < $v.ruleHdr.length; i++) {
-            var currentRule = $v.ruleHdr[i];
-            if (currentRule.match.test(tmp.url)) { // match this URL
-                var currentHeaders = [];
-                for (var j = 0; j < tmp.requestHeaders.length; j++) {
-                    currentHeaders.push(tmp.requestHeaders[j].name);
-                }
-
-                for (var j = 0; j < currentRule.sub.length; j++) {
-                    var idx;
-                    if ((idx = currentHeaders.indexOf(
-                        currentRule.sub[j])) !== -1) { // Exists
-                        tmp.requestHeaders[idx].value =
-                            currentRule.repl[j];
-                    } else if ((idx = currentHeaders.indexOf(
-                        currentRule.sub[j].replace(/^-/, '')
-                    )) !== -1) { // To del
-                        tmp.requestHeaders.splice(idx, 1);
-                    } else {    // To create
-                        if ((/^(?!-)/).test(currentRule.sub[j])) {
-                            // Do not create headers with name `-...'
-                            tmp.requestHeaders.push({
-                                name: currentRule.sub[j],
-                                value: currentRule.repl[j]
-                            });
-                        }
-                    }
-                }
-
-                return {requestHeaders: tmp.requestHeaders};
-            }
-        }
-    },
-    {urls: $v.validUrl},
-    ['blocking', 'requestHeaders']
-);
+try {                           // First install
+    var version = JSON.parse(localStorage.VERSION);
+} catch (e) {
+    localStorage.VERSION =
+        JSON.stringify(chrome.app.getDetails().version);
+    chrome.tabs.create({
+        url: 'chrome-extension://' +
+            chrome.i18n.getMessage('@@extension_id') +
+            '/html/options.html'
+    });
+}
