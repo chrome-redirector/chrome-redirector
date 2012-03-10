@@ -156,7 +156,7 @@ RuleList.prototype.onSel = function (e) { // On a row selected
 
 RuleList.prototype.loadBuiltin = function (e) { // Load built-in rules
     try {
-        this.builtinRule = $f.xhrJson('/conf/rule.json');
+        this.builtinRule = JSON.parse($f.readFile('/conf/rule.json'));
     } catch (e) {
         this.builtinRule = [];
     }
@@ -429,15 +429,14 @@ RuleList.prototype.move = function (inc) { // Change the priority
 };
 
 RuleList.prototype.bak = function () { // Backup rule list
-    var link = document.createElement('a'); // Tmp link
-    link.href = 'data:application/x-download;charset=utf-8,' +
-        JSON.stringify(this.data); // Download file (backup)
-    link.download = 'Redirector_' +
-        (new Date()).toISOString().replace(
-                /^(.{10}).(.{8}).*$/, '$1_$2'
-        ) + '.rlst';            // Download filename
+    var date = new Date();
+    var filename = 'Redirector_' +
+        date.toISOString().substring(0, 10) +
+        '_' +
+        date.toLocaleTimeString() +
+        '.json';
 
-    link.mouseClick();          // Simulate mouse click to download
+    $f.writeFile(filename, JSON.stringify(this.data));
 };
 
 RuleList.prototype.restore = function (append) { // Restore rule list

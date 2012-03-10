@@ -93,13 +93,16 @@ Lang.prototype.onSelLang = function (e) { // Language selector handler
 Lang.prototype.loadI18n = function () { // Load the i18n data
     var i18nSet = {};
 
-    var langList = $f.xhrJson('/_locales/lang.json'); // Avail languages
+    var langList = JSON.parse(
+        $f.readFile('/_locales/lang.json')
+    );                          // Avail languages
 
     for (var i in langList) {
         if (langList.hasOwnProperty(i)) {
             try {                   // Determine if a locale available
-                i18nSet[i] =
-                    $f.xhrJson('/_locales/' + i + '/messages.json');
+                i18nSet[i] = JSON.parse(
+                    $f.readFile('/_locales/' + i + '/messages.json')
+                );
             } catch (e) {
                 delete i18nSet[i];  // Delete empty entry
             }

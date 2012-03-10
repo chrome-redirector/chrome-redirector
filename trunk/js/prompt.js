@@ -23,8 +23,8 @@
 /*global $: true, $$: true, $v: true, $f: true*/
 /*global Prompt: true*/
 
-Prompt = function (id, list, code) {  // Prompt obj
-    this.init(id, list, code);
+Prompt = function (id, list, callback) {  // Prompt obj
+    this.init(id, list, callback);
 };
 
 Prompt.prototype.refresh = function (id) { // Refresh prompt data
@@ -251,28 +251,29 @@ Prompt.prototype.refresh = function (id) { // Refresh prompt data
     this.update(id, list);      // Update prompt
 };
 
-Prompt.prototype.update = function (id, list, code) { // Update prompt
-    // id: section id; list: prompt data; code: execute after update
+Prompt.prototype.update = function (id, list, callback) {
+    // id: section id; list: prompt data; callback: callback function
     var html = document.createElement('ul');
-    var txt = id + 'str';       // Input textbox
+    var txt = $(id + 'str');    // Input textbox
     var onClick = function () { // Function called when clicked
         // Text to be inserted
         var text = this.getElementsByTagName('span')[0].innerText;
         // Cursor postion after insertion
-        var idx = $(txt).selectionStart + text.length;
-        $(txt).value =          // Insert
-            $(txt).value.substring(0, $(txt).selectionStart) +
+        var idx = txt.selectionStart + text.length;
+        txt.value =             // Insert
+            txt.value.substring(0, txt.selectionStart) +
             text +
-            $(txt).value.substring($(txt).selectionStart);
+            txt.value.substring(txt.selectionStart);
         // Set cursor
-        $(txt).selectionStart = $(txt).selectionEnd = idx;
+        txt.selectionStart = txt.selectionEnd = idx;
 
-        if (typeof code !== 'undefined') { // Execute code
-            code();
+        if (typeof callback !== 'undefined') { // Execute callback
+            callback();
         }
 
-        $(txt).onclick();       // Update cursor position
-        $(txt).selectedIdx = 0; // Select the first menu entry
+        $(id + 'prompt').hovered = false;
+        txt.onclick();          // Update cursor position
+        txt.selectedIdx = 0;    // Select the first menu entry
         return text.length;     // Used by <Enter>
     };
 
@@ -292,8 +293,8 @@ Prompt.prototype.update = function (id, list, code) { // Update prompt
     }
 };
 
-Prompt.prototype.init = function (id, list, code) { // Init prompts
-    var txt = id + 'str';                           // Input textbox
+Prompt.prototype.init = function (id, list, callback) { // Initialize
+    var txt = $(id + 'str');                        // Input textbox
 
     var node = document.createElement('div'); // Prompt menu
     node.id = id + 'prompt';
@@ -306,17 +307,33 @@ Prompt.prototype.init = function (id, list, code) { // Init prompts
             menu[i].className = '';
         }
 
-        $(txt).selectedIdx = undefined;
+        txt.selectedIdx = undefined;
     };
 
     node.onmouseout = function () {
         this.hovered = false;
     };
 
-    node.appendChild(this.update(id, list, code));
-    $(id).insertBefore(node, $(txt));
+    node.adjPos = function (num) {
+        var maxNum = Math.floor((txt.offsetWidth - 5) / 8);
 
-    $(txt).colorize = function () { // Highlight selected
+        if (txt.value.length >= maxNum) {
+            this.style.width = maxNum * 8 + 5 + 'px';
+            num = 0;
+        } else {
+            this.style.removeProperty('width');
+            num = num > maxNum ? 0 : num;
+        }
+
+        // Move prompts to correct position
+        $(this.id).style.marginLeft = num * 8 + 5 + 'px';
+        $v['prompt_' + id.replace('ruleEdit_', '')].refresh(id);
+    }
+
+    node.appendChild(this.update(id, list, callback));
+    $(id).insertBefore(node, txt);
+
+    txt.colorize = function () { // Highlight selected
         var menu = $$('#' + node.id + ' li');
         for (var i = 0; i < menu.length; i++) {
             if (i === this.selectedIdx) {
@@ -327,7 +344,7 @@ Prompt.prototype.init = function (id, list, code) { // Init prompts
         }
     };
 
-    $(txt).onfocus = function () { // On get focused
+    txt.onfocus = function () {    // On get focused
         if ($(node.id) === null) { // Prompts disabled
             return;
         }
@@ -337,7 +354,7 @@ Prompt.prototype.init = function (id, list, code) { // Init prompts
         this.selectedIdx = 0;
     };
 
-    $(txt).onblur = function () { // On blured
+    txt.onblur = function () {     // On blured
         if ($(node.id) === null) { // Prompts disabled
             return;
         }
@@ -349,22 +366,16 @@ Prompt.prototype.init = function (id, list, code) { // Init prompts
         this.selectedIdx = undefined;
     };
 
-    $(txt).onclick = function (e) { // On clicked
+    txt.onclick = function (e) {   // On clicked
         if ($(node.id) === null) {  // Prompts disabled
             return;
         }
 
-        var maxNum = Math.floor((this.offsetWidth - 5) / 9); // Max
-        var num = this.selectionStart;                       // Real
-        num = num > maxNum ? maxNum : num;
-        // Move prompts to correct position
-        $(node.id).style.marginLeft = num * 9 + 5 + 'px';
-        $v['prompt_' + id.replace('ruleEdit_', '')].refresh(id);
-
+        node.adjPos(this.selectionStart);
         this.colorize();
     };
 
-    $(txt).onkeyup = function (e) { // On key released
+    txt.onkeyup = function (e) { // On key released
         switch (e.keyCode) {
         case 9: case 16: case 17: case 18: case 19: case 20: case 27:
         case 33: case 34: case 38: case 40: case 45: case 46:
@@ -380,14 +391,12 @@ Prompt.prototype.init = function (id, list, code) { // Init prompts
         this.colorize();
     };
 
-    $(txt).onkeydown = function (e) { // On key pressed down
-        if ($(node.id) === null) {    // Prompts disabled
+    txt.onkeydown = function (e) { // On key pressed down
+        if ($(node.id) === null) { // Prompts disabled
             return;
         }
 
-        var maxNum = Math.floor((this.offsetWidth - 5) / 9);
         var num = this.selectionStart;
-        num = num > maxNum ? maxNum : num;
 
         switch (e.keyCode) {
         case 13:                // Enter
@@ -461,7 +470,7 @@ Prompt.prototype.init = function (id, list, code) { // Init prompts
             num++;
         }
 
-        $(node.id).style.marginLeft = num * 9 + 5 + 'px';
+        node.adjPos(num);
         this.colorize();
     };
 };
@@ -519,7 +528,7 @@ Prompt.prototype.header = [     // Prompts for headers
      'desc': 'Acceptable languages for response'
     },
     {'msg': 'Cookie',
-     'desc': 'an HTTP cookie previously sent by the server with Set-Cookie'
+     'desc': 'An HTTP cookie previously sent by the server with Set-Cookie'
     },
     {'msg': 'Content-MD5',
      'desc': 'A Base64-encoded binary MD5 sum of the content of the request body'

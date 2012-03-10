@@ -165,19 +165,34 @@ $f.err = function (innerHTML) { // Orange
     $('layerNotif').style.background = '#f60';
 };
 
-$f.xhrJson = function (file) {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', file, false);
-    xhr.send();
-    return JSON.parse(xhr.responseText);
-};
-
 $f.readFile = function (file, callback) {
-    var reader = new FileReader();
+    if (typeof file === 'string') { // Path
+        var xhr = new XMLHttpRequest();
 
-    reader.onload = function (e) {
-        callback(e.target.result);
+        xhr.open('GET', file, false);
+        xhr.send();
+
+        return xhr.responseText;
+    } else {                    // File Obj
+        var reader = new FileReader();
+
+        reader.onload = function (e) {
+            callback(e.target.result);
+        }
+
+        reader.readAsText(file);
     }
-
-    reader.readAsText(file);
 };
+
+$f.writeFile = function (file, content) {
+    /* Add more features when WebKit support FileWriter interface of
+     * HTML5 File API
+     * `file' can also be of type File
+     */
+    // file: filename (in user's download dir); content: string
+
+    var link = document.createElement('a'); // Tmp link
+    link.href = 'data:text/x-download;charset=utf-8,' + content;
+    link.download = file;
+    link.mouseClick();          // Simulate mouse click to download
+}

@@ -268,7 +268,8 @@ chrome.webRequest.onBeforeSendHeaders.addListener(
                         tmp.requestHeaders[idx].value =
                             currentRule.repl[j];
                     } else if ((idx = currentHeaders.indexOf(
-                        '-' + currentRule.sub[j])) !== -1) { // To del
+                        currentRule.sub[j].replace(/^-/, '')
+                    )) !== -1) { // To del
                         tmp.requestHeaders.splice(idx, 1);
                     } else {    // To create
                         if ((/^(?!-)/).test(currentRule.sub[j])) {

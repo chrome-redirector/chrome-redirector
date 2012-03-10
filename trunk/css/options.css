@@ -270,7 +270,7 @@ input[type="text"], input[type="url"], input:not([type]) {
     margin: 0;
     padding: 3px;
 
-    font: 15px "DejaVu Sans Mono",monospace;
+    font: 13px "DejaVu Sans Mono",monospace;
     width: 99%;
     height: 20px;
 }
@@ -441,7 +441,7 @@ th {
 
 /* Prompt begin */
 .prompt {
-    background-color: rgba(255, 255, 255, 0.9);
+    background-color: rgba(255, 255, 153, 0.9);
     margin-top: 28px;
     float: left;
     display: none;
@@ -450,7 +450,6 @@ th {
     z-index: 51;
     border: 1px solid #BFBFBF;
     border-radius: 2px;
-    max-width: 70%;
     min-width: 10%;
 }
 
