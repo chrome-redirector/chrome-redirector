@@ -1,5 +1,5 @@
 {
-    "DESCRIPTION": {"message": "Redirects URLs automatically/manually"},
+    "DESCRIPTION": {"message": "Modifies URLs & HTTP request headers arbitrarily"},
     "PAGE_TITLE": {"message": "Options"},
     "NAVBAR_PREF": {"message": "Preferences"},
     "NAVBAR_RULEMGR": {"message": "Rules Manager"},
@@ -12,11 +12,9 @@
     "CONTEXT_PAGE": {"message": "Enable context menu for Pages"},
     "PROMPT": {"message": "Input Prompts (Beta)"},
     "PROMPT_CHKBOX": {"message": "Enable input prompts"},
-    "MISC_TITLE": {"message": "Misc"},
     "DOC_TITLE": {"message": "Documents"},
     "RULEMGR_TITLE": {"message": "Rules"},
     "RULEMGR_BAK_TITLE": {"message": "Backup Rules List"},
-    "RULEEDIT_CURRENT": {"message": "Current/New added Rule"},
     "TYPE_REGEXP": {"message": "RegExp"},
     "TYPE_GLOB": {"message": "Wildcard"},
     "TYPE_MANUAL": {"message": "Manual"},
@@ -30,7 +28,7 @@
     "LBL_TEST": {"message": "Test Rule"},
     "LBL_IGNCASE": {"message": "Ignore case"},
     "LBL_SUBGLOB": {"message": "Global match"},
-    "LBL_REPLDECODE": {"message": "Decode URL"},
+    "LBL_REPLDECODE": {"message": "Decode"},
     "RULE_EDITOR": {"message": "Rule Editor"},
 
     "BTN_SAVE": {"message": "Save"},
@@ -42,13 +40,19 @@
     "BTN_DOWN": {"message": "Down"},
     "BTN_BAK": {"message": "Backup"},
     "BTN_RESTORE": {"message": "Restore"},
-    "BTN_APPEND": {"message": "Append"},
+    "BTN_APPEND": {"message": "Import"},
     "BTN_TEST": {"message": "Test"},
 
-    "TEST_NOTMATCH": {"message": "Test URL is not matched!"},
+    "CONTEXT_NEW_TAB": {"message": "Open in new tab with rule..."},
+    "CONTEXT_RELOAD_TAB": {"message": "Reload this tab with rule..."},
+    "CONTEXT_STATUS_ENABLED": {"message": "Enabled"},
+    "CONTEXT_STATUS_DISABLED": {"message": "Globally disabled"},
+    "CONTEXT_OPTIONS": {"message": "Options..."},
+    "TEST_SUB_REPL_CONFLICT": {"message": "Substitution and Replacement conflict!"},
+    "TEST_MISMATCH": {"message": "Test URL is not matched!"},
     "TEST_BLOCK": {"message": "Test URL will be blocked"},
-    "NO_INPUT_FILE": {"message": "No file specified!"},
-    "RULE_RESTORE_ERR": {"message": "Unable to restore!"},
-    "URL_INVALID_PROTO": {"message": "URL has no valid protocol"},
-    "URL_INVALID_CHAR": {"message": "URL contains invalid characters"}
+    "TEST_INVALID_PROTO": {"message": "URL has no valid protocol"},
+    "TEST_INVALID_CHAR": {"message": "URL contains invalid characters"},
+    "BAK_NO_INPUT_FILE": {"message": "No file specified!"},
+    "BAK_RESTORE_ERR": {"message": "Unable to restore!"}
 }

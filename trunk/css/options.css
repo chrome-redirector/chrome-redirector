@@ -216,7 +216,7 @@ input[type="button"], input[type="submit"] {
     font-family: inherit;
     font-size: inherit;
     margin-bottom: 0;
-    min-width: 4em;
+    min-width: 6em;
     padding: 3px 12px;
 }
 

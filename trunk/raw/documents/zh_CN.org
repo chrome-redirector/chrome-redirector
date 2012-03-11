@@ -24,7 +24,7 @@ From Cyril Feng.
 #+TITLE:     Redirector指南
 #+AUTHOR:    Cyril Feng
 #+EMAIL:     CyrilFeng@gmail.com
-#+DATE:      2012-03-08
+#+DATE:      2012-03-11
 #+DESCRIPTION:
 #+KEYWORDS:
 #+LANGUAGE:  zh-CN
@@ -144,8 +144,8 @@ From Cyril Feng.
 **** 通配符
      同 /匹配/ 中的通配符。
 
-**** 屏蔽
-     /Redirector/ 除了重定向，也可以屏蔽一条请求。
+**** 封锁
+     /Redirector/ 除了重定向，也可以封锁一条请求。
 
 **** 请求头
      这个选项用来修改“HTTP请求头”。
@@ -160,7 +160,7 @@ From Cyril Feng.
     [[ADVANCED_SUBSTITUTION][高级替换]]
     中会用到它。
 
-    /解码URL/ 选项用作解码最终URL中被编码的字符，比如
+    /译码/ 选项用作对最终URL中被编码的字符进行译码，比如
     - ~http%3A%2F%2Fwww.google.com%2F~ 译为 ~http://www.google.com/~ 。
 
     值得注意的是，若 /被替换式/ 是请求头类型的，则替换式应当是对应的值，也用竖线 ~|~ 分隔。

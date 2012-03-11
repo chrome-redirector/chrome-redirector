@@ -85,6 +85,7 @@ Pref.prototype.onChgProto = function (proto) { // On protocols changed
     tmp[proto] = $('pref_proto_' + proto).checked; // Save the checked
 
     this.refresh();
+    $v.ext_bg.onInit();
 };
 
 Pref.prototype.onChgContext = function () { // On manual setting chged

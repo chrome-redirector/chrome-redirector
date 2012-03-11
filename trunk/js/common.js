@@ -38,13 +38,17 @@ Element.prototype.mouseClick = function () {
     this.dispatchEvent(e);
 }
 
-function $(id) {                // Id selector
+$ = function (id) {                // Id selector
     return document.getElementById(id);
-}
+};
 
-function $$() {                 // CSS-like selector
+$$ = function () {                 // CSS-like selector
     return document.querySelectorAll.apply(document, arguments);
-}
+};
+
+$i18n = function (msg) {
+    return chrome.i18n.getMessage(msg);
+};
 
 $v = {type: {}};                        // Global values set
 $f = {};                                // Global functions set
@@ -56,6 +60,22 @@ $v.type.regexp = 0;
 $v.type.glob = 1;
 $v.type.manual = $v.type.block = 2;
 $v.type.hdr = 3;
+
+$f.applyI18n = function (type) {
+    var elem = $$('[' + type + ']'); // All elements need to be mod
+
+    for (var i = 0; i < elem.length; i++) {
+        var it = elem[i];
+
+        var attr = it.getAttribute(type);
+        if (type === 'i18nT') {
+            it.textContent = $i18n(attr);
+        } else {
+            var attrArr = attr.split(":"); // Fmt of attr: prop:val
+            it.setAttribute(attrArr[0], $i18n(attrArr[1]));
+        }
+    }
+};
 
 $f.dbg = function (msg) {
     if ($v.debug === true) {

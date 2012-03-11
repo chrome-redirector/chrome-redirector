@@ -123,7 +123,7 @@ var updateContext = function () {      // Update the context menu
     if ($v.status === true && $v.ruleManual.length > 0) {
         if ($v.prefData.context.link) { // Links' context menu enabled
             var parentLink = chrome.contextMenus.create({ // Parent
-                title: 'Open in new tab with rule...',
+                title: $i18n('CONTEXT_NEW_TAB'),
                 contexts: ['link', 'image']
             });
 
@@ -139,7 +139,7 @@ var updateContext = function () {      // Update the context menu
 
         if ($v.prefData.context.page) { // Pages' context menu enabled
             var parentPage = chrome.contextMenus.create({ // Parent
-                title: 'Reload current page with rule...',
+                title: $i18n('CONTEXT_RELOAD_TAB'),
                 contexts: ['page', 'frame']
             });
 
@@ -154,7 +154,9 @@ var updateContext = function () {      // Update the context menu
         }
     }
 
-    var title = $v.status === true ? 'Enabled' : 'Disabled';
+    var title = $v.status === true ?
+        $i18n('CONTEXT_STATUS_ENABLED') :
+        $i18n('CONTEXT_STATUS_DISABLED');
     chrome.contextMenus.create({ // Open options page
         type: 'checkbox',
         title: title,
@@ -169,12 +171,12 @@ var updateContext = function () {      // Update the context menu
     });
 
     chrome.contextMenus.create({ // Open options page
-        title: 'Options...',
+        title: $i18n('CONTEXT_OPTIONS'),
         contexts: ['all'],
         onclick: function () {
             chrome.tabs.create({
                 url: 'chrome-extension://' +
-                    chrome.i18n.getMessage('@@extension_id') +
+                    $i18n('@@extension_id') +
                     '/html/options.html'
             });
         }
@@ -240,7 +242,7 @@ var loadRule = function (data) { // Called when rule list needs update
                 }
                 // Check if sub and repl are of the same size
                 if (tmp.sub.length !== tmp.repl.length) {
-                    return 'Substitution and Replacement mismatch!';
+                    return $i18n('TEST_SUB_REPL_CONFLICT');
                 }
             } catch (e) {
                 continue;
@@ -280,6 +282,20 @@ var loadRule = function (data) { // Called when rule list needs update
 };
 
 var onInit = function () {
+    if (chrome.webRequest.onBeforeRequest.hasListener(
+        onBeforeRequestListener)) {
+        chrome.webRequest.onBeforeRequest.removeListener(
+            onBeforeRequestListener
+        );
+    }
+
+    if (chrome.webRequest.onBeforeSendHeaders.hasListener(
+        onBeforeSendHeadersListener)) {
+        chrome.webRequest.onBeforeSendHeaders.removeListener(
+            onBeforeSendHeadersListener
+        );
+    }
+
     if ($v.status === true) {
         chrome.webRequest.onBeforeRequest.addListener( // Auto redir
             onBeforeRequestListener, {urls: $v.validUrl}, ['blocking']
@@ -290,24 +306,10 @@ var onInit = function () {
             {urls: $v.validUrl},
             ['blocking', 'requestHeaders']
         );
-    } else {
-        if (chrome.webRequest.onBeforeRequest.hasListener(
-            onBeforeRequestListener)) {
-            chrome.webRequest.onBeforeRequest.removeListener(
-                onBeforeRequestListener
-            );
-        }
-
-        if (chrome.webRequest.onBeforeSendHeaders.hasListener(
-            onBeforeSendHeadersListener)) {
-            chrome.webRequest.onBeforeSendHeaders.removeListener(
-                onBeforeSendHeadersListener
-            );
-        }
     }
 };
 
-try {
+try {                           // Enabled or disabled
     $v.status = JSON.parse(localStorage.STATUS);
 } catch (e) {
     $v.status = true;
@@ -316,7 +318,7 @@ try {
 
 loadPref();                     // Load preferences data
 loadRule();                     // Load rule list
-onInit();
+onInit();                       // Initialize
 
 try {                           // First install
     var version = JSON.parse(localStorage.VERSION);
@@ -325,7 +327,7 @@ try {                           // First install
         JSON.stringify(chrome.app.getDetails().version);
     chrome.tabs.create({
         url: 'chrome-extension://' +
-            chrome.i18n.getMessage('@@extension_id') +
+            $i18n('@@extension_id') +
             '/html/options.html'
     });
 }

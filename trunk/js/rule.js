@@ -326,14 +326,14 @@ RuleList.prototype.test = function () { // Test the current rule
         }
 
         if (! tmp.test($('ruleEdit_teststr').value)) { // Not match
-            $f.err($v.lang.i18n.TEST_NOTMATCH);
+            $f.err($i18n('TEST_MISMATCH'));
             return;
         }
     }
 
     if ($('ruleEdit_subtype').selectedIndex === $v.type.block) {
         // To block
-        $f.notif($v.lang.i18n.TEST_BLOCK);
+        $f.notif($i18n('TEST_BLOCK'));
         return;
     }
 
@@ -447,7 +447,7 @@ RuleList.prototype.restore = function (append) { // Restore rule list
     }
 
     if (files.length === 0) {   // No input file
-        $f.err($v.lang.i18n.NO_INPUT_FILE);
+        $f.err($i18n('BAK_NO_INPUT_FILE'));
         return;
     } else {
         var file = files[0];
@@ -465,7 +465,7 @@ RuleList.prototype.restore = function (append) { // Restore rule list
             this.refresh(true);
             location.reload();
         } catch (e) {
-            $f.err($v.lang.i18n.RULE_RESTORE_ERR);
+            $f.err($i18n('BAK_RESTORE_ERR'));
         }
     }).bind(this));
 };
