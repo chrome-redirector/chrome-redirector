@@ -8,7 +8,7 @@
     "PROTO_TITLE": {"message": "Enabled Protocols (restart required)"},
     "PROTO_ALL": {"message": "All supported protocols"},
     "CONTEXT_TITLE": {"message": "Manual Redirection"},
-    "CONTEXT_LINK": {"message": "Enable context menu for Links"},
+    "CONTEXT_LINK": {"message": "Enable context menu for Links/images"},
     "CONTEXT_PAGE": {"message": "Enable context menu for Pages"},
     "PROMPT": {"message": "Input Prompts (Beta)"},
     "PROMPT_CHKBOX": {"message": "Enable input prompts"},
