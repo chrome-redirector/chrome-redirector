@@ -1,0 +1,494 @@
+#+BEGIN_COMMENT
+User guide (English).
+
+Copyright (C) 2010-2012.
+
+This file is part of Redirector.
+
+Redirector is free software: you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation, either version 3 of the License, or
+(at your option) any later version.
+
+Redirector is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with Redirector.  If not, see <http://www.gnu.org/licenses/>.
+
+From Cyril Feng.
+#+END_COMMENT
+
+#+TITLE:     Redirector Guide
+#+AUTHOR:    Cyril Feng
+#+EMAIL:     CyrilFeng@gmail.com
+#+DATE:      2012-03-11
+#+DESCRIPTION:
+#+KEYWORDS:
+#+LANGUAGE:  en
+#+OPTIONS:   H:3 num:t toc:t \n:nil @:t ::t |:t ^:t -:t f:t *:t <:t
+#+OPTIONS:   TeX:t LaTeX:t skip:nil d:nil todo:t pri:nil tags:not-in-toc
+#+INFOJS_OPT: view:nil toc:nil ltoc:t mouse:underline buttons:0 path:http://orgmode.org/org-info.js
+#+EXPORT_SELECT_TAGS: export
+#+EXPORT_EXCLUDE_TAGS: noexport
+#+LINK_UP:
+#+LINK_HOME:
+#+XSLT:
+
+#+STYLE: <style>table{margin:auto auto;}</style>
+#+STYLE: <style>body{padding:0 20px;}</style>
+#+STYLE: <style>i{font-weight:bold;}</style>
+#+STYLE: <style>code{background-color:lightgray;font-size:90%}</style>
+
+* Preface
+  This guide was created as an introduction to /Redirector/,
+  the /Chromium/ / /Google Chrome/ extension that redirects URLs
+  either automatically or manually.
+  Rather than covering every aspect of /Redirector/,
+  this guide will mainly focus on composing the rules.
+
+* Conventions
+  - /Cr/ :: The /Chromium/ / /Google Chrome/ browser
+
+  - /RegExp/ :: Regular expression
+
+  - =~ :: matches or is matched with
+
+  - !~ :: unmatches or is unmatched with
+
+  - @<code>...@</code> :: Placeholder for the contents
+
+  - -> :: redirects to
+
+* How it works
+  Every time /Cr/ receives a web request,
+  /Redirector/ will be triggered to manipulate the requested URL
+  (if allowd and there're no other extensions redirect or block URLs).
+  Note that After the manipulation finishes,
+  /Redirector/ will lose control over that URL,
+  thus /Redirector/ *only do redirection once*.
+  For more information, please refer to
+  [[http://code.google.com/chrome/extensions/webRequest.html#life_cycle][this page]]
+
+  /Redirector/ will first check if the URL matches any rules.
+  If any, the first will be picked and the URL manipulated accordingly.
+
+  A similar procedure will be triggered during a manual redirection,
+  except that URLs will be manipulated without match checking.
+
+* Basic Usage
+  In this part,
+  you're about to learn how to configure /Redirector/ and compose basic rules.
+
+** Protocols
+   Normally,
+   /Redirector/ handles =HTTP://=, =HTTPS://=, =FTP://= and =FILE://= protocols,
+   but you may want to disable some of them in /Preferences/ tab.
+
+   *NOTE:*
+   If you ever managed to get /Redirector/ manipulating URLs begin with other protocol
+   e.g. =chrome://=, don't rely on that.
+
+** Manual Redirection
+   /Redirector/ is mainly used to redirect URLs automatically,
+   while there're many situations auto-redirection is unfit for.
+   As an alternative, you should consider manual redirection.
+
+   There're basically two ways:
+   - Right click on a link and select a rule,
+     the link will be loaded in a new tab with the rule appling to its URL;
+   - Right click on a page and select a rule,
+     this page will be reloaded with the rule appling to it's URL.
+
+   *NOTE:*
+   You need at least one [[BASIC-MATCH-MANUAL][Manual rule]] created and enabled,
+   or there won't be anything about /Redirector/ in context menus.
+
+** Configure Rules
+   To add a rule, press /Add/, so the rule editor will turn up.
+   You may either select a built-in rule or compose one yourself.
+
+   *NOTE:* built-in rules are for reference use only. Some of them
+   are just skeletons, useless without modifications.
+
+   You may edit created rules with /Edit/, and delete with /Delete/.
+   If multiple rules are created, their priorities are changed through
+   /Up/ or /Down/.
+
+   *NOTE:* Rules are searched from top to bottom, with disabled ones
+   ignored.
+
+   Make a backup of the rules list with /Backup/, and save the
+   contents in the text-area elsewhere for later use.
+   Restorations are done with /Restore/.
+
+** Basic Syntax of Rules
+*** Name
+    The name of the rule. Make it as distinctive as possible.
+
+*** Match
+    A /Match/ pattern defines which URLs this rule will apply to.
+    You may want to check the option /Ignore case/ to perform a
+    case-insensitive match.
+    /Match/ patterns are typically in three forms:
+**** /RegExp/
+     Matching with /RegExp/ will be introduced in
+     [[ADVANCED_MATCH][Advanced Match]]
+
+**** Wildcard
+     Wildcards are normal strings, except for two special characters:
+     - ~?~ :: Matches any single character. e.g.
+              - ~https://www.google.com.??/~
+                =~ ~https://www.google.com.hk/~.
+
+     - ~*~ :: Matches any string, including an empty one, e.g.
+              - ~https://*google.com/~
+                =~ ~https://www.google.com/~
+                and =~ ~https://google.com/~.
+
+     *NOTE:* If you want to match these two characters literally, use
+     ~\?~ and ~\*~ instead.
+
+#<<BASIC-MATCH-MANUAL>>
+**** Manual
+     A special type of /Match/ method, indicating this rule is used
+     for manual redirection.
+
+*** Substitution
+    A /Substitution/ defined which part(s) of a URL should be replaced.
+    Case-insensitive search is enabled by checking /Ignore case/,
+    and search won't stop on the first match when /Global match/ is checked.
+    @<i>Substitution@</i>s are also in three forms:
+**** /RegExp/
+     Substituting with /RegExp/ will be explained in
+     [[ADVANCED_SUBSTITUTION][Advanced Substitution & Replacement]].
+
+**** Wildcard
+     Same with that of /Match/.
+
+**** Block
+     Instead of redirecting a URL, you may alternatively block it.
+
+**** Header
+     This option allows you to modify "HTTP request headers".
+     /Substitution/ stands for the name of the header to be modified.
+     If a header is not found, then it'll be created.
+     To delete a header,
+     place a minus sign ~-~ in front of its name.
+     To modify multiple headers,
+     seperate thme by vertical lines ~|~.
+
+*** Replacement
+    A /Replacement/ is what used to replace the /Substitution/.
+    You may simply use a string,
+    but a literal dollar sign ~$~ should be written as ~$$~,
+    as
+    [[ADVANCED_SUBSTITUTION][Advanced Substitution & Replacement]]
+    requires it.
+
+    You may check the /Decode URL/ option,
+    which results in the encoded characters of the final URL replaced
+    with the corresponding ones, e.g.
+    - ~http%3A%2F%2Fwww.google.com%2F~ to ~http://www.google.com/~.
+
+    Note that /Replacement/ for /Substitution/ of type header differs.
+    Here it's the corresponding values of headers also seperated by ~|~.
+    Use ~\|~ instead if a value contains a literal ~|~.
+    You may leave the value blank if header is to be deleted.
+
+** Test
+   You are encouraged to test every rules you composed,
+   or /Cr/ would probably freeze up or complain "He's Dead, Jim!".
+   An easy test utility is included in the rule editor.
+   Here're only some tips:
+
+   - When making a new rule,
+     select /Match/ as /Manual/ and compose /Substitution/ together with /Replacement/ first.
+     You should never move on until the test passed.
+     Save /Substitution/ and /Replacement/ before composing /Match/.
+
+   - When debugging an existing rule,
+     simplify the potential buggy parts first.
+     If you get one rule messed up, discard changes and start from scratch.
+
+   If every thing works, the test result will show up with substituted
+   part and its replacement colored.
+
+#<<ADVANCED_MATCH>>
+* Advanced Match
+  @<i>Advanced Match@</i>es are achieved with the aid of /RegExp/.
+  You may refer to other guides on /RegExp/,
+  but keep in mind that there're various forms,
+  and what you employ here is of JavaScript flavor,
+  one fork of Perl flavor /RegExp/.
+
+  As it's impossible to show you all facts about /RegExp/ in so short
+  a guide,
+  here we will only cover those have something to do with URL matching,
+  and draw out their meanings only applicable to real URLs.
+
+  One basic component of /RegExp/ is meta-characters, characters with
+  special meanings, as the table below presents:
+
+| Meta-Character         | Meaning                         |
+|------------------------+---------------------------------|
+| ~\~                    | Escape the next character       |
+| ~^~                    | Matches the beginning of a URL  |
+| ~$~                    | Matches the end of a URL        |
+| ~.~                    | Matches any character           |
+| @<code>\vert@</code>   | Alternation                     |
+|------------------------+---------------------------------|
+| @<code>[...]@</code>   | Character class                 |
+| @<code>[\^...]@</code> | Antonym of @<code>[...]@</code> |
+
+  If you want to match a meta-character (or a quantifier, see below) literally,
+  a backslash is required to escape the special meaning,
+  e.g.
+  - ~https://www\.gogole\.com/~
+    =~ ~https://www.google.com/~.
+
+  ~^~ and ~$~ are both anchors, which match specific positions rather
+  than any real characters, e.g.
+  - ~^https://~ =~ ~https://www.google.com/~
+    while !~ ~http://www.google.com/search?q=https~.
+
+  Besides ~^~ and ~$~, there're other anchors, belonging to the
+  /Escape Sequences/:
+
+| Anchor | Meaning                      |
+|--------+------------------------------|
+| ~\b~   | Matches the border of a word |
+| ~\B~   | Antonym of ~\b~              |
+
+  ~|~ means alternation, e.g.
+  - ~https://www.google.com~ =~ ~google|yahoo~
+    while !~ ~http://www.bing.com~.
+
+  Actually, ~|~ is more useful in /groups/.
+
+  A character class is a group of characters that it matches, e.g.
+  - ~[aA]~ =~ either ~a~ or ~A~
+
+  Hyphens ~-~ in character classes mean a range of characters in
+  ASCII table, e.g.
+  - ~[a-z]~ =~ any lowercase letter
+  - ~[0-9]~ =~ any digit
+
+  *NOTE:*
+  To place a literal hyphen in a character class,
+  use ~\-~ instead.
+  ~-~ is literal in other context.
+
+  There're some predefined "character classes",
+  also in the form of /Escape Sequences/:
+
+| Escape Sequence | Meaning                                         |
+|-----------------+-------------------------------------------------|
+| ~\w~            | Matches a word character (alphanum, underscore) |
+| ~\W~            | Antonym of ~\w~                                 |
+| ~\d~            | Matches a digit                                 |
+| ~\D~            | Antonym of ~\d~                                 |
+| ~\ddd~          | Matches the No.ddd (OCT) ASCII character        |
+| ~\xdd~          | Matches the No.dd (HEX) ASCII character         |
+| ~\udddd~        | Matches the No.dddd (HEX) Unicode character     |
+
+  Another basic component of /RegExp/ is quantifiers,
+  they're used as suffixes after characters, meta-characters or /groups/,
+  to indicate how many time the character should be repeated:
+
+| Quantifier | Meaning                              |
+|------------+--------------------------------------|
+| ~*~        | Zero or more, as many as possible    |
+| ~+~        | At least one, as many as possible    |
+| ~?~        | Zero or one, as many as possible     |
+| ~{N}~      | Exactly N                            |
+| ~{N,}~     | At least N, as many as possible      |
+| ~{N,M}~    | Between N and M, as many as possible |
+
+  e.g.
+  - ~^https://www\.google\.com/*~
+    =~ any URL begins with ~https://www.google.com/~;
+  - ~^http?://~
+    =~ any URL begins with ~http://~ or ~https://~.
+
+  By default, /Redirector/ matches in "greedy" mode,
+  which means it will match as many characters as possible.
+  Place a ~?~ after the quantifier to turn it to "lazy" mode,
+  e.g.
+  - ~https://.*?\.~ will match ~https://www.~ in string
+    ~https://www.google.com~
+    while ~https://.*\.~ will match ~https://www.google.~.
+
+  One pattern can be isolated through the use of parentheses, called
+  /grouping/:
+
+| Grouping               | Meaning                |
+|------------------------+------------------------|
+| @<code>(...)@</code>   | Capturing grouping     |
+| @<code>(?:...)@</code> | Non-capturing grouping |
+
+  Contents in capturing groups are automatically saved in special
+  variables ~\1~ to ~\99~,
+  numbered from left to right, from outside to inside.
+  Capturing groups can do /back reference/,
+  e.g.
+  - ~http://(\w+)\.wikipedia\.org/\1/~ =~
+    ~http://zh.wikipedia.org/zh/Google~
+    while !~ ~http://zh.wikipedia.org/zh-cn/Google~
+
+  In /RegExp/, /Extended Pattern/ is of the form
+  @<code>(?x...)@</code>, e.g. @<code>(?:...)@</code>.
+  Here are the rest:
+
+| Extended Pattern       | Meaning                           |
+|------------------------+-----------------------------------|
+| @<code>(?=...)@</code> | Followed by @<code>...@</code>    |
+| @<code>(?!...)@</code> | Antonym of @<code>(?=...)@</code> |
+
+  The pattern @<code>(?!...)@</code> is quite useful,
+  as /Redirector/ doesn't come with the so-called /blacklist/,
+  because you can completely avoid its use.
+  For example, for a rule matching ~A~ but not matching ~B~,
+  you may compose it as ~^(?!.*B).*A~.
+  e.g.
+  - Compose a /Match/ pattern matching all URL belong to google.com
+    and its subdomains but code.google.com:
+    - ~^(?!.*https?://code\.google\.com)https?://(.*?\.)?google\.com~
+    - A more compact one:
+      ~^https?://(?!code)(.*?\.)?google.com~
+
+  *Note:*
+  @<code>(?=...)@</code> or @<code>(?!...)@</code> captures nothing.
+
+#<<ADVANCED_SUBSTITUTION>>
+* Advanced Substitution & Replacement
+  As well as matching, /RegExp/ is a powerful tool for substitution.
+  Syntax here is similar, we only discuss the differences.
+
+  The main difference is /grouping/, while contents in capturing
+  groups can also be used in /Replacement/.
+  To be on the safe side, always replace capturing groups with
+  non-capturing ones if they're not intended to be captured.
+
+  Rather than being a literal string, /Replacement/ can also
+  be part of /Substitution/.
+  This is achieved with the dollar sign ~$~:
+
+| Special replacement | Meaning                                    |
+|---------------------+--------------------------------------------|
+| ~$N~ (~$1~ - ~$99~) | Matched content in the Nth capturing group |
+| ~$&~                | What /Substitution/ matches                |
+| ~$`~                | The unmatched part on the left of ~$&~     |
+| @<code>$'@</code>   | The unmatched part on the right of ~$&~    |
+
+  ~$1~ - ~$99~ are corresponding to ~\1~ - ~\99~ in
+  [[ADVANCED_MATCH][Advanced Match]].
+
+  Here're some examples:
+  - With /Substitution/ being ~(^[^\.]+[^/]+)/[^/]*~
+    and /Replacement/ being ~$1/zh-cn~,
+    ~http://zh.wikipedia.org/zh-hk/Google~
+    -> ~http://zh.wikipedia.org/zh-cn/Google~ ；
+
+  - With /Substitution/ being ~[^\.]+[^/]+~
+    and /Replacement/ being ~$&.sixxs.org~,
+    ~http://www.google.com/~ -> ~http://www.google.com.sixxs.org/~.
+
+  *NOTE:*
+  For an /anchor/, /Replacement/ is inserted to the matched position,
+  e.g.
+  - With /Substitution/ being ~$~ and /Replacement/ being ~ncr~,
+    ~http://www.google.com/~ -> ~http://www.google.com/ncr~.
+
+* Troubleshooting
+  For the sake of efficiency,
+  /Redirector/ doesn't do strict check with a rule during run-time.
+  As a result, you may run into these problems:
+
+  - The bottom-left corner shows "Waiting for extension /Redirector/" ::
+    This indicates you probably got a bad rule
+    that matches the current URL
+    but makes /Redirector/ puzzled on how to manipulate it.
+
+  - Sometimes, you may notice a URL got redirected for multiple times ::
+    e.g.
+    #+BEGIN_EXAMPLE
+    What you want: https://www.google.com/ -> https://www.google.com/?
+    While you get: https://www.google.com/ -> https://www.google.com/??
+    #+END_EXAMPLE
+    It's most likely the behavior of server-side
+    redirection. Refer to the examples of @<code>(?!...)@</code> on
+    how to make a 'blacklist'.
+
+  If you are sure a problem results from bugs of /Redirector/,
+  send a bug report to <CyrilFeng at gmail dot com>.
+  Before that, make sure you've gone through the following steps:
+  - Make sure the problem will disappear once /Redirector/ is disabled;
+
+  - Make sure you've installed the latest release (both /Cr/ and /Redirector/);
+
+  - When recreate the problem, set the language of /Redirector/ to
+    Chinese or English if possible;
+
+  - Problem should be described in either Chinese or English;
+
+  - Make a backup of the rules list and submit it with the report,
+    if no privacy is concerned.
+
+* Suggestions
+** Composing efficient /Match/ patterns
+   The Quality of /Match/ patterns is the key factor that affecting
+   the efficiency of /Redirector/.
+
+   Something must be clarified first:
+   - Disabled rules and rules for manual redirections have nothing to do with the efficiency;
+
+   - Though wildcards are translated into /RegExp/ internally,
+     the translation only happens when /Redirector/ starts or rules list has any change;
+
+   - To speed up, @<i>RegExp@</i>s are all compiled in advance.
+     Even if you don't adopt any suggestion here,
+     /Redirector/ will be fast enough when doing matches.
+
+   To write an efficient /Match/ pattern, you should:
+   - Prefer /RegExp/ to wildcard ::
+     /RegExp/ is more precise in matching;
+
+   - Avoid the use of /Ignore case/ ::
+     URLs are commonly in lower-case;
+
+   - Make matching process for unmatched URLs terminate as soon as possible ::
+      e.g.
+     - If you want to match a URL begins with ~http://~,
+       then ~^http://~ is better than ~http://~.
+
+   - Prefer "lazy" mode to "greedy" mode ::
+     This is tenable when the matching part is short;
+
+   In addition, you should keep rules for auto-redirection in a reasonable order.
+
+** Composing maintainable @<i>Substitution@</i>s
+   As /Cr/ is not redirecting URLs all the time
+   (or you've misused /Redirector/),
+   You should ensure a /Substitution/ is of maintainability first.
+   To do so, you should:
+   - Make /Substitution/ short ::
+     e.g.
+     - Remove unneccessary parts ::
+       - Preceding and Trailing ~.*~, ~.+~, etc are all unneccessary,
+         use ~$`~, @<code>$'@</code> in /Replacement/ instead.
+
+     - Some frequently-used /Substitution/ patterns ::
+       - ~https?://~ ::
+         =~ ~http://~ and ~https://~;
+
+       - ~^[^\.]+[^/]+~ ::
+           =~ ~protocol://[username[:password]@]domain[:port]~
+           (square brackets means optional here).
+
+   - Prefer non-capturing groups to capturing ones ::
+     This help to avoid miscounting ~$1~, ~$2~...
+
+-----

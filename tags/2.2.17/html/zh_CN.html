@@ -1,0 +1,929 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN"
+               "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh-CN" xml:lang="zh-CN">
+<head>
+<title>Redirector指南</title>
+<meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
+<meta name="title" content="Redirector指南"/>
+<meta name="generator" content="Org-mode"/>
+<meta name="generated" content="2012-03-11"/>
+<meta name="author" content="Cyril Feng"/>
+<meta name="description" content=""/>
+<meta name="keywords" content=""/>
+<style type="text/css">
+ <!--/*--><![CDATA[/*><!--*/
+  html { font-family: Times, serif; font-size: 12pt; }
+  .title  { text-align: center; }
+  .todo   { color: red; }
+  .done   { color: green; }
+  .tag    { background-color: #add8e6; font-weight:normal }
+  .target { }
+  .timestamp { color: #bebebe; }
+  .timestamp-kwd { color: #5f9ea0; }
+  .right  {margin-left:auto; margin-right:0px;  text-align:right;}
+  .left   {margin-left:0px;  margin-right:auto; text-align:left;}
+  .center {margin-left:auto; margin-right:auto; text-align:center;}
+  p.verse { margin-left: 3% }
+  pre {
+	border: 1pt solid #AEBDCC;
+	background-color: #F3F5F7;
+	padding: 5pt;
+	font-family: courier, monospace;
+        font-size: 90%;
+        overflow:auto;
+  }
+  table { border-collapse: collapse; }
+  td, th { vertical-align: top;  }
+  th.right  { text-align:center;  }
+  th.left   { text-align:center;   }
+  th.center { text-align:center; }
+  td.right  { text-align:right;  }
+  td.left   { text-align:left;   }
+  td.center { text-align:center; }
+  dt { font-weight: bold; }
+  div.figure { padding: 0.5em; }
+  div.figure p { text-align: center; }
+  div.inlinetask {
+    padding:10px;
+    border:2px solid gray;
+    margin:10px;
+    background: #ffffcc;
+  }
+  textarea { overflow-x: auto; }
+  .linenr { font-size:smaller }
+  .code-highlighted {background-color:#ffff00;}
+  .org-info-js_info-navigation { border-style:none; }
+  #org-info-js_console-label { font-size:10px; font-weight:bold;
+                               white-space:nowrap; }
+  .org-info-js_search-highlight {background-color:#ffff00; color:#000000;
+                                 font-weight:bold; }
+  /*]]>*/-->
+</style>
+<style>table{margin:auto auto;}</style>
+<style>body{padding:0 20px;}</style>
+<style>i{font-weight:bold;}</style>
+<style>code{background-color:lightgray;font-size:90%}</style>
+<script type="text/javascript">
+<!--/*--><![CDATA[/*><!--*/
+ function CodeHighlightOn(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(null != target) {
+     elem.cacheClassElem = elem.className;
+     elem.cacheClassTarget = target.className;
+     target.className = "code-highlighted";
+     elem.className   = "code-highlighted";
+   }
+ }
+ function CodeHighlightOff(elem, id)
+ {
+   var target = document.getElementById(id);
+   if(elem.cacheClassElem)
+     elem.className = elem.cacheClassElem;
+   if(elem.cacheClassTarget)
+     target.className = elem.cacheClassTarget;
+ }
+/*]]>*///-->
+</script>
+
+</head>
+<body>
+
+<div id="preamble">
+
+</div>
+
+<div id="content">
+<h1 class="title">Redirector指南</h1>
+
+
+
+
+
+<div id="table-of-contents">
+<h2>Table of Contents</h2>
+<div id="text-table-of-contents">
+<ul>
+<li><a href="#sec-1">1 前言</a></li>
+<li><a href="#sec-2">2 符号约定</a></li>
+<li><a href="#sec-3">3 工作机制</a></li>
+<li><a href="#sec-4">4 基本使用</a>
+<ul>
+<li><a href="#sec-4-1">4.1 协议</a></li>
+<li><a href="#sec-4-2">4.2 手动重定向</a></li>
+<li><a href="#sec-4-3">4.3 配置规则</a></li>
+<li><a href="#sec-4-4">4.4 规则的基本格式</a>
+<ul>
+<li><a href="#sec-4-4-1">4.4.1 名称</a></li>
+<li><a href="#sec-4-4-2">4.4.2 匹配</a></li>
+<li><a href="#sec-4-4-3">4.4.3 被替换式</a></li>
+<li><a href="#sec-4-4-4">4.4.4 替换式</a></li>
+</ul>
+</li>
+<li><a href="#sec-4-5">4.5 测试</a></li>
+</ul>
+</li>
+<li><a href="#sec-5">5 高级匹配</a></li>
+<li><a href="#sec-6">6 高级替换</a></li>
+<li><a href="#sec-7">7 故障处置</a></li>
+<li><a href="#sec-8">8 建议</a>
+<ul>
+<li><a href="#sec-8-1">8.1 编写高效的 <i>匹配</i> 模式</a></li>
+<li><a href="#sec-8-2">8.2 编写可维护的 <i>被替换式</i></a></li>
+</ul>
+</li>
+</ul>
+</div>
+</div>
+
+<div id="outline-container-1" class="outline-2">
+<h2 id="sec-1"><span class="section-number-2">1</span> 前言</h2>
+<div class="outline-text-2" id="text-1">
+
+<p>  这份指南旨在介绍一个可以自动／手动重定向URL的 <i>Chromium</i> / <i>Google Chrome</i>
+  插件—— <i>Redirector</i> 。
+  这份指南将着重解释规则的编写，而不求顾及此插件使用的每个方面。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-2" class="outline-2">
+<h2 id="sec-2"><span class="section-number-2">2</span> 符号约定</h2>
+<div class="outline-text-2" id="text-2">
+
+<dl>
+<dt><i>Cr</i></dt><dd><i>Chromium</i> / <i>Google Chrome</i> 浏览器
+
+</dd>
+<dt><i>正则</i></dt><dd>正则表达式
+
+</dd>
+<dt>=~</dt><dd>匹配或被匹配
+
+</dd>
+<dt>!~</dt><dd>不匹配或不被匹配
+
+</dd>
+<dt><code>&hellip;</code></dt><dd>内容占位符
+
+</dd>
+<dt>-&gt;</dt><dd>重定向至
+</dd>
+</dl>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-3" class="outline-2">
+<h2 id="sec-3"><span class="section-number-2">3</span> 工作机制</h2>
+<div class="outline-text-2" id="text-3">
+
+<p>  每当 <i>Cr</i> 收到一个web请求， <i>Redirector</i> 就会被触发去处理所请求的URL
+  （如果这是允许的，而且没有其它重定向或者屏蔽URL的扩展）。
+  值得注意的是，当处理结束后，这个URL将脱离 <i>Redirector</i> 的控制，
+  并且再也没有被 <i>Redirector</i> 处理的机会，
+  即 <i>Redirector</i> <b>只进行一次重定向</b> 。
+  更多信息请参考
+  <a href="http://code.google.com/chrome/extensions/webRequest.html#life_cycle">这个页面</a>。
+</p>
+<p>
+  <i>Redirector</i> 会首先检查是否有规则适用于该URL。
+  如果有的话，第一条适用的规则将被用于处理该URL。
+</p>
+<p>
+  手动重定向的过程也是类似的，只不过检查规则可用性的步骤会被跳过。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-4" class="outline-2">
+<h2 id="sec-4"><span class="section-number-2">4</span> 基本使用</h2>
+<div class="outline-text-2" id="text-4">
+
+<p>  这一部分将介绍 <i>Redirector</i> 的配置及基本的规则编写。
+</p>
+
+</div>
+
+<div id="outline-container-4-1" class="outline-3">
+<h3 id="sec-4-1"><span class="section-number-3">4.1</span> 协议</h3>
+<div class="outline-text-3" id="text-4-1">
+
+<p>   正常情况下， <i>Redirector</i> 处理 <code>HTTP://</code> 、 <code>HTTPS://</code> 、 <code>FTP://</code> 、
+   <code>FILE://</code> 这几种协议，你也可以在 <i>首选项</i> 标签页下禁用其中的协议。
+</p>
+<p>
+   <b>注意：</b> 最好不要试图处理 <code>chrome://</code> 等协议，虽然 <i>Redirector</i> 可以做到。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-4-2" class="outline-3">
+<h3 id="sec-4-2"><span class="section-number-3">4.2</span> 手动重定向</h3>
+<div class="outline-text-3" id="text-4-2">
+
+<p>   尽管 <i>Redirector</i> 的主要功能是自动重定向，但自动重定向并不胜任所有情况。
+   手动重定向作为其补充，共有两种形式：
+</p>
+<ul>
+<li>右键单击链接并选择一条规则，将会在新标签页打开经规则处理过的链接；
+</li>
+<li>右键单击页面并选择一条规则，将会重新载入经规则处理过的当前页URL。
+</li>
+</ul>
+
+
+<p>
+   <b>注意：</b> 你必须创建并启用了至少一条<a href="#sec-4-4-2-3">手动规则</a>，否则右键菜单里不会出现任何关于
+   <i>Redirector</i> 的信息。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-4-3" class="outline-3">
+<h3 id="sec-4-3"><span class="section-number-3">4.3</span> 配置规则</h3>
+<div class="outline-text-3" id="text-4-3">
+
+<p>   使用 <i>添加</i> 按钮添加一条规则，这时将会出现规则编辑器。
+   你可以选择一条内置的规则或是自己编写当前的规则。
+</p>
+<p>
+   <b>注意：</b> 内置规则仅供参考。其中的一些规则只是框架，应在修改后使用。
+</p>
+<p>
+   你可以通过 <i>编辑</i> 按钮编辑已有的规则，或是用 <i>删除</i> 进行删除。
+   如果有多条规则，你可以通过 <i>上移</i> 、 <i>下移</i> 按钮改变优先级。
+</p>
+<p>
+   <b>注意：</b> 规则是从上到下搜索的，并且禁用的规则会被忽略。
+</p>
+<p>
+   <i>备份</i> 按钮可以备份规则列表，你需要自行复制备份结果并保存到别处。
+   另外你可以通过 <i>还原</i> 按钮还原备份。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-4-4" class="outline-3">
+<h3 id="sec-4-4"><span class="section-number-3">4.4</span> 规则的基本格式</h3>
+<div class="outline-text-3" id="text-4-4">
+
+
+</div>
+
+<div id="outline-container-4-4-1" class="outline-4">
+<h4 id="sec-4-4-1"><span class="section-number-4">4.4.1</span> 名称</h4>
+<div class="outline-text-4" id="text-4-4-1">
+
+<p>    规则的名称，应尽量容易区分。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-4-4-2" class="outline-4">
+<h4 id="sec-4-4-2"><span class="section-number-4">4.4.2</span> 匹配</h4>
+<div class="outline-text-4" id="text-4-4-2">
+
+<p>    匹配模式用于确定规则是否适用于特定的URL。
+    你可以勾选 <i>忽略大小写</i> 选项进行大小写不敏感的匹配。
+    匹配有主要三种形式：
+</p><ul>
+<li id="sec-4-4-2-1"><i>正则</i><br/>
+     用 <i>正则</i> 进行匹配将会在<a href="#sec-5">高级匹配</a>中介绍。
+</li>
+</ul>
+<ul>
+<li id="sec-4-4-2-2">通配符<br/>
+     通配符其实就是基本的字符串，除了两个字符：
+<dl>
+<dt><code>?</code></dt><dd>匹配任意单个字符，例如：
+<ul>
+<li><code>https://www.google.com.??/</code>
+                =~ <code>https://www.google.com.hk/</code>.
+</li>
+</ul>
+
+</dd>
+</dl>
+
+
+
+<dl>
+<dt><code>*</code></dt><dd>匹配任意长字符串，包括零字符串。
+</dd>
+</dl>
+
+
+<p>
+     <b>注意：</b> 若要直接匹配上述两个字符，请分别使用 <code>\?</code> 和 <code>\*</code> 。
+</p>
+</li>
+</ul>
+<ul>
+<li id="sec-4-4-2-3"><a name="BASIC-MATCH-MANUAL" id="BASIC-MATCH-MANUAL"></a>手动<br/>
+     特殊的匹配方式，意指规则用于手动重定向。
+
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-4-4-3" class="outline-4">
+<h4 id="sec-4-4-3"><span class="section-number-4">4.4.3</span> 被替换式</h4>
+<div class="outline-text-4" id="text-4-4-3">
+
+<p>    <i>被替换式</i> 指明URL中的哪些部分需要被替换。
+    <i>被替换式</i> 的搜索同样可以忽略大小写；
+    另外你也可以勾选 <i>多次替换</i> ，这样所有符合要求的子串都会被替换。
+</p>
+<p>
+    <i>被替换式</i> 同样有三种形式：
+</p><ul>
+<li id="sec-4-4-3-1"><i>正则</i><br/>
+     使用 <i>正则</i> 搜索 <i>被替换式</i> 将在<a href="#sec-6">高级替换</a>中介绍。
+
+</li>
+</ul>
+<ul>
+<li id="sec-4-4-3-2">通配符<br/>
+     同 <i>匹配</i> 中的通配符。
+
+</li>
+</ul>
+<ul>
+<li id="sec-4-4-3-3">封锁<br/>
+     <i>Redirector</i> 除了重定向，也可以封锁一条请求。
+
+</li>
+</ul>
+<ul>
+<li id="sec-4-4-3-4">请求头<br/>
+     这个选项用来修改“HTTP请求头”。
+     这时 <i>被替换式</i> 应是要修改的请求头的名字。
+     如果一个请求头不存在，那么它会被创建。
+     要删除一个请求头，请在名称前放置减号 <code>-</code> 。
+     如有多条请求头要修改，用竖线 <code>|</code> 分隔。
+
+</li>
+</ul>
+</div>
+
+</div>
+
+<div id="outline-container-4-4-4" class="outline-4">
+<h4 id="sec-4-4-4"><span class="section-number-4">4.4.4</span> 替换式</h4>
+<div class="outline-text-4" id="text-4-4-4">
+
+<p>    <i>替换式</i> 用作 <i>被替换式</i> 的填充。
+    你可以使用普通的字符串，不过注意 <code>$</code> 应写作 <code>$$</code> ，因为
+    <a href="#sec-6">高级替换</a>
+    中会用到它。
+</p>
+<p>
+    <i>译码</i> 选项用作对最终URL中被编码的字符进行译码，比如
+</p><ul>
+<li><code>http%3A%2F%2Fwww.google.com%2F</code> 译为 <code>http://www.google.com/</code> 。
+</li>
+</ul>
+
+
+<p>
+    值得注意的是，若 <i>被替换式</i> 是请求头类型的，则替换式应当是对应的值，也用竖线 <code>|</code> 分隔。
+    若值中包括字面意义的竖线 <code>|</code> ，请使用 <code>\|</code> 代替。
+    对于要删除的请求头，对应的值可以留空。
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-4-5" class="outline-3">
+<h3 id="sec-4-5"><span class="section-number-3">4.5</span> 测试</h3>
+<div class="outline-text-3" id="text-4-5">
+
+<p>   你应当测试每条编写的规则，否则可能会导致 <i>Cr</i> 假死或者抱怨"He's Dead, Jim!"。
+   规则编辑器包括一个简单的测试工具。
+   这里只提醒几点：
+</p><ul>
+<li>当编写一条新规则时，选择手动模式，然后编写 <i>被替换式</i> 和 <i>替换式</i> 。
+     测试通过后再进行下一步。
+     编写 <i>匹配</i> 前请先保存 <i>被替换式</i> 和 <i>替换式</i> 。
+
+</li>
+<li>当调试一条已有规则时，先简化可能错误的部分。
+     规则弄乱了也没关系，直接放弃修改然后重新开始。
+</li>
+</ul>
+
+
+<p>
+   如果一切顺利，测试结果将会显示出来，其中被替换和替换上去的部分会被着色。
+</p>
+</div>
+</div>
+
+</div>
+
+<div id="outline-container-5" class="outline-2">
+<h2 id="sec-5"><a name="ADVANCED_MATCH" id="ADVANCED_MATCH"></a><span class="section-number-2">5</span> 高级匹配</h2>
+<div class="outline-text-2" id="text-5">
+
+<p>  <i>高级匹配</i> 指的是使用 <i>正则</i> 进行匹配。
+  你可能要去参考其它关于 <i>正则</i> 的文章，但请留意 <i>正则</i> 有很多种，
+  这里使用的是JavaScript风格的，类似于Perl风格。
+</p>
+<p>
+  这份简短的指南显然无法介绍关于 <i>正则</i> 的所有方面，这里只挑选那些与URL匹配有关的。
+  对于解释，这里也只抽取那些对于URL有意义的。
+</p>
+<p>
+  <i>正则</i> 的一个基本组件是元字符。它们有特殊的含义，如下表：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption></caption>
+<colgroup><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">元字符</th><th scope="col" class="left">意义</th></tr>
+</thead>
+<tbody>
+<tr><td class="left"><code>\</code></td><td class="left">转义下一个字符</td></tr>
+<tr><td class="left"><code>^</code></td><td class="left">匹配URL的开头</td></tr>
+<tr><td class="left"><code>$</code></td><td class="left">匹配URL的结尾</td></tr>
+<tr><td class="left"><code>.</code></td><td class="left">匹配任意字符</td></tr>
+<tr><td class="left"><code>&#124;</code></td><td class="left">逻辑或</td></tr>
+</tbody>
+<tbody>
+<tr><td class="left"><code>[&hellip;]</code></td><td class="left">字符集</td></tr>
+<tr><td class="left"><code>[^&hellip;]</code></td><td class="left"><code>[&hellip;]</code>的反义</td></tr>
+</tbody>
+</table>
+
+
+<p>
+  如果想要匹配一个元字符（或一个量词，见下），它们应用反斜线转义，例如：
+</p><ul>
+<li><code>https://www\.gogole\.com/</code>
+    =~ <code>https://www.google.com/</code> 。
+</li>
+</ul>
+
+
+<p>
+  <code>^</code> 和 <code>$</code> 都是锚点，用来定位而非匹配字符，例如：
+</p><ul>
+<li><code>^https://</code> =~ <code>https://www.google.com/</code>
+    而 !~ <code>http://www.google.com/search?q=https</code> 。
+</li>
+</ul>
+
+
+<p>
+  除了 <code>^</code> 、 <code>$</code> 之外，还有其它锚点——以 <i>转义序列</i> 的形式提供：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption></caption>
+<colgroup><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">锚点</th><th scope="col" class="left">意义</th></tr>
+</thead>
+<tbody>
+<tr><td class="left"><code>\b</code></td><td class="left">匹配字符的边界</td></tr>
+<tr><td class="left"><code>\B</code></td><td class="left"><code>\b</code> 的反义</td></tr>
+</tbody>
+</table>
+
+
+
+<p>
+  <code>|</code> 意指逻辑或，例如：
+</p><ul>
+<li><code>https://www.google.com</code> =~ <code>google|yahoo</code>
+    而 !~ <code>http://www.bing.com</code> 。
+</li>
+</ul>
+
+
+<p>
+  事实上， <code>|</code> 在 <i>组</i> 中更常用。
+</p>
+<p>
+  字符集是它所匹配字符的集合，例如：
+</p><ul>
+<li><code>[aA]</code> =~ <code>a</code> 或 <code>A</code>
+</li>
+</ul>
+
+
+<p>
+  连字符 <code>-</code> 在字符集中表示ASCII码表中的一段字符，例如：
+</p><ul>
+<li><code>[a-z]</code> =~ 所有小写字母
+</li>
+<li><code>[0-9]</code> =~ 所有数字
+</li>
+</ul>
+
+
+<p>
+  <b>注意：</b> 要在字符集中包括连字符，使用 <code>\-</code> 。
+  <code>-</code> 在其它地方没有特殊意义。
+</p>
+<p>
+  <i>正则</i> 预定义的一些常用的字符集，也以 <i>转义序列</i> 的形式给出：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption></caption>
+<colgroup><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">转义序列</th><th scope="col" class="left">意义</th></tr>
+</thead>
+<tbody>
+<tr><td class="left"><code>\w</code></td><td class="left">匹配一个单词字符（字母、数字和下划线）</td></tr>
+<tr><td class="left"><code>\W</code></td><td class="left"><code>\w</code> 的反义</td></tr>
+<tr><td class="left"><code>\d</code></td><td class="left">匹配一个数字</td></tr>
+<tr><td class="left"><code>\D</code></td><td class="left"><code>\d</code> 的反义</td></tr>
+<tr><td class="left"><code>\ddd</code></td><td class="left">匹配ddd号（八进制）ASCII字符</td></tr>
+<tr><td class="left"><code>\xdd</code></td><td class="left">匹配dd号（十六进制）ASCII字符</td></tr>
+<tr><td class="left"><code>\udddd</code></td><td class="left">匹配dddd号（十六进制）Unicode字符</td></tr>
+</tbody>
+</table>
+
+
+<p>
+  正则的另一个基本组件是 <i>量词</i> ，它们附在字符、元字符或 <i>组</i> 之后表示字符应重复多少次：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption></caption>
+<colgroup><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">量词</th><th scope="col" class="left">意义</th></tr>
+</thead>
+<tbody>
+<tr><td class="left"><code>*</code></td><td class="left">至少0个，尽可能多</td></tr>
+<tr><td class="left"><code>+</code></td><td class="left">至少1个，尽可能多</td></tr>
+<tr><td class="left"><code>?</code></td><td class="left">0或1个，尽可能多</td></tr>
+<tr><td class="left"><code>{N}</code></td><td class="left">恰好N个</td></tr>
+<tr><td class="left"><code>{N,}</code></td><td class="left">至少N个，尽可能多</td></tr>
+<tr><td class="left"><code>{N,M}</code></td><td class="left">N到M个，尽可能多</td></tr>
+</tbody>
+</table>
+
+
+<p>
+  例如：
+</p><ul>
+<li><code>^https://www\.google\.com/*</code>
+    =~ 任意以 <code>https://www.google.com/</code> 开头的URL；
+</li>
+<li><code>^http?://</code>
+    =~ 任意以 <code>http://</code> 或 <code>https://</code> 开头的URL。
+</li>
+</ul>
+
+
+<p>
+  默认情况下， <i>Redirector</i> 进行“贪婪”模式匹配，也就是匹配尽可能多的字符。
+  在量词后附加一个 <code>?</code> 可以切换到“懒惰”模式。例如：
+</p><ul>
+<li><code>https://.*?\.</code> 将匹配 <code>https://www.google.com</code> 中的 <code>https://www.</code>
+    而 <code>https://.*\.</code> 却匹配 <code>https://www.google.</code>.
+</li>
+</ul>
+
+
+<p>
+  一个匹配模式可以被括号隔离起来，即 <i>组</i> ：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption></caption>
+<colgroup><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">组</th><th scope="col" class="left">意义</th></tr>
+</thead>
+<tbody>
+<tr><td class="left"><code>(&hellip;)</code></td><td class="left">捕获组</td></tr>
+<tr><td class="left"><code>(?:&hellip;)</code></td><td class="left">非捕获组</td></tr>
+</tbody>
+</table>
+
+
+<p>
+  捕获组中的内容会保存在自动变量 <code>\1</code> 到 <code>\99</code> 中， 从左向右、由外至里编号。
+  捕获组可以进行 <i>反向引用</i> ，例如：
+</p><ul>
+<li><code>http://(\w+)\.wikipedia\.org/\1/</code> =~
+    <code>http://zh.wikipedia.org/zh/Google</code>
+    而 !~ <code>http://zh.wikipedia.org/zh-cn/Google</code>
+</li>
+</ul>
+
+
+<p>
+  在 <i>正则</i> 中， <i>扩展模式</i> 形如<code>(?x&hellip;)</code>，例如
+  <code>(?:&hellip;)</code>。其它还有：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption></caption>
+<colgroup><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">扩展模式</th><th scope="col" class="left">意义</th></tr>
+</thead>
+<tbody>
+<tr><td class="left"><code>(?=&hellip;)</code></td><td class="left">后接<code>&hellip;</code></td></tr>
+<tr><td class="left"><code>(?!&hellip;)</code></td><td class="left"><code>(?=&hellip;)</code>的反义</td></tr>
+</tbody>
+</table>
+
+
+<p>
+  应当特别留意模式<code>(?!&hellip;)</code>，
+  因为 <i>Redirector</i> 不提供所谓的 <i>黑名单</i> ，
+  因为你完全可以避免使用它。
+  要编写一条规则匹配 <code>A</code> 的同时不匹配 <code>B</code> ，可以这样写为 <code>^(?!.*B).*A</code> 。
+  例子：
+</p><ul>
+<li>编写一条 <i>匹配</i> 模式，匹配所有属于google.com及其子域的URL，但不属于code.google.com：
+<ul>
+<li><code>^(?!.*https?://code\.google\.com)https?://(.*?\.)?google\.com</code>
+</li>
+<li>这个更紧凑：
+      <code>^https?://(?!code)(.*?\.)?google.com</code>
+</li>
+</ul>
+
+</li>
+</ul>
+
+
+<p>
+  <b>注意：</b> <code>(?=&hellip;)</code>和<code>(?!&hellip;)</code>不能捕获任何内容。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-6" class="outline-2">
+<h2 id="sec-6"><a name="ADVANCED_SUBSTITUTION" id="ADVANCED_SUBSTITUTION"></a><span class="section-number-2">6</span> 高级替换</h2>
+<div class="outline-text-2" id="text-6">
+
+<p>  除了进行匹配， <i>正则</i> 也是字符串替换的有力工具。
+  它们的格式很类似，这里只讨论区别。
+</p>
+<p>
+  它们的主要区别在于 <i>组</i> ，对于捕获组，它们的结果也被用于 <i>替换</i> 。
+  如果不打算捕获，保险起见尽量使用非捕获组。
+</p>
+<p>
+  <i>替换式</i> 除了可以是字符串字面量，也可以是 <i>被替换式</i> 的一部分。
+  这里依靠美元符 <code>$</code> 实现：
+</p>
+<table border="2" cellspacing="0" cellpadding="6" rules="groups" frame="hsides">
+<caption></caption>
+<colgroup><col class="left" /><col class="left" />
+</colgroup>
+<thead>
+<tr><th scope="col" class="left">特殊替换</th><th scope="col" class="left">意义</th></tr>
+</thead>
+<tbody>
+<tr><td class="left"><code>$N</code> (<code>$1</code> - <code>$99</code>)</td><td class="left">匹配第N个捕获组中的内容</td></tr>
+<tr><td class="left"><code>$&amp;</code></td><td class="left"><i>被替换式</i> 匹配的全部字符串</td></tr>
+<tr><td class="left"><code>$`</code></td><td class="left"><code>$&amp;</code> 的左边部分</td></tr>
+<tr><td class="left"><code>$'</code></td><td class="left"><code>$&amp;</code> 的右边部分</td></tr>
+</tbody>
+</table>
+
+
+<p>
+  <code>$1</code> - <code>$99</code> 与<a href="#sec-5">高级匹配</a>中的 <code>\1</code> - <code>\99</code> 相对应。
+</p>
+<p>
+  下面是一些例子：
+</p><ul>
+<li>当 <i>被替换式</i> 为 <code>(^[^\.]+[^/]+)/[^/]*</code>
+    且 <i>替换式</i> 为 <code>$1/zh-cn</code>,
+    <code>http://zh.wikipedia.org/zh-hk/Google</code>
+    -&gt; <code>http://zh.wikipedia.org/zh-cn/Google</code> ；
+
+</li>
+<li>当 <i>被替换式</i> 为 <code>[^\.]+[^/]+</code>
+    且 <i>替换式</i> 为 <code>$&amp;.sixxs.org</code>,
+    <code>http://www.google.com/</code> -&gt; <code>http://www.google.com.sixxs.org/</code>.
+</li>
+</ul>
+
+
+<p>
+  <b>注意：</b>
+  对于 <i>锚点</i>, <i>替换式</i> 会插入相关位置，例如：
+</p><ul>
+<li>当 <i>被替换式</i> 为 <code>$</code> 且 <i>替换式</i> 为 <code>ncr</code>,
+    <code>http://www.google.com/</code> -&gt; <code>http://www.google.com/ncr</code>.
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-7" class="outline-2">
+<h2 id="sec-7"><span class="section-number-2">7</span> 故障处置</h2>
+<div class="outline-text-2" id="text-7">
+
+<p>  为提高效率， <i>Redirector</i> 在运行时不对规则的正确性执行严格检查。
+  所以你可能会遇到如下情形：
+</p>
+<dl>
+<dt>左下角提示“等待扩展 <i>Redirector</i> ”</dt><dd>
+<p>
+    这说明有一条规则错误，虽然它匹配当前页的URL，但 <i>Redirector</i> 并不知道应怎样处理。
+</p>
+</dd>
+<dt>有时你会发现 <i>Redirector</i> 对一个URL作了多次重定向</dt><dd>
+<p>
+    比如
+</p>
+
+
+<pre class="example">想要的结果: https://www.google.com/ -&gt; https://www.google.com/?
+实际的结果: https://www.google.com/ -&gt; https://www.google.com/??
+</pre>
+
+<p>
+    最有可能的情况是服务器端进行了重定向。
+    参考<code>(?!&hellip;)</code>的例子编写“黑名单”即可。
+</p></dd>
+</dl>
+
+
+<p>
+  如果你确定问题出在 <i>Redirector</i> 本身，请发送错误报告至&lt;CyrilFeng at gmail dot com&gt;。
+  但在此之前，请先确定你已做过下列步骤：
+</p><ul>
+<li>确定在禁用 <i>Redirector</i> 之后问题就会消失；
+
+</li>
+<li>确定已更新到最新版（ <i>Cr</i> 和 <i>Redirector</i> ）；
+
+</li>
+<li>如有可能，在重现这个问题时，设置语言为中文或者英语；
+
+</li>
+<li>同样，用中文或英语描述这个问题；
+
+</li>
+<li>备份规则列表并随错误报告一起提交，如果不涉及隐私。
+</li>
+</ul>
+
+
+</div>
+
+</div>
+
+<div id="outline-container-8" class="outline-2">
+<h2 id="sec-8"><span class="section-number-2">8</span> 建议</h2>
+<div class="outline-text-2" id="text-8">
+
+
+</div>
+
+<div id="outline-container-8-1" class="outline-3">
+<h3 id="sec-8-1"><span class="section-number-3">8.1</span> 编写高效的 <i>匹配</i> 模式</h3>
+<div class="outline-text-3" id="text-8-1">
+
+<p>   <i>匹配</i> 模式的质量是影响 <i>Redirector</i> 效率的主要因素。
+</p>
+<p>
+   先澄清一些事情：
+</p><ul>
+<li>禁用和手动的规则并不影响效率；
+
+</li>
+<li>虽然通配符会在内部被转化为 <i>正则</i> ，
+     但转化过程只发生在 <i>Redirector</i> 启动或规则列表有改动的时候；
+
+</li>
+<li>为加快速度， <i>正则</i> 都会在事先被编译。即便你没有采纳这里的任何建议，
+     <i>Redirector</i> 在匹配时也足够快。
+</li>
+</ul>
+
+
+<p>
+   要编写高效的 <i>匹配</i> 模式，你应该：
+</p><dl>
+<dt>优先用 <i>正则</i> 而不是通配符</dt><dd>
+<p>
+     <i>正则</i> 在匹配时更精准；
+</p>
+</dd>
+<dt>避免使用 <i>忽略大小写</i></dt><dd>
+<p>
+     URL一般都是小写的；
+</p>
+</dd>
+<dt>在匹配过程中，不匹配的URL应尽快地被排除</dt><dd>
+<p>
+      例如：
+</p><ul>
+<li>如果你要匹配以 <code>http://</code> 开头的URL，
+       <code>^http://</code> 会比 <code>http://</code> 更佳。
+
+</li>
+</ul>
+
+</dd>
+<dt>优先使用“懒惰”而不是“贪婪”模式</dt><dd>
+<p>
+     这在被匹配部分较短时是适用的。
+</p></dd>
+</dl>
+
+
+<p>
+   另外提醒一点，规则列表中自动规则也应当合理地排列。
+</p>
+</div>
+
+</div>
+
+<div id="outline-container-8-2" class="outline-3">
+<h3 id="sec-8-2"><span class="section-number-3">8.2</span> 编写可维护的 <i>被替换式</i></h3>
+<div class="outline-text-3" id="text-8-2">
+
+<p>   考虑到 <i>Cr</i> 不是时时刻刻都在进行重定向，
+   （否则你就滥用了 <i>Redirector</i> ）,
+   你应当首先保证 <i>被替换式</i> 的可维护性。
+   为此，你应当：
+</p><dl>
+<dt>使 <i>被替换式</i> 较短</dt><dd>
+<p>
+     例如：
+</p><dl>
+<dt>删除不必要的部分</dt><dd>
+<ul>
+<li>开头和结尾的 <code>.*</code> ， <code>.+</code> 等都是不必要的，而应当在 <i>替换式</i> 中使用 <code>$`</code> 或 <code>$'</code> 。
+
+</li>
+</ul>
+
+</dd>
+<dt>一些常用的 <i>被替换式</i></dt><dd>
+<dl>
+<dt><code>https?://</code></dt><dd>
+<p>
+         =~ <code>http://</code> 和 <code>https://</code>;
+</p>
+</dd>
+<dt><code>^[^\.]+[^/]+</code></dt><dd>
+<p>
+           =~ <code>protocol://[username[:password]@]domain[:port]</code>
+           （这里的方括号表示其中的内容是可选的）。
+</p>
+</dd>
+</dl>
+
+</dd>
+</dl>
+
+</dd>
+<dt>优先使用非捕获组而不是捕获组</dt><dd>
+<p>
+     这有助于避免数错 <code>$1</code> 、 <code>$2</code> ……
+</p></dd>
+</dl>
+
+
+
+<hr/>
+</div>
+</div>
+</div>
+</div>
+
+<div id="postamble">
+<p class="date">Date: 2012-03-11</p>
+<p class="author">Author: Cyril Feng</p>
+<p class="creator">Org version 7.8.03 with Emacs version 23</p>
+<a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
+
+</div>
+</body>
+</html>
