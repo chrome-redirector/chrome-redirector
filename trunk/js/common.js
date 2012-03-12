@@ -23,15 +23,6 @@
 /*global $: true, $$: true, $v: true, $f: true*/
 /*global chrome: true*/
 
-Object.prototype.merge = function (src) { // Merge obj from src
-    for (var prop in src) {
-        if (src.hasOwnProperty(prop)) {
-            this[prop] = src[prop];
-        }
-    }
-    return this;
-};
-
 Element.prototype.mouseClick = function () {
     var e = document.createEvent('MouseEvents');
     e.initEvent('click', true, true);
@@ -53,9 +44,6 @@ $i18n = function (msg) {
 $v = {type: {}};                        // Global values set
 $f = {};                                // Global functions set
 
-$v.debug = true;                // Global debug symbol
-// $v.debug = false;
-
 $v.type.regexp = 0;
 $v.type.glob = 1;
 $v.type.manual = $v.type.block = 2;
@@ -74,12 +62,6 @@ $f.applyI18n = function (type) {
             var attrArr = attr.split(":"); // Fmt of attr: prop:val
             it.setAttribute(attrArr[0], $i18n(attrArr[1]));
         }
-    }
-};
-
-$f.dbg = function (msg) {
-    if ($v.debug === true) {
-        chrome.extension.getBackgroundPage().console.log('DBG>', msg);
     }
 };
 
@@ -207,7 +189,7 @@ $f.readFile = function (file, callback) {
 $f.writeFile = function (file, content) {
     /* Add more features when WebKit support FileWriter interface of
      * HTML5 File API
-     * `file' can also be of type File
+     * Then `file' can also be of type File
      */
     // file: filename (in user's download dir); content: string
 

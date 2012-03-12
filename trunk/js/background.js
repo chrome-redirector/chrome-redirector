@@ -23,46 +23,46 @@
 /*global $: true, $$: true, $v: true, $f: true*/
 /*global chrome: true, localStorage: true, RuleList: true, Pref: true*/
 
-var onBeforeRequestListener = function (tmp) {
+var onBeforeRequestListener = function (details) {
     if ($v.ruleAuto.length === 0) { // No auto rule
         return;
     }
 
     for (var i = 0; i < $v.ruleAuto.length; i++) {
-        if ($v.ruleAuto[i].match.test(tmp.url)) { // Match
-            if ($v.ruleAuto[i].sub === null) {    // To block
+        if ($v.ruleAuto[i].match.test(details.url)) { // Match
+            if ($v.ruleAuto[i].sub === null) {        // To block
                 return {cancel: true};
-            } else {        // To redirect
+            } else {            // To redirect
                 return {redirectUrl:
-                        $f.getRedirUrl(tmp.url, $v.ruleAuto[i])};
+                        $f.getRedirUrl(details.url, $v.ruleAuto[i])};
             }
         }
     }
 };
 
-var onBeforeSendHeadersListener = function (tmp) {
+var onBeforeSendHeadersListener = function (details) {
     for (var i = 0; i < $v.ruleHdr.length; i++) {
         var currentRule = $v.ruleHdr[i];
-        if (currentRule.match.test(tmp.url)) { // match this URL
+        if (currentRule.match.test(details.url)) { // match this URL
             var currentHeaders = [];
-            for (var j = 0; j < tmp.requestHeaders.length; j++) {
-                currentHeaders.push(tmp.requestHeaders[j].name);
+            for (var j = 0; j < details.requestHeaders.length; j++) {
+                currentHeaders.push(details.requestHeaders[j].name);
             }
 
             for (var j = 0; j < currentRule.sub.length; j++) {
                 var idx;
                 if ((idx = currentHeaders.indexOf(
                     currentRule.sub[j])) !== -1) { // Exists
-                    tmp.requestHeaders[idx].value =
+                    details.requestHeaders[idx].value =
                         currentRule.repl[j];
                 } else if ((idx = currentHeaders.indexOf(
                     currentRule.sub[j].replace(/^-/, '')
                 )) !== -1) { // To del
-                    tmp.requestHeaders.splice(idx, 1);
+                    details.requestHeaders.splice(idx, 1);
                 } else {    // To create
                     if ((/^(?!-)/).test(currentRule.sub[j])) {
                         // Do not create headers with name `-...'
-                        tmp.requestHeaders.push({
+                        details.requestHeaders.push({
                             name: currentRule.sub[j],
                             value: currentRule.repl[j]
                         });
@@ -70,7 +70,7 @@ var onBeforeSendHeadersListener = function (tmp) {
                 }
             }
 
-            return {requestHeaders: tmp.requestHeaders};
+            return {requestHeaders: details.requestHeaders};
         }
     }
 };

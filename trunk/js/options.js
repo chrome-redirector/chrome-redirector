@@ -21,12 +21,12 @@
 
 /*jslint browser: true, onevar: false, plusplus: false*/
 /*global $: true, $$: true, $v: true, $f: true*/
-/*global chrome: true, RuleList: true, Pref: true*/
+/*global chrome: true, RuleList: true, Pref: true, Debugger: true*/
 
 // Navbar
 $f.switchNav = function (tag) {
-    $('prefTag').className =
-        $('ruleMgrTag').className = $('docTag').className = '';
+    $('prefTag').className = $('ruleMgrTag').className =
+        $('dbgTag').className = $('docTag').className = '';
     $(tag).className = 'selected';
 
     $('main-container').className = '.selected';
@@ -36,8 +36,9 @@ $f.switchNav = function (tag) {
 
 $f.initOpt = function () {                         // Option page init
     $v.ext_bg = chrome.extension.getBackgroundPage(); // Bg page
-    $v.pref = new Pref();         // preferences obj
-    $v.ruleList = new RuleList(); // rules list obj
+    $v.pref = new Pref();         // Preferences obj
+    $v.ruleList = new RuleList(); // Rules list obj
+    $v.debugger = new Debugger(); // Debugger obj
 
     $v.pref.onChgPrompt();      // Will create prompts objs
 

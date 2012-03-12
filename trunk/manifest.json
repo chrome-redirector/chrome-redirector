@@ -10,6 +10,6 @@
     "permissions": ["webRequest", "webRequestBlocking",
                     "contextMenus", "<all_urls>"],
     "default_locale": "en_US",
-    "version": "2.2.17",
+    "version": "2.2.18",
     "minimum_chrome_version": "17"
 }

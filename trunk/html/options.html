@@ -29,6 +29,7 @@
     <script src="/js/prompt.js" type="text/javascript"></script>
     <script src="/js/pref.js" type="text/javascript"></script>
     <script src="/js/rule.js" type="text/javascript"></script>
+    <script src="/js/debugger.js" type="text/javascript"></script>
     <script src="/js/options.js" type="text/javascript"></script>
     <link rel="stylesheet" href="/css/options.css" type="text/css">
   </head>
@@ -40,15 +41,19 @@
 
       <ul id="navTags">
         <li id="prefTag">
-          <a href="#pref" i18nT="NAVBAR_PREF"
+          <a href="#pref" i18nT="PREF_TITLE"
              onclick="$f.switchNav('prefTag')"></a>
         </li>
         <li id="ruleMgrTag">
-          <a href="#ruleMgr" i18nT="NAVBAR_RULEMGR"
+          <a href="#ruleMgr" i18nT="RULEMGR_TITLE"
              onclick="$f.switchNav('ruleMgrTag')"></a>
         </li>
+        <li id="dbgTag">
+          <a href="#dbg" i18nT="DBG_TITLE"
+             onclick="$f.switchNav('dbgTag')"></a>
+        </li>
         <li id="docTag">
-          <a href="#doc" i18nT="NAVBAR_DOC"
+          <a href="#doc" i18nT="DOC_TITLE"
              onclick="$f.switchNav('docTag')"></a>
         </li>
       </ul>
@@ -64,21 +69,28 @@
           <!-- Proto settings -->
           <h3 i18nT="PROTO_TITLE"></h3>
           <section>
-            <input type="checkbox" id="pref_proto_all"
-                   onclick="$v.pref.onChgProto('all')" />
-            <label i18nT="PROTO_ALL"></label><br />
-            <input type="checkbox" id="pref_proto_http"
-                   onclick="$v.pref.onChgProto('http')" />
-            <label>HTTP://</label><br />
-            <input type="checkbox" id="pref_proto_https"
-                   onclick="$v.pref.onChgProto('https')" />
-            <label>HTTPS://</label><br />
-            <input type="checkbox" id="pref_proto_ftp"
-                   onclick="$v.pref.onChgProto('ftp')" />
-            <label>FTP://</label><br />
-            <input type="checkbox" id="pref_proto_file"
-                   onclick="$v.pref.onChgProto('file')" />
-            <label>FILE://</label><br />
+            <details>
+              <summary>
+                <input type="checkbox" id="pref_proto_all"
+                       onclick="$v.pref.onChgProto('all')" />
+                <label i18nT="PROTO_ALL"></label><br />
+              </summary>
+
+              <section>
+                <input type="checkbox" id="pref_proto_http"
+                       onclick="$v.pref.onChgProto('http')" />
+                <label>HTTP://</label><br />
+                <input type="checkbox" id="pref_proto_https"
+                       onclick="$v.pref.onChgProto('https')" />
+                <label>HTTPS://</label><br />
+                <input type="checkbox" id="pref_proto_ftp"
+                       onclick="$v.pref.onChgProto('ftp')" />
+                <label>FTP://</label><br />
+                <input type="checkbox" id="pref_proto_file"
+                       onclick="$v.pref.onChgProto('file')" />
+                <label>FILE://</label><br />
+              </section>
+            </details>
           </section>
 
           <!-- Context menu settings -->
@@ -128,7 +140,7 @@
 
             <table id="ruleListTable">
               <colgroup>
-                <col width="4%">
+               <col width="4%">
                 <col width="24%" span="4">
               </colgroup>
               <tr>
@@ -141,28 +153,74 @@
           </section>
 
           <!-- Backup rule list -->
-          <h3 i18nT="RULEMGR_BAK_TITLE" style="cursor: pointer;"
-              onclick="$('div_bak').className =
-                       $('div_bak').offsetHeight === 0 ? 'show' : ''">
-          </h3>
           <section>
-            <div id="div_bak">
+            <details>
+              <summary i18nT="RULEMGR_BAK_TITLE"></summary>
+
               <p>
                 <input type="button" i18nP="value:BTN_BAK"
                        onclick="$v.ruleList.bak()" />
-              </p>
-              <p>
+              </p><p>
                 <input type="button" i18nP="value:BTN_RESTORE"
                        onclick="$v.ruleList.restore()" />
                 <input type="file" id="ruleEdit_restoreFile" />
-              </p>
-              <p>
+              </p><p>
                 <input type="button" i18nP="value:BTN_APPEND"
                        onclick="$v.ruleList.restore(true)" />
                 <input type="file" id="ruleEdit_appendFile" />
               </p>
-            </div>
+            </details>
           </section>
+        </div>
+
+        <!-- Page for debugger -->
+        <div id="dbg" class="mainview">
+          <h1 i18nT="DBG_TITLE"></h1>
+
+          <form onsubmit="return false;">
+            <input type="url" id="dbg_url"
+                   class="input-text"
+                   i18nP="placeholder:PH_DEBUG_URL" required />
+            <input type="checkbox"
+                   onchange="$v.debugger.quiet=this.checked" />
+            <label i18nT="DBG_QUIET"></label>
+            <input type="checkbox" checked
+                   onchange="$v.debugger.trackRedir=this.checked" />
+            <label i18nT="DBG_TRACK_REDIR"></label>
+            <input type="checkbox" checked
+                   onchange="$v.debugger.trackHdr=this.checked" />
+            <label i18nT="DBG_TRACK_HDR"></label>
+
+            <div class="action-area">
+              <input type="submit" id="dbg_start"
+                     i18nP="value:BTN_DBG_START"
+                     onclick="this.hidden=true;
+                              $('dbg_stop').hidden=false;
+                              $v.debugger.start()" />
+              <input type="button" id="dbg_stop" hidden="true"
+                     i18nP="value:BTN_DBG_STOP"
+                     onclick="this.hidden=true;
+                              $('dbg_start').hidden=false;
+                              $v.debugger.stop()" />
+              <input type="button" id="dbg_unfold" hidden="true"
+                     i18nP="value:BTN_DBG_UNFOLD"
+                     onclick="this.hidden=true;
+                              $('dbg_fold').hidden=false;
+                              $v.debugger.openDetails(true)" />
+              <input type="button" id="dbg_fold" hidden="true"
+                     i18nP="value:BTN_DBG_FOLD"
+                     onclick="this.hidden=true;
+                              $('dbg_unfold').hidden=false;
+                              $v.debugger.openDetails(false)" />
+              <input type="button" i18nP="value:BTN_DBG_CLEAR"
+                     onclick="$('dbg_unfold').hidden=true;
+                              $('dbg_fold').hidden=true;
+                              $('dbg_info').innerHTML=''" />
+            </div>
+          </form>
+
+          <div id="dbg_info">
+          </div>
         </div>
 
         <!-- Page for docs -->
@@ -192,7 +250,7 @@
                 <!-- Rule name -->
                 <h3 i18nT="LBL_NAME"></h3>
                 <br />
-                <input id="ruleEdit_namestr" placeholder="NAME"
+                <input id="ruleEdit_namestr" i18nP="placeholder:PH_NAME"
                        required />
               </section>
 
@@ -210,7 +268,7 @@
                 <label i18nT="LBL_IGNCASE"></label>
                 <br />
                 <input id="ruleEdit_matchstr"
-                       placeholder="MATCH PATTERN" required />
+                       i18nP="placeholder:PH_MATCH" required />
               </section>
 
               <section id="ruleEdit_sub">
@@ -230,7 +288,7 @@
                 <label i18nT="LBL_SUBGLOB"></label>
                 <br />
                 <input id="ruleEdit_substr"
-                       placeholder="SUB STRING/REGEXP" required />
+                       i18nP="placeholder:PH_SUB" required />
               </section>
 
               <section id="ruleEdit_repl">
@@ -239,7 +297,7 @@
                 <input type="checkbox" id="ruleEdit_replDecode" />
                 <label i18nT="LBL_REPLDECODE"></label>
                 <br />
-                <input id="ruleEdit_replstr" placeholder="REPLACEMENT" />
+                <input id="ruleEdit_replstr" i18nP="placeholder:PH_REPL" />
               </section>
 
               <!-- Save/Cancel buttons -->
@@ -258,33 +316,28 @@
             <!-- Test form -->
             <form onsubmit="return false;" autocomplete="off">
               <section>
-                <h3 i18nT="LBL_TEST" style="cursor: pointer;"
-                    onclick="$('div_test').className =
-                             $('div_test').offsetHeight === 0 ? 'show' : ''">
-                </h3>
-              </section>
-              <div id="div_test">
-                <section id="ruleEdit_test">
-                  <br />
+                <details id="ruleEdit_test">
+                  <summary i18nT="LBL_TEST"></summary>
+
                   <input type="url" id="ruleEdit_teststr"
                          class="input-text"
-                         placeholder="TEST URL" required />
+                         i18nP="placeholder:PH_TEST_URL" required />
                   <div class="action-area">
                     <input type="submit" i18nP="value:BTN_TEST"
                            onclick="$v.ruleList.test()" />
                   </div>
-                </section>
-              </div>
+                </details>
+              </section>
             </form>
           </div>
         </div>
       </div>
     </div>
 
-<!-- Notification layer -->
-<div id="layerNotif" onclick="this.className=''">
-  <div  class="div-center">
-    <div id="layerNotif_disp"></div>
-  </div>
-</body>
+    <!-- Notification layer -->
+    <div id="layerNotif" onclick="this.className=''">
+      <div  class="div-center">
+        <div id="layerNotif_disp"></div>
+      </div>
+  </body>
 </html>
