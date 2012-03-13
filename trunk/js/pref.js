@@ -20,7 +20,7 @@
    From Cyril Feng. */
 
 /*jslint browser: true, onevar: false, plusplus: false*/
-/*global $: true, $$: true, $v: true, $f: true*/
+/*global $: true, $$: true, $v: true, $f: true, $i18n: true*/
 /*global localStorage: true, Pref: true, Prompt: true*/
 
 Pref = function () {            // Obj holds preferences data/method

@@ -24,7 +24,7 @@
   <head>
     <meta http-equiv="Content-Type" content="text/html;
                                              charset=utf-8">
-    <title i18nT="PAGE_TITLE"></title>
+    <title i18n=":PAGE_TITLE"></title>
     <script src="/js/common.js" type="text/javascript"></script>
     <script src="/js/prompt.js" type="text/javascript"></script>
     <script src="/js/pref.js" type="text/javascript"></script>
@@ -41,20 +41,20 @@
 
       <ul id="navTags">
         <li id="prefTag">
-          <a href="#pref" i18nT="PREF_TITLE"
-             onclick="$f.switchNav('prefTag')"></a>
+          <a href="#pref" i18n="PREF_TITLE"
+             onclick="$f.switchNav()"></a>
         </li>
         <li id="ruleMgrTag">
-          <a href="#ruleMgr" i18nT="RULEMGR_TITLE"
-             onclick="$f.switchNav('ruleMgrTag')"></a>
+          <a href="#ruleMgr" i18n="RULEMGR_TITLE"
+             onclick="$f.switchNav()"></a>
         </li>
         <li id="dbgTag">
-          <a href="#dbg" i18nT="DBG_TITLE"
-             onclick="$f.switchNav('dbgTag')"></a>
+          <a href="#dbg" i18n="DBG_TITLE"
+             onclick="$f.switchNav()"></a>
         </li>
         <li id="docTag">
-          <a href="#doc" i18nT="DOC_TITLE"
-             onclick="$f.switchNav('docTag')"></a>
+          <a href="#doc" i18n="DOC_TITLE"
+             onclick="$f.switchNav()"></a>
         </li>
       </ul>
     </div>
@@ -64,16 +64,16 @@
       <div id="main">
         <!-- Page for Preferences -->
         <div id="pref">
-          <h1 i18nT="PREF_TITLE"></h1>
+          <h1 i18n="PREF_TITLE"></h1>
 
           <!-- Proto settings -->
-          <h3 i18nT="PROTO_TITLE"></h3>
+          <h3 i18n="PROTO_TITLE"></h3>
           <section>
             <details>
               <summary>
                 <input type="checkbox" id="pref_proto_all"
                        onclick="$v.pref.onChgProto('all')" />
-                <label i18nT="PROTO_ALL"></label><br />
+                <label i18n="PROTO_ALL"></label><br />
               </summary>
 
               <section>
@@ -94,47 +94,42 @@
           </section>
 
           <!-- Context menu settings -->
-          <h3 i18nT="CONTEXT_TITLE"></h3>
+          <h3 i18n="CONTEXT_TITLE"></h3>
           <section>
             <input type="checkbox" id="pref_context_link"
                    onclick="$v.pref.onChgContext()" />
-            <label i18nT="CONTEXT_LINK"></label><br />
+            <label i18n="CONTEXT_LINK"></label><br />
             <input type="checkbox" id="pref_context_page"
                    onclick="$v.pref.onChgContext()" />
-            <label i18nT="CONTEXT_PAGE"></label><br />
+            <label i18n="CONTEXT_PAGE"></label><br />
           </section>
 
           <!-- Input prompt settings -->
-          <h3 i18nT="PROMPT"></h3>
+          <h3 i18n="PROMPT"></h3>
           <section>
             <input type="checkbox" id="pref_prompt"
                    onclick="$v.pref.onChgPrompt()" />
-            <label i18nT="PROMPT_CHKBOX"></label>
+            <label i18n="PROMPT_CHKBOX"></label>
           </section>
-
-          <!-- <\!-- Misc settings -\-> -->
-          <!-- <h3 i18nT="MISC_TITLE"></h3> -->
-          <!-- <section> -->
-          <!-- </section> -->
         </div>
 
         <!-- Page for rules -->
         <div id="ruleMgr" class="mainview">
-          <h1 i18nT="RULEMGR_TITLE"></h1>
+          <h1 i18n="RULEMGR_TITLE"></h1>
 
           <!-- Rules list -->
-          <h3 i18nT="LBL_TITLE"></h3>
+          <h3 i18n="LBL_TITLE"></h3>
           <section>
             <div class="div-center">
-              <input type="button" i18nP="value:BTN_NEW"
+              <input type="button" i18n="value:BTN_NEW"
                      onclick="$v.ruleList.add()" />
-              <input type="button" i18nP="value:BTN_EDIT"
+              <input type="button" i18n="value:BTN_EDIT"
                      onclick="$v.ruleList.edit()" />
-              <input type="button" i18nP="value:BTN_DEL"
+              <input type="button" i18n="value:BTN_DEL"
                      onclick="$v.ruleList.del()" />
-              <input type="button" i18nP="value:BTN_UP"
+              <input type="button" i18n="value:BTN_UP"
                      onclick="$v.ruleList.move(-1)" />
-              <input type="button" i18nP="value:BTN_DOWN"
+              <input type="button" i18n="value:BTN_DOWN"
                      onclick="$v.ruleList.move(1)" />
             </div>
 
@@ -144,10 +139,10 @@
                 <col width="24%" span="4">
               </colgroup>
               <tr>
-                <th i18nT="LBL_NAME" colspan="2"></th>
-                <th i18nT="LBL_MATCH"></th>
-                <th i18nT="LBL_SUB"></th>
-                <th i18nT="LBL_REPL"></th>
+                <th i18n="LBL_NAME" colspan="2"></th>
+                <th i18n="LBL_MATCH"></th>
+                <th i18n="LBL_SUB"></th>
+                <th i18n="LBL_REPL"></th>
               </tr>
             </table>
           </section>
@@ -155,19 +150,28 @@
           <!-- Backup rule list -->
           <section>
             <details>
-              <summary i18nT="RULEMGR_BAK_TITLE"></summary>
+              <summary i18n="RULEMGR_BAK_TITLE"></summary>
 
               <p>
-                <input type="button" i18nP="value:BTN_BAK"
+                <input type="button"
+                       i18n="value:BTN_BAK;title:BTN_BAK_TITLE"
                        onclick="$v.ruleList.bak()" />
               </p><p>
-                <input type="button" i18nP="value:BTN_RESTORE"
+                <input type="button"
+                       i18n="value:BTN_RESTORE;title:BTN_RESTORE_TITLE"
                        onclick="$v.ruleList.restore()" />
-                <input type="file" id="ruleEdit_restoreFile" />
+                <input type="file" id="ruleEdit_restoreFile"
+                       accept="text/plain" />
               </p><p>
-                <input type="button" i18nP="value:BTN_APPEND"
+                <input type="button"
+                       i18n="value:BTN_EXPORT;title:BTN_EXPORT_TITLE"
+                       onclick="$v.ruleList.bak(true)" />
+              </p><p>
+                <input type="button"
+                       i18n="value:BTN_IMPORT;title:BTN_IMPORT_TITLE"
                        onclick="$v.ruleList.restore(true)" />
-                <input type="file" id="ruleEdit_appendFile" />
+                <input type="file" id="ruleEdit_appendFile"
+                       accept="text/plain" />
               </p>
             </details>
           </section>
@@ -175,44 +179,47 @@
 
         <!-- Page for debugger -->
         <div id="dbg" class="mainview">
-          <h1 i18nT="DBG_TITLE"></h1>
+          <h1 i18n="DBG_TITLE"></h1>
 
           <form onsubmit="return false;">
             <input type="url" id="dbg_url"
                    class="input-text"
-                   i18nP="placeholder:PH_DEBUG_URL" required />
+                   i18n="placeholder:PH_DEBUG_URL" required />
             <input type="checkbox"
                    onchange="$v.debugger.quiet=this.checked" />
-            <label i18nT="DBG_QUIET"></label>
+            <label i18n="DBG_QUIET"></label>
             <input type="checkbox" checked
                    onchange="$v.debugger.trackRedir=this.checked" />
-            <label i18nT="DBG_TRACK_REDIR"></label>
+            <label i18n="DBG_TRACK_REDIR"></label>
             <input type="checkbox" checked
                    onchange="$v.debugger.trackHdr=this.checked" />
-            <label i18nT="DBG_TRACK_HDR"></label>
+            <label i18n="DBG_TRACK_HDR"></label>
+            <input type="checkbox" checked
+                   onchange="$v.debugger.testSpeed=this.checked" />
+            <label i18n="DBG_TEST_SPEED"></label>
 
             <div class="action-area">
               <input type="submit" id="dbg_start"
-                     i18nP="value:BTN_DBG_START"
+                     i18n="value:BTN_DBG_START"
                      onclick="this.hidden=true;
                               $('dbg_stop').hidden=false;
                               $v.debugger.start()" />
               <input type="button" id="dbg_stop" hidden="true"
-                     i18nP="value:BTN_DBG_STOP"
+                     i18n="value:BTN_DBG_STOP"
                      onclick="this.hidden=true;
                               $('dbg_start').hidden=false;
                               $v.debugger.stop()" />
               <input type="button" id="dbg_unfold" hidden="true"
-                     i18nP="value:BTN_DBG_UNFOLD"
+                     i18n="value:BTN_DBG_UNFOLD"
                      onclick="this.hidden=true;
                               $('dbg_fold').hidden=false;
                               $v.debugger.openDetails(true)" />
               <input type="button" id="dbg_fold" hidden="true"
-                     i18nP="value:BTN_DBG_FOLD"
+                     i18n="value:BTN_DBG_FOLD"
                      onclick="this.hidden=true;
                               $('dbg_unfold').hidden=false;
                               $v.debugger.openDetails(false)" />
-              <input type="button" i18nP="value:BTN_DBG_CLEAR"
+              <input type="button" i18n="value:BTN_DBG_CLEAR"
                      onclick="$('dbg_unfold').hidden=true;
                               $('dbg_fold').hidden=true;
                               $('dbg_info').innerHTML=''" />
@@ -221,11 +228,27 @@
 
           <div id="dbg_info">
           </div>
+
+          <details>
+            <summary i18n="DBG_INFO_EXPORT"></summary>
+
+            <p>
+              <input type="button"
+                     i18n="value:BTN_EXPORT;title:BTN_DBG_EXPORT_TITLE"
+                     onclick="$v.debugger.export()" />
+            </p><p>
+              <input type="button"
+                     i18n="value:BTN_IMPORT;title:BTN_DBG_IMPORT_TITLE"
+                     onclick="$v.debugger.import()" />
+              <input type="file" id="dbg_importFile"
+                     accept="text/plain" />
+            </p>
+          </details>
         </div>
 
         <!-- Page for docs -->
         <div id="doc" class="mainview">
-          <h1 i18nT="DOC_TITLE"></h1>
+          <h1 i18n="DOC_TITLE"></h1>
 
           <section>
             <h3>
@@ -241,71 +264,71 @@
           <!-- Rule Editor -->
           <div id="layerFront">
             <section>
-              <h1 i18nT="RULE_EDITOR"></h1>
+              <h1 i18n="RULE_EDITOR"></h1>
             </section>
             <!-- Main form -->
             <form id="ruleEdit" onsubmit="return false;"
                   autocomplete="off">
               <section id="ruleEdit_name">
                 <!-- Rule name -->
-                <h3 i18nT="LBL_NAME"></h3>
+                <h3 i18n="LBL_NAME"></h3>
                 <br />
-                <input id="ruleEdit_namestr" i18nP="placeholder:PH_NAME"
+                <input id="ruleEdit_namestr" i18n="placeholder:PH_NAME"
                        required />
               </section>
 
               <section id="ruleEdit_match">
                 <!-- Match pattern -->
-                <h3 i18nT="LBL_MATCH"></h3>
+                <h3 i18n="LBL_MATCH"></h3>
                 <select id="ruleEdit_matchtype"
                         onchange="$v.ruleList.onChgMatchType()">
-                  <option selected="selected" i18nT="TYPE_REGEXP">
+                  <option selected="selected" i18n="TYPE_REGEXP">
                   </option>
-                  <option i18nT="TYPE_GLOB"></option>
-                  <option i18nT="TYPE_MANUAL"></option>
+                  <option i18n="TYPE_GLOB"></option>
+                  <option i18n="TYPE_MANUAL"></option>
                 </select>
                 <input type="checkbox" id="ruleEdit_matchcase" />
-                <label i18nT="LBL_IGNCASE"></label>
+                <label i18n="LBL_IGNCASE"></label>
                 <br />
                 <input id="ruleEdit_matchstr"
-                       i18nP="placeholder:PH_MATCH" required />
+                       i18n="placeholder:PH_MATCH" required />
               </section>
 
               <section id="ruleEdit_sub">
                 <!-- Substitution -->
-                <h3 i18nT="LBL_SUB"></h3>
+                <h3 i18n="LBL_SUB"></h3>
                 <select id="ruleEdit_subtype"
                         onchange="$v.ruleList.onChgSubType()">
-                  <option selected="selected" i18nT="TYPE_REGEXP">
+                  <option selected="selected" i18n="TYPE_REGEXP">
                   </option>
-                  <option i18nT="TYPE_GLOB"></option>
-                  <option i18nT="TYPE_BLOCK"></option>
-                  <option i18nT="TYPE_HDR"></option>
+                  <option i18n="TYPE_GLOB"></option>
+                  <option i18n="TYPE_BLOCK"></option>
+                  <option i18n="TYPE_HDR"></option>
                 </select>
                 <input type="checkbox" id="ruleEdit_subcase" />
-                <label i18nT="LBL_IGNCASE"></label>
+                <label i18n="LBL_IGNCASE"></label>
                 <input type="checkbox" id="ruleEdit_subglob" />
-                <label i18nT="LBL_SUBGLOB"></label>
+                <label i18n="LBL_SUBGLOB"></label>
                 <br />
                 <input id="ruleEdit_substr"
-                       i18nP="placeholder:PH_SUB" required />
+                       i18n="placeholder:PH_SUB" required />
               </section>
 
               <section id="ruleEdit_repl">
                 <!-- Replacement -->
-                <h3 i18nT="LBL_REPL"></h3>
+                <h3 i18n="LBL_REPL"></h3>
                 <input type="checkbox" id="ruleEdit_replDecode" />
-                <label i18nT="LBL_REPLDECODE"></label>
+                <label i18n="LBL_REPLDECODE"></label>
                 <br />
-                <input id="ruleEdit_replstr" i18nP="placeholder:PH_REPL" />
+                <input id="ruleEdit_replstr" i18n="placeholder:PH_REPL" />
               </section>
 
               <!-- Save/Cancel buttons -->
               <section>
                 <div class="action-area">
-                  <input type="submit" i18nP="value:BTN_SAVE"
+                  <input type="submit" i18n="value:BTN_SAVE"
                          onclick="$v.ruleList.save()" />
-                  <input type="button" i18nP="value:BTN_CANCEL"
+                  <input type="button" i18n="value:BTN_CANCEL"
                          onclick="$v.ruleList.discard()" />
                 </div>
               </section>
@@ -317,13 +340,13 @@
             <form onsubmit="return false;" autocomplete="off">
               <section>
                 <details id="ruleEdit_test">
-                  <summary i18nT="LBL_TEST"></summary>
+                  <summary i18n="LBL_TEST"></summary>
 
                   <input type="url" id="ruleEdit_teststr"
                          class="input-text"
-                         i18nP="placeholder:PH_TEST_URL" required />
+                         i18n="placeholder:PH_TEST_URL" required />
                   <div class="action-area">
-                    <input type="submit" i18nP="value:BTN_TEST"
+                    <input type="submit" i18n="value:BTN_TEST"
                            onclick="$v.ruleList.test()" />
                   </div>
                 </details>

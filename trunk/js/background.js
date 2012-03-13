@@ -20,7 +20,7 @@
    From Cyril Feng. */
 
 /*jslint browser: true, onevar: false, plusplus: false*/
-/*global $: true, $$: true, $v: true, $f: true*/
+/*global $: true, $$: true, $v: true, $f: true, $i18n: true*/
 /*global chrome: true, localStorage: true, RuleList: true, Pref: true*/
 
 var onBeforeRequestListener = function (details) {

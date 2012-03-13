@@ -66,6 +66,10 @@ label {
     margin-right: 1em;
 }
 
+section>details, #dbg>details {
+    padding-bottom: 3em;
+}
+
 details summary::-webkit-details-marker {
   color: gray;
   font-size: 120%;
@@ -300,7 +304,7 @@ section {
     background: white;
     box-shadow: 0 3px 15px rgba(0, 0, 0, 0.3), 0 3px 57px rgba(0, 0, 0, 0.3);
     min-width: 400px;
-    padding: 0 0 3px 0;
+    padding: 0;
     position: relative;
 
     display:none;

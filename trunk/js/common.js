@@ -20,7 +20,7 @@
    From Cyril Feng. */
 
 /*jslint browser: true, onevar: false, plusplus: false*/
-/*global $: true, $$: true, $v: true, $f: true*/
+/*global $: true, $$: true, $v: true, $f: true, $i18n: true*/
 /*global chrome: true*/
 
 Element.prototype.mouseClick = function () {
@@ -49,18 +49,19 @@ $v.type.glob = 1;
 $v.type.manual = $v.type.block = 2;
 $v.type.hdr = 3;
 
-$f.applyI18n = function (type) {
-    var elem = $$('[' + type + ']'); // All elements need to be mod
+$f.applyI18n = function () {
+    var elem = $$('[i18n]');    // All elements need to be mod
 
     for (var i = 0; i < elem.length; i++) {
-        var it = elem[i];
+        var attr = elem[i].getAttribute('i18n').split(";");
+        for (var j = 0; j < attr.length; j++) {
+            var keyVal = attr[j].split(":"); // Key-value pair
+            if (typeof keyVal[1] === 'undefined') {
+                keyVal[1] = keyVal[0];
+                keyVal[0] = 'textContent';
+            }
 
-        var attr = it.getAttribute(type);
-        if (type === 'i18nT') {
-            it.textContent = $i18n(attr);
-        } else {
-            var attrArr = attr.split(":"); // Fmt of attr: prop:val
-            it.setAttribute(attrArr[0], $i18n(attrArr[1]));
+            elem[i][keyVal[0]] = $i18n(keyVal[1]);
         }
     }
 };

@@ -20,23 +20,32 @@
    From Cyril Feng. */
 
 /*jslint browser: true, onevar: false, plusplus: false*/
-/*global $: true, $$: true, $v: true, $f: true*/
+/*global $: true, $$: true, $v: true, $f: true, $i18n: true*/
 /*global localStorage: true, RuleList: true*/
 
-RuleList = function (init) {
+RuleList = function (noInit) {
     try {
         this.data = JSON.parse(localStorage.RULELIST);
     } catch (e) {
         this.data = [];         // Default to empty
     }
 
-    if (init !== undefined) {   // No need to chg page
-        return;
+    if (noInit === undefined) {   // No need to chg page
+        this.init();
+    }
+};
+
+RuleList.prototype.init = function () { // Initialize
+    // Remove existing list
+    var table = $('ruleListTable');
+    var length = $$('#ruleListTable tr').length;
+    for (var i = 1; i < length; i++) {
+        table.deleteRow(-1);
     }
 
     // Construct rules list
     for (var i = 0; i < this.data.length; i++) {
-        $('ruleListTable').insertRow(-1).innerHTML =
+        table.insertRow(-1).innerHTML =
             '<td><input type="checkbox" /></td>' +
             '<td></td><td></td><td></td><td></td>';
 
@@ -428,15 +437,26 @@ RuleList.prototype.move = function (inc) { // Change the priority
     this.refresh(true);
 };
 
-RuleList.prototype.bak = function () { // Backup rule list
-    var date = new Date();
-    var filename = 'Redirector_' +
-        date.toISOString().substring(0, 10) +
-        '_' +
-        date.toLocaleTimeString() +
-        '.json';
+RuleList.prototype.bak = function (single) { // Backup rule list
+    if (typeof single === 'undefined') {
+        var addition = 'All';
+        var out = this.data;
+    } else {
+        if (typeof this.sel === 'undefined') {
+            $f.err($i18n('BAK_NO_RULE'));
+            return;
+        }
 
-    $f.writeFile(filename, JSON.stringify(this.data));
+        var addition = this.data[this.sel].name.replace(/\s+/g, '_');
+        var out = [this.data[this.sel]];
+    }
+
+    var date = new Date();
+    var filename = 'Redirector_' + addition + '_' +
+        date.toISOString().substring(0, 10) + '_' +
+        date.toLocaleTimeString() + '.json';
+
+    $f.writeFile(filename, JSON.stringify(out));
 };
 
 RuleList.prototype.restore = function (append) { // Restore rule list
@@ -463,7 +483,7 @@ RuleList.prototype.restore = function (append) { // Restore rule list
 
             this.data = this.data.concat(tmp);
             this.refresh(true);
-            location.reload();
+            this.init();        // Re-construct table
         } catch (e) {
             $f.err($i18n('BAK_RESTORE_ERR'));
         }

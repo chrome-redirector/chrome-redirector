@@ -20,14 +20,21 @@
    From Cyril Feng. */
 
 /*jslint browser: true, onevar: false, plusplus: false*/
-/*global $: true, $$: true, $v: true, $f: true*/
+/*global $: true, $$: true, $v: true, $f: true, $i18n: true*/
 /*global chrome: true, RuleList: true, Pref: true, Debugger: true*/
 
 // Navbar
-$f.switchNav = function (tag) {
-    $('prefTag').className = $('ruleMgrTag').className =
-        $('dbgTag').className = $('docTag').className = '';
-    $(tag).className = 'selected';
+$f.switchNav = function () {
+    var selectedTags = $$('#navTags .selected');
+    for (var i = 0; i < selectedTags.length; i++) {
+        selectedTags[i].className = '';
+    }
+
+    try {
+        $$('#navTags li:hover')[0].className = 'selected';
+    } catch (e) {               // Switched by script
+        $$('#navTags li')[0].className = 'selected';
+    }
 
     $('main-container').className = '.selected';
     $('main-container').style.margin = '0 -20px';
@@ -42,8 +49,7 @@ $f.initOpt = function () {                         // Option page init
 
     $v.pref.onChgPrompt();      // Will create prompts objs
 
-    $f.applyI18n('i18nT');      // Apply i18n messages
-    $f.applyI18n('i18nP');
+    $f.applyI18n();             // Apply i18n messages
 
     // Navigation bar (work with $f.switchNav)
     $('main-container').addEventListener(
