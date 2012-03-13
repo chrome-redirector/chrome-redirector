@@ -24,7 +24,7 @@ From Cyril Feng.
 #+TITLE:     Redirector Guide
 #+AUTHOR:    Cyril Feng
 #+EMAIL:     CyrilFeng@gmail.com
-#+DATE:      2012-03-11
+#+DATE:      2012-03-14
 #+DESCRIPTION:
 #+KEYWORDS:
 #+LANGUAGE:  en
@@ -77,6 +77,16 @@ From Cyril Feng.
 
   A similar procedure will be triggered during a manual redirection,
   except that URLs will be manipulated without match checking.
+
+  It's another independent yet analogous procedure for /Redirector/ to
+  manipulate HTTP request headers.
+  If the URL of a web request matches a rule,
+  the headers will be modified.
+  /Redirector/ also modifies headers only once.
+
+  Note that a headers modification always takes place after a redirection.
+  Have a try to debugger to comprehend more about the
+  inner time sequential relationship.
 
 * Basic Usage
   In this part,
@@ -215,6 +225,24 @@ From Cyril Feng.
 
    If every thing works, the test result will show up with substituted
    part and its replacement colored.
+
+** Debugger
+   Debugger is introduced since /Redirector/ ver.2.2.8
+   to make it easy to find out problems with rules.
+   Matters need attention:
+
+   - First lines of each debug record indicate the time sequence.
+     Time of first record is in the form of ~[hh:mm:ss]~ and
+     others in ~[+ElapsedTimeInMilliseconds ms]~.
+
+   - The /Test speed/ option is surely to delay the whole debug session
+     since /Redirector/ has to test for one million times to get the result.
+     That is to say,
+     if a redirection takes up 0.5@<span>\mu@</span>s to finish,
+     you're likely to experience a delay of 0.5s.
+
+   - Sum of time elapsed in redirection and headers modification is
+     an estimation to how long /Redirector/ will take in reality.
 
 #<<ADVANCED_MATCH>>
 * Advanced Match

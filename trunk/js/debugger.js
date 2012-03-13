@@ -86,7 +86,9 @@ Debugger.prototype.disp = function (details) {
             ' #' + details.requestId;
     } else {
         prompt = '+' +
-            (details.timeStamp - this.timeStamp[details.requestId]) +
+            (
+                details.timeStamp - this.timeStamp[details.requestId]
+            ).toFixed(3) +
             ' ms';
     }
 
@@ -101,17 +103,13 @@ Debugger.prototype.disp = function (details) {
 };
 
 Debugger.prototype.timer = function (testee, para) {
-    var date1 = new Date();
-
+    var time1 = (new Date()).getTime();
     for (var i = 0; i < 1000000; i++) {
         testee.apply(document, para);
     }
+    var time2 = (new Date()).getTime();
 
-    var date2 = new Date();
-
-    var elapse = date2.getTime() + date2.getMilliseconds() / 1000 -
-        date1.getTime() - date1.getMilliseconds() / 1000;
-    elapse = ' (' + elapse + ' &mu;s)';
+    var elapse = ' (' + ((time2 - time1) / 1000).toFixed(3) + ' &mu;s)';
 
     return [this.setColor(elapse, 'red'), testee(para)];
 };

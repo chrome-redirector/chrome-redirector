@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Redirector Guide"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-03-11"/>
+<meta name="generated" content="2012-03-14"/>
 <meta name="author" content="Cyril Feng"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -122,6 +122,7 @@
 </ul>
 </li>
 <li><a href="#sec-4-5">4.5 Test</a></li>
+<li><a href="#sec-4-6">4.6 Debugger</a></li>
 </ul>
 </li>
 <li><a href="#sec-5">5 Advanced Match</a></li>
@@ -200,6 +201,18 @@
 <p>
   A similar procedure will be triggered during a manual redirection,
   except that URLs will be manipulated without match checking.
+</p>
+<p>
+  It's another independent yet analogous procedure for <i>Redirector</i> to
+  manipulate HTTP request headers.
+  If the URL of a web request matches a rule,
+  the headers will be modified.
+  <i>Redirector</i> also modifies headers only once.
+</p>
+<p>
+  Note that a headers modification always takes place after a redirection.
+  Have a try to debugger to comprehend more about the
+  inner time sequential relationship.
 </p>
 </div>
 
@@ -466,6 +479,37 @@
    If every thing works, the test result will show up with substituted
    part and its replacement colored.
 </p>
+</div>
+
+</div>
+
+<div id="outline-container-4-6" class="outline-3">
+<h3 id="sec-4-6"><span class="section-number-3">4.6</span> Debugger</h3>
+<div class="outline-text-3" id="text-4-6">
+
+<p>   Debugger is introduced since <i>Redirector</i> ver.2.2.8
+   to make it easy to find out problems with rules.
+   Matters need attention:
+</p>
+<ul>
+<li>First lines of each debug record indicate the time sequence.
+     Time of first record is in the form of <code>[hh:mm:ss]</code> and
+     others in <code>[+ElapsedTimeInMilliseconds ms]</code>.
+
+</li>
+<li>The <i>Test speed</i> option is surely to delay the whole debug session
+     since <i>Redirector</i> has to test for one million times to get the result.
+     That is to say,
+     if a redirection takes up 0.5<span>&mu;</span>s to finish,
+     you're likely to experience a delay of 0.5s.
+
+</li>
+<li>Sum of time elapsed in redirection and headers modification is
+     an estimation to how long <i>Redirector</i> will take in reality.
+</li>
+</ul>
+
+
 </div>
 </div>
 
@@ -996,7 +1040,7 @@ While you get: https://www.google.com/ -&gt; https://www.google.com/??
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-03-11</p>
+<p class="date">Date: 2012-03-14</p>
 <p class="author">Author: Cyril Feng</p>
 <p class="creator">Org version 7.8.03 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>

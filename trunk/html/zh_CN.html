@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Redirector指南"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-03-11"/>
+<meta name="generated" content="2012-03-14"/>
 <meta name="author" content="Cyril Feng"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -122,6 +122,7 @@
 </ul>
 </li>
 <li><a href="#sec-4-5">4.5 测试</a></li>
+<li><a href="#sec-4-6">4.6 调试器</a></li>
 </ul>
 </li>
 <li><a href="#sec-5">5 高级匹配</a></li>
@@ -196,6 +197,15 @@
 </p>
 <p>
   手动重定向的过程也是类似的，只不过检查规则可用性的步骤会被跳过。
+</p>
+<p>
+  <i>Redirector</i> 处理HTTP请求头是另外一个独立但相似的过程。
+  如果一个web请求的URL匹配某个规则，则相应地请求头就会被处理。
+  对于请求头， <i>Redirector</i> 也只修改一次。
+</p>
+<p>
+  请注意，对于请求头的修改总是发生在重定向之后。
+  想了解更多关于时序关系的信息，请尝试一下调试器。
 </p>
 </div>
 
@@ -429,6 +439,32 @@
 <p>
    如果一切顺利，测试结果将会显示出来，其中被替换和替换上去的部分会被着色。
 </p>
+</div>
+
+</div>
+
+<div id="outline-container-4-6" class="outline-3">
+<h3 id="sec-4-6"><span class="section-number-3">4.6</span> 调试器</h3>
+<div class="outline-text-3" id="text-4-6">
+
+<p>   <i>Redirector</i> 自版本2.2.8 引入了调试器，以便更容易发现规则的问题。
+   注意事项：
+</p>
+<ul>
+<li>每条调试记录的第一行指示时序。
+     第一条记录以 <code>[时:分:秒]</code> 的形式表示，其余以 <code>[+经过的毫秒数 ms]</code> 呈现。
+
+</li>
+<li><i>测速</i> 选项必然会拖慢整个调试过程，因为 <i>Redirector</i> 会测试一百万次以得到结果。
+     比方说，如果一次重定向用时 0.5<span>&mu;</span>s ，
+     那么你很可能会感受到0.5s的延迟。
+
+</li>
+<li>重定向和头修改用时之和即可估计 <i>Redirector</i> 真实需时。
+</li>
+</ul>
+
+
 </div>
 </div>
 
@@ -919,7 +955,7 @@
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-03-11</p>
+<p class="date">Date: 2012-03-14</p>
 <p class="author">Author: Cyril Feng</p>
 <p class="creator">Org version 7.8.03 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>

@@ -66,7 +66,7 @@ label {
     margin-right: 1em;
 }
 
-section>details, #dbg>details {
+form>section>details, #dbg>details {
     padding-bottom: 3em;
 }
 
