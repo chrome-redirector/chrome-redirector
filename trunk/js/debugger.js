@@ -121,12 +121,13 @@ Debugger.prototype.trimHdr = function (Hdr) {
     for (var i = 0; i < Hdr.length; i++) {
         var hdr = Hdr[i];
 
-        tmp += '<details>' +
+        tmp += '<details style="margin-left:1em;">' +
             '<summary>' + hdr.name + '</summary>' +
             hdr.value + '</details>';
     }
 
-    return tmp;
+    return '<details><summary>HDR:</summary>' +
+        tmp + '</details>';
 };
 
 Debugger.prototype.prepare = function (tab) {
@@ -202,7 +203,8 @@ Debugger.prototype.prepare = function (tab) {
 
             return result;
         }).bind(this),
-        {urls: $v.ext_bg.$v.validUrl, tabId: tab.id}, ['blocking']
+        {urls: $v.ext_bg.$v.validUrl, tabId: tab.id},
+        ['blocking']
     );
 
     $v.ext_bg.chrome.webRequest.onBeforeSendHeaders.addListener(
@@ -231,7 +233,7 @@ Debugger.prototype.prepare = function (tab) {
                     this.setColor(
                         $i18n('DBG_SRC_HDR') + ': ' + srcHdr,
                         '', 'lightBlue'
-                    ) + '<br />' +
+                    ) +
                     this.setColor(
                         $i18n('DBG_DEST_HDR') + ': ' + destHdr,
                         '', 'lightGreen'
@@ -254,6 +256,32 @@ Debugger.prototype.prepare = function (tab) {
         }).bind(this),
         {urls: $v.ext_bg.$v.validUrl, tabId: tab.id},
         ['blocking', 'requestHeaders']
+    );
+
+    $v.ext_bg.chrome.webRequest.onSendHeaders.addListener(
+        (function (details) {
+            if (this.quiet === false) {
+                this.disp({
+                    url: details.url,
+                    timeStamp: details.timeStamp,
+                    requestId: details.requestId,
+                    data: '<details>' +
+                        '<summary>' +
+                        this.setColor($i18n('DBG_SEND_REQHDR')) +
+                        '</summary>' +
+                        'URL: ' + details.url +
+                        this.trimHdr(details.requestHeaders) +
+                        this.setColor(
+                            (details.fromCache ?
+                             '<br />' + $i18n('DBG_CACHE') : ''
+                            ), 'red', 'lightYellow'
+                        ) +
+                        '</details>'
+                });
+            }
+        }).bind(this),
+        {urls: ['<all_urls>'], tabId: tab.id},
+        ['requestHeaders']
     );
 
     $v.ext_bg.chrome.webRequest.onHeadersReceived.addListener(
@@ -282,7 +310,7 @@ Debugger.prototype.prepare = function (tab) {
                     this.setColor(
                         $i18n('DBG_SRC_HDR') + ': ' + srcHdr,
                         '', 'lightBlue'
-                    ) + '<br />' +
+                    ) +
                     this.setColor(
                         $i18n('DBG_DEST_HDR') + ': ' + destHdr,
                         '', 'lightGreen'
@@ -330,11 +358,14 @@ Debugger.prototype.prepare = function (tab) {
                             (details.fromCache ?
                              '<br />' + $i18n('DBG_CACHE') : ''
                             ), 'red', 'lightYellow'
-                        ) + '</details>'
+                        ) +
+                        this.trimHdr(details.responseHeaders) +
+                        '</details>'
                 });
             }
         }).bind(this),
-        {urls: ['<all_urls>'], tabId: tab.id}
+        {urls: ['<all_urls>'], tabId: tab.id},
+        ['responseHeaders']
     );
 
     $v.ext_bg.chrome.webRequest.onCompleted.addListener(
@@ -349,11 +380,13 @@ Debugger.prototype.prepare = function (tab) {
                             $i18n('DBG_COMPLETE'), '', 'green'
                         ) + '</summary>' +
                         'URL: ' + details.url +
+                        this.trimHdr(details.responseHeaders) +
                         this.setColor(
                             (details.fromCache ?
                              '<br />' + $i18n('DBG_CACHE') : ''
                             ), 'red', 'lightYellow'
-                        ) + '</details>'
+                        ) +
+                        '</details>'
                 });
             }
         }).bind(this),
