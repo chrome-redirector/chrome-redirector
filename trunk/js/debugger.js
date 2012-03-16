@@ -111,7 +111,9 @@ Debugger.prototype.timer = function (testee, para) {
 
     var elapse = ' (' + ((time2 - time1) / 1000).toFixed(3) + ' &mu;s)';
 
-    return [this.setColor(elapse, 'red'), testee(para)];
+    return [
+        this.setColor(elapse, 'red'), testee.apply(document, para)
+    ];
 };
 
 Debugger.prototype.prepare = function (tab) {
@@ -297,7 +299,7 @@ Debugger.prototype.prepare = function (tab) {
                         '<summary>' + this.setColor(
                             $i18n('DBG_COMPLETE'), '', 'green'
                         ) + '</summary>' +
-                        details.url +
+                        'URL: ' + details.url +
                         this.setColor(
                             (details.fromCache ?
                              '<br />' + $i18n('DBG_CACHE') : ''

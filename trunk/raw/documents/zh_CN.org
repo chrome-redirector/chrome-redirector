@@ -24,7 +24,7 @@ From Cyril Feng.
 #+TITLE:     Redirector指南
 #+AUTHOR:    Cyril Feng
 #+EMAIL:     CyrilFeng@gmail.com
-#+DATE:      2012-03-14
+#+DATE:      2012-03-16
 #+DESCRIPTION:
 #+KEYWORDS:
 #+LANGUAGE:  zh-CN
@@ -61,25 +61,36 @@ From Cyril Feng.
   - -> :: 重定向至
 
 * 工作机制
-  每当 /Cr/ 收到一个web请求， /Redirector/ 就会被触发去处理所请求的URL
-  （如果这是允许的，而且没有其它重定向或者屏蔽URL的扩展）。
-  值得注意的是，当处理结束后，这个URL将脱离 /Redirector/ 的控制，
-  并且再也没有被 /Redirector/ 处理的机会，
-  即 /Redirector/ *只进行一次重定向* 。
-  更多信息请参考
-  [[http://code.google.com/chrome/extensions/webRequest.html#life_cycle][这个页面]]。
+  /Redirector/ 会在每个web请求产生之初处理它，
+  这时DNS解析、与服务器建立连接等都还没有开始。
+  提醒一下，当你浏览一个网页时，很有可能会产生多个web请求，比如用来加载图片；
+  不过 /Redirector/ 会处理全部这些请求。
 
-  /Redirector/ 会首先检查是否有规则适用于该URL。
-  如果有的话，第一条适用的规则将被用于处理该URL。
+  /Redirector/ 会首先检查是否有规则匹配请求的URL。
+  如果是，则URL会根据第一条匹配的规则进行相应地修改／封锁。
 
-  手动重定向的过程也是类似的，只不过检查规则可用性的步骤会被跳过。
+  *注意：*
+  这个过程 *只发生一次* 。
+  事实上被重定向的URL会触发一个相同的过程，只不过 /Redirector/ 会忽略它。
+  这对服务器端发起的重定向也是适用的。
+  这种机制可以避免（无限）重定向循环的产生，否则 /Cr/ 很容易假死。
+  其实，即使 /Redirector/ 执行了第二次重定向，接下来也不会有第三次，
+  这是由 /Cr/ 内在的安全性所决定的。
 
-  /Redirector/ 处理HTTP请求头是另外一个独立但相似的过程。
-  如果一个web请求的URL匹配某个规则，则相应地请求头就会被处理。
-  对于请求头， /Redirector/ 也只修改一次。
+  手动重定向相当于是上述的强制过程，即不执行匹配检查。
 
-  请注意，对于请求头的修改总是发生在重定向之后。
-  想了解更多关于时序关系的信息，请尝试一下调试器。
+  /Redirector/ 修改HTTP请求头是另一个独立但相似的过程。
+  如果有规则匹配一个请求的URL，则第一条规则会被用来修改它的头。
+
+  *注意：*
+  这个过程通常 *只发生一次* ，但有一个例外：
+  如果服务器端触发了一次重定向， /Redirector/ 会尝试再次修改请求头。
+  这是因为之前的头已经被发送，现有的头是新生成的。
+
+  /Redirector/ 自带了一个调试器，很适合用来监视上述过程。
+  它可以帮助你理解内部的时序关系。
+  比如，你会注意到头处理总是发生在重定向检查之后。
+  如果在头处理之后发生了一次重定向，那么这很有可能是服务器端发起的。
 
 * 基本使用
   这一部分将介绍 /Redirector/ 的配置及基本的规则编写。
@@ -363,15 +374,6 @@ From Cyril Feng.
   - 左下角提示“等待扩展 /Redirector/ ” ::
     这说明有一条规则错误，虽然它匹配当前页的URL，但 /Redirector/ 并不知道应怎样处理。
 
-  - 有时你会发现 /Redirector/ 对一个URL作了多次重定向 ::
-    比如
-    #+BEGIN_EXAMPLE
-    想要的结果: https://www.google.com/ -> https://www.google.com/?
-    实际的结果: https://www.google.com/ -> https://www.google.com/??
-    #+END_EXAMPLE
-    最有可能的情况是服务器端进行了重定向。
-    参考@<code>(?!...)@</code>的例子编写“黑名单”即可。
-
   如果你确定问题出在 /Redirector/ 本身，请发送错误报告至<CyrilFeng at gmail dot com>。
   但在此之前，请先确定你已做过下列步骤：
   - 确定在禁用 /Redirector/ 之后问题就会消失；
@@ -382,7 +384,7 @@ From Cyril Feng.
 
   - 同样，用中文或英语描述这个问题；
 
-  - 备份规则列表并随错误报告一起提交，如果不涉及隐私。
+  - 导出有问题的规则及调试信息，然后随报告一起提交。
 
 * 建议
 ** 编写高效的 /匹配/ 模式

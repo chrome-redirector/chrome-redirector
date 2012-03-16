@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Redirector Guide"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-03-14"/>
+<meta name="generated" content="2012-03-16"/>
 <meta name="author" content="Cyril Feng"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -185,34 +185,60 @@
 <h2 id="sec-3"><span class="section-number-2">3</span> How it works</h2>
 <div class="outline-text-2" id="text-3">
 
-<p>  Every time <i>Cr</i> receives a web request,
-  <i>Redirector</i> will be triggered to manipulate the requested URL
-  (if allowd and there're no other extensions redirect or block URLs).
-  Note that After the manipulation finishes,
-  <i>Redirector</i> will lose control over that URL,
-  thus <i>Redirector</i> <b>only do redirection once</b>.
-  For more information, please refer to
-  <a href="http://code.google.com/chrome/extensions/webRequest.html#life_cycle">this page</a>
+<p>  <i>Redirector</i> handles every web request
+  at the very beginning of its creation,
+  when DNS resolving, connection to the server, etc have not started.
+  Note that even when you browsing a single web-page,
+  multiple web request is likely to be created, e.g., to load images.
+  <i>Redirector</i> simply handles all of them.
 </p>
 <p>
-  <i>Redirector</i> will first check if the URL matches any rules.
-  If any, the first will be picked and the URL manipulated accordingly.
+  <i>Redirector</i> will first check if the URL of a request matches
+  any of the automatic redirection rules,
+  If so, the URL will be modified/blocked
+  according to the <b>first</b> matched rule.
 </p>
 <p>
-  A similar procedure will be triggered during a manual redirection,
-  except that URLs will be manipulated without match checking.
+  <b>NOTE:</b>
+  Such process <b>happens ONLY ONCE</b>.
+  Actually the redirected URL will trigger the same process,
+  which will be ignored by <i>Redirector</i>.
+  The same thing happens to a server-initiated redirection.
+  This mechanism ensures that
+  no (infinite) redirection loop will be created,
+  which easily freezes <i>Cr</i>.
+  In fact, even if <i>Redirector</i> carries out a second redirection,
+  no third one will be triggered,
+  as it's an intrinsic security feature of <i>Cr</i>.
 </p>
 <p>
-  It's another independent yet analogous procedure for <i>Redirector</i> to
-  manipulate HTTP request headers.
-  If the URL of a web request matches a rule,
-  the headers will be modified.
-  <i>Redirector</i> also modifies headers only once.
+  A manual redirection is just like a forced process of above,
+  without match checking.
 </p>
 <p>
-  Note that a headers modification always takes place after a redirection.
-  Have a try to debugger to comprehend more about the
-  inner time sequential relationship.
+  It's another independent yet analogous process
+  for <i>Redirector</i> to manipulate HTTP request headers.
+  If there're any rules matching the URL of a web request,
+  the first will be picked up to modify the headers.
+</p>
+<p>
+  <b>NOTE:</b>
+  Such process normally <b>happens ONLY ONCE</b>,
+  but there's an exception:
+  if a server-initiated redirection is triggered,
+  <i>Redirector</i> will try to modify its headers again.
+  It's because previous headers have been sent and
+  totally new headers have been generated.
+</p>
+<p>
+  <i>Redirector</i> comes with a debugger,
+  ideal for monitoring processes mentioned above.
+  It can help you to better understand
+  the internal time sequential relationship.
+  For example, you will notice that headers handling always
+  takes place after a redirection checking.
+  If a redirection occurs after headers handling,
+  then it's probably a server-initiated redirection.
 </p>
 </div>
 
@@ -859,7 +885,7 @@
 
 <p>  For the sake of efficiency,
   <i>Redirector</i> doesn't do strict check with a rule during run-time.
-  As a result, you may run into these problems:
+  As a result, you may run into this problem:
 </p>
 <dl>
 <dt>The bottom-left corner shows "Waiting for extension <i>Redirector</i>"</dt><dd>
@@ -867,22 +893,6 @@
     This indicates you probably got a bad rule
     that matches the current URL
     but makes <i>Redirector</i> puzzled on how to manipulate it.
-</p>
-</dd>
-<dt>Sometimes, you may notice a URL got redirected for multiple times</dt><dd>
-<p>
-    e.g.
-</p>
-
-
-<pre class="example">What you want: https://www.google.com/ -&gt; https://www.google.com/?
-While you get: https://www.google.com/ -&gt; https://www.google.com/??
-</pre>
-
-<p>
-    It's most likely the behavior of server-side
-    redirection. Refer to the examples of <code>(?!&hellip;)</code> on
-    how to make a 'blacklist'.
 </p></dd>
 </dl>
 
@@ -905,8 +915,8 @@ While you get: https://www.google.com/ -&gt; https://www.google.com/??
 <li>Problem should be described in either Chinese or English;
 
 </li>
-<li>Make a backup of the rules list and submit it with the report,
-    if no privacy is concerned.
+<li>Export the problematic rule(s) together with the debugging results,
+    then submit them with the report.
 </li>
 </ul>
 
@@ -1040,7 +1050,7 @@ While you get: https://www.google.com/ -&gt; https://www.google.com/??
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-03-14</p>
+<p class="date">Date: 2012-03-16</p>
 <p class="author">Author: Cyril Feng</p>
 <p class="creator">Org version 7.8.03 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>

@@ -24,7 +24,7 @@
 /*global chrome: true, localStorage: true, RuleList: true, Pref: true*/
 
 var onBeforeRequestListener = function (details) {
-    if ($v.ruleAuto.length === 0) { // No auto rule
+    if ($v.redirected.hasOwnProperty(details.requestId)) {
         return;
     }
 
@@ -33,6 +33,8 @@ var onBeforeRequestListener = function (details) {
             if ($v.ruleAuto[i].sub === null) {        // To block
                 return {cancel: true};
             } else {            // To redirect
+                $v.redirected[details.requestId] = true;
+
                 return {redirectUrl:
                         $f.getRedirUrl(details.url, $v.ruleAuto[i])};
             }
@@ -282,6 +284,8 @@ var loadRule = function (data) { // Called when rule list needs update
 };
 
 var onInit = function () {
+    $v.redirected = {};
+
     if (chrome.webRequest.onBeforeRequest.hasListener(
         onBeforeRequestListener)) {
         chrome.webRequest.onBeforeRequest.removeListener(

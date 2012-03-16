@@ -1,5 +1,5 @@
 {
-    "DESCRIPTION": {"message": "Modifies URLs & HTTP request headers arbitrarily"},
+    "DESCRIPTION": {"message": "Modifies URLs & HTTP request headers arbitrarily."},
     "PAGE_TITLE": {"message": "Options"},
     "PREF_TITLE": {"message": "Preferences"},
     "RULEMGR_TITLE": {"message": "Rules Manager"},

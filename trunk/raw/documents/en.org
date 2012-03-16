@@ -24,7 +24,7 @@ From Cyril Feng.
 #+TITLE:     Redirector Guide
 #+AUTHOR:    Cyril Feng
 #+EMAIL:     CyrilFeng@gmail.com
-#+DATE:      2012-03-14
+#+DATE:      2012-03-16
 #+DESCRIPTION:
 #+KEYWORDS:
 #+LANGUAGE:  en
@@ -63,30 +63,54 @@ From Cyril Feng.
   - -> :: redirects to
 
 * How it works
-  Every time /Cr/ receives a web request,
-  /Redirector/ will be triggered to manipulate the requested URL
-  (if allowd and there're no other extensions redirect or block URLs).
-  Note that After the manipulation finishes,
-  /Redirector/ will lose control over that URL,
-  thus /Redirector/ *only do redirection once*.
-  For more information, please refer to
-  [[http://code.google.com/chrome/extensions/webRequest.html#life_cycle][this page]]
+  /Redirector/ handles every web request
+  at the very beginning of its creation,
+  when DNS resolving, connection to the server, etc have not started.
+  Note that even when you browsing a single web-page,
+  multiple web request is likely to be created, e.g., to load images.
+  /Redirector/ simply handles all of them.
 
-  /Redirector/ will first check if the URL matches any rules.
-  If any, the first will be picked and the URL manipulated accordingly.
+  /Redirector/ will first check if the URL of a request matches
+  any of the automatic redirection rules,
+  If so, the URL will be modified/blocked
+  according to the *first* matched rule.
 
-  A similar procedure will be triggered during a manual redirection,
-  except that URLs will be manipulated without match checking.
+  *NOTE:*
+  Such process *happens ONLY ONCE*.
+  Actually the redirected URL will trigger the same process,
+  which will be ignored by /Redirector/.
+  The same thing happens to a server-initiated redirection.
+  This mechanism ensures that
+  no (infinite) redirection loop will be created,
+  which easily freezes /Cr/.
+  In fact, even if /Redirector/ carries out a second redirection,
+  no third one will be triggered,
+  as it's an intrinsic security feature of /Cr/.
 
-  It's another independent yet analogous procedure for /Redirector/ to
-  manipulate HTTP request headers.
-  If the URL of a web request matches a rule,
-  the headers will be modified.
-  /Redirector/ also modifies headers only once.
+  A manual redirection is just like a forced process of above,
+  without match checking.
 
-  Note that a headers modification always takes place after a redirection.
-  Have a try to debugger to comprehend more about the
-  inner time sequential relationship.
+  It's another independent yet analogous process
+  for /Redirector/ to manipulate HTTP request headers.
+  If there're any rules matching the URL of a web request,
+  the first will be picked up to modify the headers.
+
+  *NOTE:*
+  Such process normally *happens ONLY ONCE*,
+  but there's an exception:
+  if a server-initiated redirection is triggered,
+  /Redirector/ will try to modify its headers again.
+  It's because previous headers have been sent and
+  totally new headers have been generated.
+
+  /Redirector/ comes with a debugger,
+  ideal for monitoring processes mentioned above.
+  It can help you to better understand
+  the internal time sequential relationship.
+  For example, you will notice that headers handling always
+  takes place after a redirection checking.
+  If a redirection occurs after headers handling,
+  then it's probably a server-initiated redirection.
 
 * Basic Usage
   In this part,
@@ -433,22 +457,12 @@ From Cyril Feng.
 * Troubleshooting
   For the sake of efficiency,
   /Redirector/ doesn't do strict check with a rule during run-time.
-  As a result, you may run into these problems:
+  As a result, you may run into this problem:
 
   - The bottom-left corner shows "Waiting for extension /Redirector/" ::
     This indicates you probably got a bad rule
     that matches the current URL
     but makes /Redirector/ puzzled on how to manipulate it.
-
-  - Sometimes, you may notice a URL got redirected for multiple times ::
-    e.g.
-    #+BEGIN_EXAMPLE
-    What you want: https://www.google.com/ -> https://www.google.com/?
-    While you get: https://www.google.com/ -> https://www.google.com/??
-    #+END_EXAMPLE
-    It's most likely the behavior of server-side
-    redirection. Refer to the examples of @<code>(?!...)@</code> on
-    how to make a 'blacklist'.
 
   If you are sure a problem results from bugs of /Redirector/,
   send a bug report to <CyrilFeng at gmail dot com>.
@@ -462,8 +476,8 @@ From Cyril Feng.
 
   - Problem should be described in either Chinese or English;
 
-  - Make a backup of the rules list and submit it with the report,
-    if no privacy is concerned.
+  - Export the problematic rule(s) together with the debugging results,
+    then submit them with the report.
 
 * Suggestions
 ** Composing efficient /Match/ patterns

@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Redirector指南"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-03-14"/>
+<meta name="generated" content="2012-03-16"/>
 <meta name="author" content="Cyril Feng"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -183,29 +183,42 @@
 <h2 id="sec-3"><span class="section-number-2">3</span> 工作机制</h2>
 <div class="outline-text-2" id="text-3">
 
-<p>  每当 <i>Cr</i> 收到一个web请求， <i>Redirector</i> 就会被触发去处理所请求的URL
-  （如果这是允许的，而且没有其它重定向或者屏蔽URL的扩展）。
-  值得注意的是，当处理结束后，这个URL将脱离 <i>Redirector</i> 的控制，
-  并且再也没有被 <i>Redirector</i> 处理的机会，
-  即 <i>Redirector</i> <b>只进行一次重定向</b> 。
-  更多信息请参考
-  <a href="http://code.google.com/chrome/extensions/webRequest.html#life_cycle">这个页面</a>。
+<p>  <i>Redirector</i> 会在每个web请求产生之初处理它，
+  这时DNS解析、与服务器建立连接等都还没有开始。
+  提醒一下，当你浏览一个网页时，很有可能会产生多个web请求，比如用来加载图片；
+  不过 <i>Redirector</i> 会处理全部这些请求。
 </p>
 <p>
-  <i>Redirector</i> 会首先检查是否有规则适用于该URL。
-  如果有的话，第一条适用的规则将被用于处理该URL。
+  <i>Redirector</i> 会首先检查是否有规则匹配请求的URL。
+  如果是，则URL会根据第一条匹配的规则进行相应地修改／封锁。
 </p>
 <p>
-  手动重定向的过程也是类似的，只不过检查规则可用性的步骤会被跳过。
+  <b>注意：</b>
+  这个过程 <b>只发生一次</b> 。
+  事实上被重定向的URL会触发一个相同的过程，只不过 <i>Redirector</i> 会忽略它。
+  这对服务器端发起的重定向也是适用的。
+  这种机制可以避免（无限）重定向循环的产生，否则 <i>Cr</i> 很容易假死。
+  其实，即使 <i>Redirector</i> 执行了第二次重定向，接下来也不会有第三次，
+  这是由 <i>Cr</i> 内在的安全性所决定的。
 </p>
 <p>
-  <i>Redirector</i> 处理HTTP请求头是另外一个独立但相似的过程。
-  如果一个web请求的URL匹配某个规则，则相应地请求头就会被处理。
-  对于请求头， <i>Redirector</i> 也只修改一次。
+  手动重定向相当于是上述的强制过程，即不执行匹配检查。
 </p>
 <p>
-  请注意，对于请求头的修改总是发生在重定向之后。
-  想了解更多关于时序关系的信息，请尝试一下调试器。
+  <i>Redirector</i> 修改HTTP请求头是另一个独立但相似的过程。
+  如果有规则匹配一个请求的URL，则第一条规则会被用来修改它的头。
+</p>
+<p>
+  <b>注意：</b>
+  这个过程通常 <b>只发生一次</b> ，但有一个例外：
+  如果服务器端触发了一次重定向， <i>Redirector</i> 会尝试再次修改请求头。
+  这是因为之前的头已经被发送，现有的头是新生成的。
+</p>
+<p>
+  <i>Redirector</i> 自带了一个调试器，很适合用来监视上述过程。
+  它可以帮助你理解内部的时序关系。
+  比如，你会注意到头处理总是发生在重定向检查之后。
+  如果在头处理之后发生了一次重定向，那么这很有可能是服务器端发起的。
 </p>
 </div>
 
@@ -789,21 +802,6 @@
 <dt>左下角提示“等待扩展 <i>Redirector</i> ”</dt><dd>
 <p>
     这说明有一条规则错误，虽然它匹配当前页的URL，但 <i>Redirector</i> 并不知道应怎样处理。
-</p>
-</dd>
-<dt>有时你会发现 <i>Redirector</i> 对一个URL作了多次重定向</dt><dd>
-<p>
-    比如
-</p>
-
-
-<pre class="example">想要的结果: https://www.google.com/ -&gt; https://www.google.com/?
-实际的结果: https://www.google.com/ -&gt; https://www.google.com/??
-</pre>
-
-<p>
-    最有可能的情况是服务器端进行了重定向。
-    参考<code>(?!&hellip;)</code>的例子编写“黑名单”即可。
 </p></dd>
 </dl>
 
@@ -824,7 +822,7 @@
 <li>同样，用中文或英语描述这个问题；
 
 </li>
-<li>备份规则列表并随错误报告一起提交，如果不涉及隐私。
+<li>导出有问题的规则及调试信息，然后随报告一起提交。
 </li>
 </ul>
 
@@ -955,7 +953,7 @@
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-03-14</p>
+<p class="date">Date: 2012-03-16</p>
 <p class="author">Author: Cyril Feng</p>
 <p class="creator">Org version 7.8.03 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>
