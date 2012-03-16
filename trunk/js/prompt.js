@@ -165,7 +165,8 @@ Prompt.prototype.refresh = function (id) { // Refresh prompt data
         }
         break;
     case 'ruleEdit_repl':
-        if ($('ruleEdit_subtype').selectedIndex !== $v.type.reqHdr) {
+        if ($('ruleEdit_subtype').selectedIndex !== $v.type.reqHdr &&
+            $('ruleEdit_subtype').selectedIndex !== $v.type.respHdr) {
             var prefix = '';
             if (last !== '$') {
                 prefix = '$';
@@ -192,7 +193,8 @@ Prompt.prototype.refresh = function (id) { // Refresh prompt data
         }
         break;
     case 'ruleEdit_test':
-        if ($('ruleEdit_subtype').selectedIndex !== $v.type.reqHdr) {
+        if ($('ruleEdit_subtype').selectedIndex !== $v.type.reqHdr &&
+            $('ruleEdit_subtype').selectedIndex !== $v.type.respHdr) {
             switch (frag) {
             case '':
                 list =          // URLs
@@ -593,11 +595,20 @@ Prompt.prototype.respHdr = [    // Prompts for response headers
     {'msg': 'Allow',
      'desc': 'Valid actions for a specified resource'
     },
+    {'msg': 'Cache-Control',
+     'desc': 'Tells all caching mechanisms from server to client whether they may cache this object'
+    },
+    {'msg': 'Connection',
+     'desc': 'Options that are desired for the connection'
+    },
     {'msg': 'Content-Encoding',
      'desc': 'The type of encoding used on the data'
     },
     {'msg': 'Content-Language',
      'desc': 'The language the content is in'
+    },
+    {'msg': 'Content-Length',
+     'desc': 'The length of the response body in octets'
     },
     {'msg': 'Content-Location',
      'desc': 'An alternate location for the returned data'
@@ -635,11 +646,17 @@ Prompt.prototype.respHdr = [    // Prompts for response headers
     {'msg': 'P3P',
      'desc': 'Supposed to set P3P policy'
     },
+    {'msg': 'Pragma',
+     'desc': 'Implementation-specific headers that may have various effects anywhere along the request-response chain'
+    },
+    {'msg': 'Proxy-Authenticate',
+     'desc': 'Request authentication to access the proxy'
+    },
     {'msg': 'Refresh',
      'desc': 'Used in redirection, or when a new resource has been created'
     },
     {'msg': 'Retry-After',
-     'desc': 'If an entity is temporarily unavailable, this instructs the client to try again after a specified period of time (seconds)'
+     'desc': 'If an entity is temporarily unavailable'
     },
     {'msg': 'Server',
      'desc': 'A name for the server'
@@ -651,10 +668,13 @@ Prompt.prototype.respHdr = [    // Prompts for response headers
      'desc': 'A HSTS Policy informing the HTTP client how long to cache the HTTPS only policy and whether this applies to subdomains'
     },
     {'msg': 'Trailer',
-     'desc': 'The Trailer general field value indicates that the given set of header fields is present in the trailer of a message encoded with chunked transfer-coding'
+     'desc': 'Indicates that the given set of header fields is present in the trailer of a message encoded with chunked transfer-coding'
+    },
+    {'msg': 'Transfer-Encoding',
+     'desc': 'The form of encoding used to safely transfer the entity to the user'
     },
     {'msg': 'Vary',
-     'desc': 'Tells downstream proxies how to match future request headers to decide whether the cached response can be used rather than requesting a fresh one from the origin server'
+     'desc': 'Tells downstream proxies how to match future request headers'
     },
     {'msg': 'Via',
      'desc': 'Informs the client of proxies through which the response was sent'
@@ -663,6 +683,6 @@ Prompt.prototype.respHdr = [    // Prompts for response headers
      'desc': 'A general warning about possible problems with the entity body'
     },
     {'msg': 'WWW-Authenticate',
-     'desc': 'Indicates the authentication scheme that should be used to access the requested entity'
+     'desc': 'Indicates the authentication scheme that should be used to access the requested entity.'
     }
 ];

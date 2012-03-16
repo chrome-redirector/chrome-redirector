@@ -1,5 +1,5 @@
 {
-    "DESCRIPTION": {"message": "任意修改URL＆HTTP请求头"},
+    "DESCRIPTION": {"message": "任意重定向URL＆查看／修改HTTP请求／响应头"},
     "PAGE_TITLE": {"message": "选项"},
     "PREF_TITLE": {"message": "首选项"},
     "RULEMGR_TITLE": {"message": "规则管理器"},
