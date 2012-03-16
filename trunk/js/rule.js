@@ -200,7 +200,8 @@ RuleList.prototype.onChgMatchType = function () { // On chg match type
     var tmp = $('ruleEdit_matchstr').disabled =
         $('ruleEdit_matchcase').disabled =
         $$('#ruleEdit_subtype>option')[$v.type.block].disabled =
-        $$('#ruleEdit_subtype>option')[$v.type.hdr].disabled =
+        $$('#ruleEdit_subtype>option')[$v.type.reqHdr].disabled =
+        $$('#ruleEdit_subtype>option')[$v.type.respHdr].disabled =
         $('ruleEdit_matchtype').selectedIndex === $v.type.manual;
 
     // Select manual -> match pattern = MANUAL;
@@ -209,7 +210,8 @@ RuleList.prototype.onChgMatchType = function () { // On chg match type
         $('ruleEdit_matchstr').value = 'MANUAL';
 
         if ($('ruleEdit_subtype').selectedIndex === $v.type.block ||
-            $('ruleEdit_subtype').selectedIndex === $v.type.hdr) {
+            $('ruleEdit_subtype').selectedIndex === $v.type.reqHdr ||
+            $('ruleEdit_subtype').selectedIndex === $v.type.respHdr) {
             $('ruleEdit_subtype').selectedIndex = $v.type.regexp;
         }
     } else {
@@ -242,7 +244,8 @@ RuleList.prototype.onChgSubType = function () { // On chg sub type
         $('ruleEdit_subcase').disabled =
             $('ruleEdit_subglob').disabled =
             $('ruleEdit_replDecode').disabled =
-            $('ruleEdit_subtype').selectedIndex === $v.type.hdr;
+            ($('ruleEdit_subtype').selectedIndex === $v.type.reqHdr ||
+             $('ruleEdit_subtype').selectedIndex === $v.type.respHdr);
 
         if ($('ruleEdit_substr').value === 'BLOCK') {
             $('ruleEdit_substr').value = '';
@@ -316,7 +319,8 @@ RuleList.prototype.test = function () { // Test the current rule
     }
 
     // Don't test substitution of type header
-    if ($('ruleEdit_subtype').selectedIndex === $v.type.hdr) {
+    if ($('ruleEdit_subtype').selectedIndex === $v.type.reqHdr ||
+        $('ruleEdit_subtype').selectedIndex === $v.type.respHdr) {
         $f.err('Test for header manipulation is not supported yet!');
         return;
     }

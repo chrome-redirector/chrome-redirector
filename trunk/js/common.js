@@ -47,7 +47,8 @@ $f = {};                                // Global functions set
 $v.type.regexp = 0;
 $v.type.glob = 1;
 $v.type.manual = $v.type.block = 2;
-$v.type.hdr = 3;
+$v.type.reqHdr = 3;
+$v.type.respHdr = 4;
 
 $f.applyI18n = function () {
     var elem = $$('[i18n]');    // All elements need to be mod

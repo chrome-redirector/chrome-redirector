@@ -43,8 +43,8 @@ var onBeforeRequestListener = function (details) {
 };
 
 var onBeforeSendHeadersListener = function (details) {
-    for (var i = 0; i < $v.ruleHdr.length; i++) {
-        var currentRule = $v.ruleHdr[i];
+    for (var i = 0; i < $v.ruleReqHdr.length; i++) {
+        var currentRule = $v.ruleReqHdr[i];
         if (currentRule.match.test(details.url)) { // match this URL
             var currentHeaders = [];
             for (var j = 0; j < details.requestHeaders.length; j++) {
@@ -73,6 +73,41 @@ var onBeforeSendHeadersListener = function (details) {
             }
 
             return {requestHeaders: details.requestHeaders};
+        }
+    }
+};
+
+var onHeadersReceivedListener = function (details) {
+    for (var i = 0; i < $v.ruleRespHdr.length; i++) {
+        var currentRule = $v.ruleRespHdr[i];
+        if (currentRule.match.test(details.url)) { // match this URL
+            var currentHeaders = [];
+            for (var j = 0; j < details.responseHeaders.length; j++) {
+                currentHeaders.push(details.responseHeaders[j].name);
+            }
+
+            for (var j = 0; j < currentRule.sub.length; j++) {
+                var idx;
+                if ((idx = currentHeaders.indexOf(
+                    currentRule.sub[j])) !== -1) { // Exists
+                    details.responseHeaders[idx].value =
+                        currentRule.repl[j];
+                } else if ((idx = currentHeaders.indexOf(
+                    currentRule.sub[j].replace(/^-/, '')
+                )) !== -1) { // To del
+                    details.responseHeaders.splice(idx, 1);
+                } else {    // To create
+                    if ((/^(?!-)/).test(currentRule.sub[j])) {
+                        // Do not create headers with name `-...'
+                        details.responseHeaders.push({
+                            name: currentRule.sub[j],
+                            value: currentRule.repl[j]
+                        });
+                    }
+                }
+            }
+
+            return {responseHeaders: details.responseHeaders};
         }
     }
 };
@@ -196,7 +231,8 @@ var loadRule = function (data) { // Called when rule list needs update
     if (dry !== true) {
         $v.ruleAuto = [];       // Rules for auto redir
         $v.ruleManual = [];     // Rules for manual redir
-        $v.ruleHdr = [];        // Rules for http request header
+        $v.ruleReqHdr = [];     // Rules for http request header
+        $v.ruleRespHdr = [];     // Rules for http request header
     }
     for (var i = 0; i < data.length; i++) {
         var rule = data[i];     // Current rule
@@ -226,12 +262,12 @@ var loadRule = function (data) { // Called when rule list needs update
 
             if (dry !== true) {
                 $v.ruleManual.push(tmp); // Add to manual rule
-                continue;
             }
+            continue;
         }
 
-        // For a header rule
-        if (rule.sub.type === $v.type.hdr) {
+        // For a request header rule
+        if (rule.sub.type === $v.type.reqHdr) {
             try {
                 var tmp = {
                     match: $f.str2re(rule.match),
@@ -251,9 +287,35 @@ var loadRule = function (data) { // Called when rule list needs update
             }
 
             if (dry !== true) {
-                $v.ruleHdr.push(tmp);
+                $v.ruleReqHdr.push(tmp);
+            }
+            continue;
+        }
+
+        // For a response header rule
+        if (rule.sub.type === $v.type.respHdr) {
+            try {
+                var tmp = {
+                    match: $f.str2re(rule.match),
+                    sub: $f.splitVl(rule.sub.str),
+                    repl: $f.splitVl(rule.repl.str)
+                };
+                // Check match to see if RegExp syntax error
+                if (! tmp.match.hasOwnProperty('global')) {
+                    return tmp.match.toString();
+                }
+                // Check if sub and repl are of the same size
+                if (tmp.sub.length !== tmp.repl.length) {
+                    return $i18n('TEST_SUB_REPL_CONFLICT');
+                }
+            } catch (e) {
                 continue;
             }
+
+            if (dry !== true) {
+                $v.ruleRespHdr.push(tmp);
+            }
+            continue;
         }
 
         // For an auto rule
@@ -300,6 +362,13 @@ var onInit = function () {
         );
     }
 
+    if (chrome.webRequest.onHeadersReceived.hasListener(
+        onHeadersReceivedListener)) {
+        chrome.webRequest.onHeadersReceived.removeListener(
+            onHeadersReceivedListener
+        );
+    }
+
     if ($v.status === true) {
         chrome.webRequest.onBeforeRequest.addListener( // Auto redir
             onBeforeRequestListener, {urls: $v.validUrl}, ['blocking']
@@ -309,6 +378,12 @@ var onInit = function () {
             onBeforeSendHeadersListener,
             {urls: $v.validUrl},
             ['blocking', 'requestHeaders']
+        );
+
+        chrome.webRequest.onHeadersReceived.addListener(
+            onHeadersReceivedListener,
+            {urls: $v.validUrl},
+            ['blocking', 'responseHeaders']
         );
     }
 };

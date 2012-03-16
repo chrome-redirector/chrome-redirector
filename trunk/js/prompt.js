@@ -152,14 +152,20 @@ Prompt.prototype.refresh = function (id) { // Refresh prompt data
                      {'msg': '?', 'desc': ''}];
             }
             break;
-        case $v.type.hdr:       // Http request Header
+        case $v.type.reqHdr:    // Http request Header
             if (id === 'ruleEdit_sub') {
-                list = this.header;
+                list = this.reqHdr;
             }
+            break;
+        case $v.type.respHdr:    // Http request Header
+            if (id === 'ruleEdit_sub') {
+                list = this.respHdr;
+            }
+            break;
         }
         break;
     case 'ruleEdit_repl':
-        if ($('ruleEdit_subtype').selectedIndex !== $v.type.hdr) {
+        if ($('ruleEdit_subtype').selectedIndex !== $v.type.reqHdr) {
             var prefix = '';
             if (last !== '$') {
                 prefix = '$';
@@ -186,7 +192,7 @@ Prompt.prototype.refresh = function (id) { // Refresh prompt data
         }
         break;
     case 'ruleEdit_test':
-        if ($('ruleEdit_subtype').selectedIndex !== $v.type.hdr) {
+        if ($('ruleEdit_subtype').selectedIndex !== $v.type.reqHdr) {
             switch (frag) {
             case '':
                 list =          // URLs
@@ -514,7 +520,7 @@ Prompt.prototype.re = {         // Prompts for RegExp
     ]
 };
 
-Prompt.prototype.header = [     // Prompts for headers
+Prompt.prototype.reqHdr = [     // Prompts for request headers
     {'msg': 'Accept',
      'desc': 'Content-Types that are acceptable'
     },
@@ -574,5 +580,89 @@ Prompt.prototype.header = [     // Prompts for headers
     },
     {'msg': 'Warning',
      'desc': 'A general warning about possible problems with the entity body.'
+    }
+];
+
+Prompt.prototype.respHdr = [    // Prompts for response headers
+    {'msg': 'Accept-Ranges',
+     'desc': 'What partial content range types this server supports'
+    },
+    {'msg': 'Age',
+     'desc': 'The age the object has been in a proxy cache in seconds'
+    },
+    {'msg': 'Allow',
+     'desc': 'Valid actions for a specified resource'
+    },
+    {'msg': 'Content-Encoding',
+     'desc': 'The type of encoding used on the data'
+    },
+    {'msg': 'Content-Language',
+     'desc': 'The language the content is in'
+    },
+    {'msg': 'Content-Location',
+     'desc': 'An alternate location for the returned data'
+    },
+    {'msg': 'Content-MD5',
+     'desc': 'A Base64-encoded binary MD5 sum of the content of the response'
+    },
+    {'msg': 'Content-Disposition',
+     'desc': 'An opportunity to raise a "File Download" dialogue box for a known MIME type'
+    },
+    {'msg': 'Content-Range',
+     'desc': 'Where in a full body message this partial message belongs'
+    },
+    {'msg': 'Content-Type',
+     'desc': 'The mime type of this content'
+    },
+    {'msg': 'Date',
+     'desc': 'The date and time that the message was sent'
+    },
+    {'msg': 'ETag',
+     'desc': 'An identifier for a specific version of a resource'
+    },
+    {'msg': 'Expires',
+     'desc': 'Gives the date/time after which the response is considered stale'
+    },
+    {'msg': 'Last-Modified',
+     'desc': 'The last modified date for the requested object'
+    },
+    {'msg': 'Link',
+     'desc': 'Used to express a typed relationship with another resource'
+    },
+    {'msg': 'Location',
+     'desc': 'Used in redirection, or when a new resource has been created'
+    },
+    {'msg': 'P3P',
+     'desc': 'Supposed to set P3P policy'
+    },
+    {'msg': 'Refresh',
+     'desc': 'Used in redirection, or when a new resource has been created'
+    },
+    {'msg': 'Retry-After',
+     'desc': 'If an entity is temporarily unavailable, this instructs the client to try again after a specified period of time (seconds)'
+    },
+    {'msg': 'Server',
+     'desc': 'A name for the server'
+    },
+    {'msg': 'Set-Cookie',
+     'desc': 'an HTTP cookie'
+    },
+    {'msg': 'Strict-Transport-Security',
+     'desc': 'A HSTS Policy informing the HTTP client how long to cache the HTTPS only policy and whether this applies to subdomains'
+    },
+    {'msg': 'Trailer',
+     'desc': 'The Trailer general field value indicates that the given set of header fields is present in the trailer of a message encoded with chunked transfer-coding'
+    },
+    {'msg': 'Vary',
+     'desc': 'Tells downstream proxies how to match future request headers to decide whether the cached response can be used rather than requesting a fresh one from the origin server'
+    },
+    {'msg': 'Via',
+     'desc': 'Informs the client of proxies through which the response was sent'
+    },
+    {'msg': 'Warning',
+     'desc': 'A general warning about possible problems with the entity body'
+    },
+    {'msg': 'WWW-Authenticate',
+     'desc': 'Indicates the authentication scheme that should be used to access the requested entity'
     }
 ];

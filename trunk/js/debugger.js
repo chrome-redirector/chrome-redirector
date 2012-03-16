@@ -25,8 +25,8 @@
 
 Debugger = function () {
     this.timeStamp = [];
-    this.quiet = false;
-    this.trackRedir = this.trackHdr = this.testSpeed = true;
+    this.quiet = this.testSpeed = false;
+    this.trackRedir = this.trackReqHdr = this.trackRespHdr = true;
 };
 
 Debugger.prototype.start = function () { // Start debugging
@@ -116,6 +116,19 @@ Debugger.prototype.timer = function (testee, para) {
     ];
 };
 
+Debugger.prototype.trimHdr = function (Hdr) {
+    var tmp = '';
+    for (var i = 0; i < Hdr.length; i++) {
+        var hdr = Hdr[i];
+
+        tmp += '<details>' +
+            '<summary>' + hdr.name + '</summary>' +
+            hdr.value + '</details>';
+    }
+
+    return tmp;
+};
+
 Debugger.prototype.prepare = function (tab) {
     // WARN: Error in onBeforeRequest is not captured!!!
     this.tabId = tab.id;
@@ -194,14 +207,7 @@ Debugger.prototype.prepare = function (tab) {
 
     $v.ext_bg.chrome.webRequest.onBeforeSendHeaders.addListener(
         (function (details) {
-            var srcHdr = '';
-            for (var i = 0; i < details.requestHeaders.length; i++) {
-                var hdr = details.requestHeaders[i];
-
-                srcHdr += '<details>' +
-                    '<summary>' + hdr.name + '</summary>' +
-                    hdr.value + '</details>';
-            }
+            var srcHdr = this.trimHdr(details.requestHeaders);
 
             if (this.testSpeed === true) {
                 var tmp = this.timer(
@@ -215,19 +221,12 @@ Debugger.prototype.prepare = function (tab) {
 
             var sum, det;
             if (typeof result === 'undefined') {
-                sum = $i18n('DBG_NO_MODHDR') + elapse;
-                det = 'URL: ' + details.url;
+                sum = $i18n('DBG_NO_MOD_REQHDR') + elapse;
+                det = 'URL: ' + details.url + '<br />' + srcHdr;
             } else {
-                var destHdr = '';
-                for (var i = 0; i < result.requestHeaders.length; i++) {
-                    var hdr = result.requestHeaders[i];
+                var destHdr = this.trimHdr(result.requestHeaders);
 
-                    destHdr += '<details>' +
-                        '<summary>' + hdr.name + '</summary>' +
-                        hdr.value + '</details>';
-                }
-
-                sum = this.setColor($i18n('DBG_MODHDR') + elapse, 'green');
+                sum = this.setColor($i18n('DBG_MOD_REQHDR') + elapse, 'green');
                 det = 'URL: ' + details.url + '<br />' +
                     this.setColor(
                         $i18n('DBG_SRC_HDR') + ': ' + srcHdr,
@@ -239,9 +238,8 @@ Debugger.prototype.prepare = function (tab) {
                     );
             }
 
-            if (this.trackHdr === true &&
-                (typeof result !== 'undefined' ||
-                 this.quiet === false)) {
+            if (this.trackReqHdr === true &&
+                (typeof result !== 'undefined' || this.quiet === false)) {
                 this.disp({
                     url: details.url,
                     timeStamp: details.timeStamp,
@@ -256,6 +254,57 @@ Debugger.prototype.prepare = function (tab) {
         }).bind(this),
         {urls: $v.ext_bg.$v.validUrl, tabId: tab.id},
         ['blocking', 'requestHeaders']
+    );
+
+    $v.ext_bg.chrome.webRequest.onHeadersReceived.addListener(
+        (function (details) {
+            var srcHdr = this.trimHdr(details.responseHeaders);
+
+            if (this.testSpeed === true) {
+                var tmp = this.timer(
+                    $v.ext_bg.onHeadersReceivedListener, [details]
+                );
+                var elapse = tmp[0], result = tmp[1];
+            } else {
+                var elapse = '',
+                result = $v.ext_bg.onHeadersReceivedListener(details);
+            }
+
+            var sum, det;
+            if (typeof result === 'undefined') {
+                sum = $i18n('DBG_NO_MOD_RESPHDR') + elapse;
+                det = 'URL: ' + details.url + '<br />' + srcHdr;
+            } else {
+                var destHdr = this.trimHdr(result.responseHeaders);
+
+                sum = this.setColor($i18n('DBG_MOD_RESPHDR') + elapse, 'green');
+                det = 'URL: ' + details.url + '<br />' +
+                    this.setColor(
+                        $i18n('DBG_SRC_HDR') + ': ' + srcHdr,
+                        '', 'lightBlue'
+                    ) + '<br />' +
+                    this.setColor(
+                        $i18n('DBG_DEST_HDR') + ': ' + destHdr,
+                        '', 'lightGreen'
+                    );
+            }
+
+            if (this.trackRespHdr === true &&
+                (typeof result !== 'undefined' || this.quiet === false)) {
+                this.disp({
+                    url: details.url,
+                    timeStamp: details.timeStamp,
+                    requestId: details.requestId,
+                    data: '<details>' +
+                        '<summary>' + sum + '</summary>' +
+                        det + '</details>'
+                });
+            }
+
+            return result;
+        }).bind(this),
+        {urls: $v.ext_bg.$v.validUrl, tabId: tab.id},
+        ['blocking', 'responseHeaders']
     );
 
     $v.ext_bg.chrome.webRequest.onBeforeRedirect.addListener(
@@ -308,7 +357,8 @@ Debugger.prototype.prepare = function (tab) {
                 });
             }
         }).bind(this),
-        {urls: ['<all_urls>'], tabId: tab.id}
+        {urls: ['<all_urls>'], tabId: tab.id},
+        ['responseHeaders']
     );
 };
 

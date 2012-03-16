@@ -192,9 +192,12 @@
                    onchange="$v.debugger.trackRedir=this.checked" />
             <label i18n="DBG_TRACK_REDIR"></label>
             <input type="checkbox" checked
-                   onchange="$v.debugger.trackHdr=this.checked" />
-            <label i18n="DBG_TRACK_HDR"></label>
+                   onchange="$v.debugger.trackReqHdr=this.checked" />
+            <label i18n="DBG_TRACK_REQHDR"></label>
             <input type="checkbox" checked
+                   onchange="$v.debugger.trackRespHdr=this.checked" />
+            <label i18n="DBG_TRACK_RESPHDR"></label>
+            <input type="checkbox"
                    onchange="$v.debugger.testSpeed=this.checked" />
             <label i18n="DBG_TEST_SPEED"></label>
 
@@ -303,7 +306,8 @@
                   </option>
                   <option i18n="TYPE_GLOB"></option>
                   <option i18n="TYPE_BLOCK"></option>
-                  <option i18n="TYPE_HDR"></option>
+                  <option i18n="TYPE_REQ_HDR"></option>
+                  <option i18n="TYPE_RESP_HDR"></option>
                 </select>
                 <input type="checkbox" id="ruleEdit_subcase" />
                 <label i18n="LBL_IGNCASE"></label>
