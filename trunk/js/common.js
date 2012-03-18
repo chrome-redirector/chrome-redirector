@@ -149,24 +149,44 @@ $f.getRedirUrl = function (url, rule) {
     return tmp;
 };
 
-$f.iNotif = function (innerHTML) {
-    $('layerNotif_disp').innerHTML = innerHTML;
-    $('layerNotif').className = 'active';
+$f.iNotif = function (innerHTML, color) {
+    if (typeof $v.ext_bg !== 'undefined') {
+        $('layerNotif_disp').innerHTML = innerHTML;
+        $('layerNotif').className = 'active';
+        $('layerNotif').style.background = color;
+    } else {
+        alert(JSON.stringify(innerHTML));
+    }
 };
 
 $f.notif = function (innerHTML) { // Green
-    $f.iNotif(innerHTML);
-    $('layerNotif').style.background = '#6f6';
+    $f.iNotif(innerHTML, '#6f6');
 };
 
 $f.warn = function (innerHTML) { // Yellow
-    $f.iNotif(innerHTML);
-    $('layerNotif').style.background = '#ff6';
+    $f.iNotif(innerHTML, '#ff6');
 };
 
 $f.err = function (innerHTML) { // Orange
-    $f.iNotif(innerHTML);
-    $('layerNotif').style.background = '#f60';
+    $f.iNotif(innerHTML, '#f60');
+};
+
+$f.openOptions = function (search) {
+    var views = chrome.extension.getViews();
+    for (var i = 0; i < views.length; i++) {
+        if (! (/\/html\/background.html$/).test(
+            views[i].location.pathname)) {
+            views[i].close();
+        }
+    }
+
+    if (typeof search === 'undefined') {
+        search = '';
+    }
+
+    chrome.tabs.create({
+        url: chrome.extension.getURL('/html/options.html' + search)
+    });
 };
 
 $f.readFile = function (file, callback) {

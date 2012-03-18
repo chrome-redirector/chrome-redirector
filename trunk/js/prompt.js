@@ -530,7 +530,7 @@ Prompt.prototype.reqHdr = [     // Prompts for request headers
      'desc': 'Character sets that are acceptable'
     },
     {'msg': 'Accept-Encoding',
-     'desc': 'Acceptable encodings. See HTTP compression.'
+     'desc': 'Acceptable encodings'
     },
     {'msg': 'Accept-Language',
      'desc': 'Acceptable languages for response'
@@ -542,7 +542,7 @@ Prompt.prototype.reqHdr = [     // Prompts for request headers
      'desc': 'A Base64-encoded binary MD5 sum of the content of the request body'
     },
     {'msg': 'Content-Type',
-     'desc': 'The mime type of the body of the request (used with POST and PUT requests)'
+     'desc': 'The mime type of the body of the request'
     },
     {'msg': 'Date',
      'desc': 'The date and time that the message was sent'
@@ -554,34 +554,34 @@ Prompt.prototype.reqHdr = [     // Prompts for request headers
      'desc': 'The email address of the user making the request'
     },
     {'msg': 'If-Match',
-     'desc': 'Only perform the action if the client supplied entity matches the same entity on the server.'
+     'desc': 'Only perform the action if the client supplied entity matches the same entity on the server'
     },
     {'msg': 'If-Unmodified-Since',
-     'desc': 'Only send the response if the entity has not been modified since a specific time.'
+     'desc': 'Only send the response if the entity has not been modified since a specific time'
     },
     {'msg': 'Max-Forwards',
-     'desc': 'Limit the number of times the message can be forwarded through proxies or gateways.'
+     'desc': 'Limit the number of times the message can be forwarded through proxies or gateways'
     },
     {'msg': 'Range',
-     'desc': 'Request only part of an entity. Bytes are numbered from 0.'
+     'desc': 'Request only part of an entity'
     },
     {'msg': 'Referer',
-     'desc': 'This is the address of the previous web page from which a link to the currently requested page was followed.'
+     'desc': 'This is the address of the previous web page from which a link to the currently requested page was followed'
     },
     {'msg': 'TE',
-     'desc': 'The transfer encodings the user agent is willing to accept.'
+     'desc': 'The transfer encodings the user agent is willing to accept'
     },
     {'msg': 'Upgrade',
-     'desc': 'Ask the server to upgrade to another protocol.'
+     'desc': 'Ask the server to upgrade to another protocol'
     },
     {'msg': 'User-Agent',
      'desc': 'The user agent string of the user agent'
     },
     {'msg': 'Via',
-     'desc': 'Informs the server of proxies through which the request was sent.'
+     'desc': 'Informs the server of proxies through which the request was sent'
     },
     {'msg': 'Warning',
-     'desc': 'A general warning about possible problems with the entity body.'
+     'desc': 'A general warning about possible problems with the entity body'
     }
 ];
 
@@ -683,6 +683,6 @@ Prompt.prototype.respHdr = [    // Prompts for response headers
      'desc': 'A general warning about possible problems with the entity body'
     },
     {'msg': 'WWW-Authenticate',
-     'desc': 'Indicates the authentication scheme that should be used to access the requested entity.'
+     'desc': 'Indicates the authentication scheme that should be used to access the requested entity'
     }
 ];

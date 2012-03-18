@@ -1,5 +1,5 @@
 {
-    "DESCRIPTION": {"message": "任意重定向URL＆查看／修改HTTP请求／响应头"},
+    "DESCRIPTION": {"message": "任意重定向URL、查看／修改HTTP请求／响应头"},
     "PAGE_TITLE": {"message": "选项"},
     "PREF_TITLE": {"message": "首选项"},
     "RULEMGR_TITLE": {"message": "规则管理器"},
@@ -70,6 +70,7 @@
     "CONTEXT_RELOAD_TAB": {"message": "刷新当前页并应用规则……"},
     "CONTEXT_STATUS_ENABLED": {"message": "启用"},
     "CONTEXT_STATUS_DISABLED": {"message": "全局禁用"},
+    "CONTEXT_IMPORT": {"message": "导入此规则"},
     "CONTEXT_OPTIONS": {"message": "选项……"},
     "TEST_SUB_REPL_CONFLICT": {"message": "替换式与被替换式冲突！"},
     "TEST_MISMATCH": {"message": "测试URL不匹配！"},
@@ -78,7 +79,7 @@
     "TEST_INVALID_CHAR": {"message": "URL包含有非法字符"},
     "BAK_NO_INPUT_FILE": {"message": "请指定文件!"},
     "BAK_NO_RULE": {"message": "请选择一条规则!"},
-    "BAK_RESTORE_ERR": {"message": "无法还原！"},
+    "BAK_RESTORE_ERR": {"message": "无法导入／还原！"},
     "DBG_ERR": {"message": "捕捉到一个错误！"},
     "DBG_CACHE": {"message": "取自缓存！是预期的吗？"},
     "DBG_NO_REDIR": {"message": "未重定向"},

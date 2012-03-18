@@ -148,9 +148,10 @@ Debugger.prototype.prepare = function (tab) {
                         '</summary>' +
                         'URL: ' + details.url + '<br />' +
                         this.setColor(details.error, '', 'pink') +
+                        '<br />' +
                         this.setColor(
                             (details.fromCache ?
-                             '<br />' + $i18n('DBG_CACHE') : ''
+                             $i18n('DBG_CACHE') : ''
                             ), 'red', 'lightYellow'
                         ) + '</details>'
                 });
@@ -273,7 +274,7 @@ Debugger.prototype.prepare = function (tab) {
                         this.trimHdr(details.requestHeaders) +
                         this.setColor(
                             (details.fromCache ?
-                             '<br />' + $i18n('DBG_CACHE') : ''
+                             $i18n('DBG_CACHE') : ''
                             ), 'red', 'lightYellow'
                         ) +
                         '</details>'
@@ -353,10 +354,10 @@ Debugger.prototype.prepare = function (tab) {
                         this.setColor(
                             $i18n('DBG_DEST_URL') + ': ' +
                                 details.redirectUrl, '', 'lightGreen'
-                        ) +
+                        ) + '<br />' +
                         this.setColor(
                             (details.fromCache ?
-                             '<br />' + $i18n('DBG_CACHE') : ''
+                             $i18n('DBG_CACHE') : ''
                             ), 'red', 'lightYellow'
                         ) +
                         this.trimHdr(details.responseHeaders) +
@@ -383,7 +384,7 @@ Debugger.prototype.prepare = function (tab) {
                         this.trimHdr(details.responseHeaders) +
                         this.setColor(
                             (details.fromCache ?
-                             '<br />' + $i18n('DBG_CACHE') : ''
+                             $i18n('DBG_CACHE') : ''
                             ), 'red', 'lightYellow'
                         ) +
                         '</details>'

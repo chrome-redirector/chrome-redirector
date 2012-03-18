@@ -1,5 +1,5 @@
 {
-    "DESCRIPTION": {"message": "任意重定向URL＆檢視／修改HTTP請求／響應頭"},
+    "DESCRIPTION": {"message": "任意重定向URL、檢視／修改HTTP請求／響應頭"},
     "PAGE_TITLE": {"message": "選項"},
     "PREF_TITLE": {"message": "首選項"},
     "RULEMGR_TITLE": {"message": "規則管理員"},
@@ -70,6 +70,7 @@
     "CONTEXT_RELOAD_TAB": {"message": "重新載入頁框並應用規則……"},
     "CONTEXT_STATUS_ENABLED": {"message": "啟用"},
     "CONTEXT_STATUS_DISABLED": {"message": "全局停用"},
+    "CONTEXT_IMPORT": {"message": "匯入此規則"},
     "CONTEXT_OPTIONS": {"message": "設定……"},
     "TEST_SUB_REPL_CONFLICT": {"message": "取代式與被取代式衝突！"},
     "TEST_MISMATCH": {"message": "測試URL不匹配！"},
@@ -78,7 +79,7 @@
     "TEST_INVALID_CHAR": {"message": "URL包含有非法字元"},
     "BAK_NO_INPUT_FILE": {"message": "請指定檔案!"},
     "BAK_NO_RULE": {"message": "請選擇一條規則!"},
-    "BAK_RESTORE_ERR": {"message": "無法還原！"},
+    "BAK_RESTORE_ERR": {"message": "無法匯入／還原！"},
     "DBG_ERR": {"message": "捕捉到一個錯誤！"},
     "DBG_CACHE": {"message": "取自快取！是預期的嗎？"},
     "DBG_NO_REDIR": {"message": "未重定向"},

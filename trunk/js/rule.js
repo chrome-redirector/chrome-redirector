@@ -418,7 +418,11 @@ RuleList.prototype.refresh = function (force) { // Refresh the list
     }
 
     localStorage.RULELIST = JSON.stringify(this.data);
-    $v.ext_bg.loadRule();
+    if (typeof $v.ext_bg !== 'undefined') {
+        $v.ext_bg.loadRule();
+    } else {
+        loadRule();
+    }
 
     return true;
 };
@@ -463,33 +467,45 @@ RuleList.prototype.bak = function (single) { // Backup rule list
     $f.writeFile(filename, JSON.stringify(out));
 };
 
-RuleList.prototype.restore = function (append) { // Restore rule list
-    if (typeof append === 'undefined') {         // Override
-        var files = $('ruleEdit_restoreFile').files;
-    } else {                    // Append
-        var files = $('ruleEdit_appendFile').files;
-    }
-
-    if (files.length === 0) {   // No input file
-        $f.err($i18n('BAK_NO_INPUT_FILE'));
-        return;
+RuleList.prototype.restore = function (append, str) { // Restore rule list
+    if (typeof str !== 'undefined') {
+        return this.restoreData($f.readFile(str));
     } else {
-        var file = files[0];
-    }
-
-    if (typeof append === 'undefined') {
-        this.data = [];
-    }
-
-    $f.readFile(file, (function (data) {
-        try {
-            var tmp = JSON.parse(data);
-
-            this.data = this.data.concat(tmp);
-            this.refresh(true);
-            this.init();        // Re-construct table
-        } catch (e) {
-            $f.err($i18n('BAK_RESTORE_ERR'));
+        if (typeof append === 'undefined') {         // Override
+            var files = $('ruleEdit_restoreFile').files;
+        } else {                    // Append
+            var files = $('ruleEdit_appendFile').files;
         }
-    }).bind(this));
+
+        if (files.length === 0) {   // No input file
+            $f.err($i18n('BAK_NO_INPUT_FILE'));
+            return;
+        } else {
+            var file = files[0];
+        }
+
+        if (typeof append === 'undefined') {
+            this.data = [];
+        }
+
+        $f.readFile(file, this.restoreData);
+    }
+};
+
+RuleList.prototype.restoreData = function (data) {
+    try {
+        var tmp = JSON.parse(data);
+
+        this.data = this.data.concat(tmp);
+        this.refresh(true);
+
+        if (typeof $v.ext_bg !== 'undefined') {
+            this.init();    // Re-construct table
+        }
+    } catch (e) {
+        $f.err($i18n('BAK_RESTORE_ERR'));
+        return false;
+    }
+
+    return true;
 };

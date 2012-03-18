@@ -33,7 +33,17 @@ $f.switchNav = function () {
     try {
         $$('#navTags li:hover')[0].className = 'selected';
     } catch (e) {               // Switched by script
-        $$('#navTags li')[0].className = 'selected';
+        switch (location.search) {
+        case '?1':
+            $$('#navTags li')[1].className = 'selected';
+            break;
+        case '?2':
+            $$('#navTags li')[2].className = 'selected';
+            break;
+        default:
+            $$('#navTags li')[0].className = 'selected';
+            break;
+        }
     }
 
     $('main-container').className = '.selected';
@@ -81,8 +91,19 @@ $f.initOpt = function () {                         // Option page init
         },
         false);
 
-    // Display the first tab
-    $$('#prefTag a')[0].mouseClick();
+    switch (location.search) {
+    case '?1':
+        // Display the rules manager tab
+        $$('#ruleMgrTag a')[0].mouseClick();
+        break;
+    case '?2':
+        // Display the debugger tab
+        $$('#dbgTag a')[0].mouseClick();
+        break;
+    default:
+        // Display the preferences tab
+        $$('#prefTag a')[0].mouseClick();
+    }
 };
 
 $f.verifyUrl = function (url) { // Verify a URL (Not strict enough)

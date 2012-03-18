@@ -1,5 +1,5 @@
 {
-    "DESCRIPTION": {"message": "Redirects URLs & views/modifies HTTP request/response headers arbitrarily."},
+    "DESCRIPTION": {"message": "Redirects URLs, views/modifies HTTP request/response headers arbitrarily."},
     "PAGE_TITLE": {"message": "Options"},
     "PREF_TITLE": {"message": "Preferences"},
     "RULEMGR_TITLE": {"message": "Rules Manager"},
@@ -70,6 +70,7 @@
     "CONTEXT_RELOAD_TAB": {"message": "Reload this tab with rule..."},
     "CONTEXT_STATUS_ENABLED": {"message": "Enabled"},
     "CONTEXT_STATUS_DISABLED": {"message": "Globally disabled"},
+    "CONTEXT_IMPORT": {"message": "Import this rule"},
     "CONTEXT_OPTIONS": {"message": "Options..."},
     "TEST_SUB_REPL_CONFLICT": {"message": "Substitution and Replacement conflict!"},
     "TEST_MISMATCH": {"message": "Test URL is not matched!"},
@@ -78,7 +79,7 @@
     "TEST_INVALID_CHAR": {"message": "URL contains invalid characters"},
     "BAK_NO_INPUT_FILE": {"message": "No file specified!"},
     "BAK_NO_RULE": {"message": "No rule selected!"},
-    "BAK_RESTORE_ERR": {"message": "Unable to restore!"},
+    "BAK_RESTORE_ERR": {"message": "Unable to import/restore!"},
     "DBG_ERR": {"message": "Caught an error!"},
     "DBG_CACHE": {"message": "From cache! Is it you want?"},
     "DBG_NO_REDIR": {"message": "Not redirected"},

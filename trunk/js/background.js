@@ -207,15 +207,22 @@ var updateContext = function () {      // Update the context menu
         }
     });
 
+    chrome.contextMenus.create({ // Import a rule
+        title: $i18n('CONTEXT_IMPORT'),
+        contexts: ['link'],
+        onclick: function (info) {
+            var tmpList = new RuleList(true);
+            if (tmpList.restore(true, info.linkUrl) === true) {
+                $f.openOptions('?1');
+            }
+        }
+    });
+
     chrome.contextMenus.create({ // Open options page
         title: $i18n('CONTEXT_OPTIONS'),
         contexts: ['all'],
         onclick: function () {
-            chrome.tabs.create({
-                url: 'chrome-extension://' +
-                    $i18n('@@extension_id') +
-                    '/html/options.html'
-            });
+            $f.openOptions();
         }
     });
 };
@@ -404,9 +411,5 @@ try {                           // First install
 } catch (e) {
     localStorage.VERSION =
         JSON.stringify(chrome.app.getDetails().version);
-    chrome.tabs.create({
-        url: 'chrome-extension://' +
-            $i18n('@@extension_id') +
-            '/html/options.html'
-    });
+    $f.openOptions();
 }
