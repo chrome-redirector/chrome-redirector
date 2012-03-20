@@ -488,7 +488,7 @@ RuleList.prototype.restore = function (append, str) { // Restore rule list
             this.data = [];
         }
 
-        $f.readFile(file, this.restoreData);
+        $f.readFile(file, this.restoreData.bind(this));
     }
 };
 
