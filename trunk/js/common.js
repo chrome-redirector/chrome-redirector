@@ -27,7 +27,7 @@ Element.prototype.mouseClick = function () {
     var e = document.createEvent('MouseEvents');
     e.initEvent('click', true, true);
     this.dispatchEvent(e);
-}
+};
 
 $ = function (id) {                // Id selector
     return document.getElementById(id);
@@ -49,6 +49,7 @@ $v.type.glob = 1;
 $v.type.manual = $v.type.block = 2;
 $v.type.reqHdr = 3;
 $v.type.respHdr = 4;
+$v.type.glob_smart = 3;
 
 $f.applyI18n = function () {
     var elem = $$('[i18n]');    // All elements need to be mod
@@ -113,12 +114,24 @@ $f.str2re = function (proto) {  // Construct compiled regexp from str
     var str = proto.str;
 
     if (proto.hasOwnProperty('type')) {
-        if (proto.type === $v.type.block) {
+        switch (proto.type) {
+        case $v.type.block:
             return;
-        }
-
-        if (proto.type === $v.type.glob) {
+        case $v.type.glob:
             str = $f.glob2re(str);
+            break;
+        case $v.type.glob_smart:
+            str = $f.glob2re(str);
+
+            if (! (/^\w+:\/\//).test(str)) {
+                str = 'https?://' + str;
+            }
+            if ((/^[^\.]+[^\/]+$/).test(str)) {
+                str += '/';
+            }
+            str = '^' + str + '$';
+
+            break;
         }
     }
 
@@ -189,6 +202,21 @@ $f.openOptions = function (search) {
     });
 };
 
+$f.queryTabId = function (tabId) {
+    chrome.tabs.query({}, function (tabs) {
+        var exists = false;
+
+        for (var i = 0; i < tabs.length; i++) {
+            if (tabs[i].id === tabId) {
+                exists = true;
+                break;
+            }
+        }
+
+        return exists;
+    });
+};
+
 $f.readFile = function (file, callback) {
     if (typeof file === 'string') { // Path
         var xhr = new XMLHttpRequest();
@@ -215,8 +243,20 @@ $f.writeFile = function (file, content) {
      */
     // file: filename (in user's download dir); content: string
 
+    if (!window.BlobBuilder) {
+        BlobBuilder = WebKitBlobBuilder;
+    }
+    if (!window.URL) {
+        URL = webkitURL;
+    }
+
+    var blob = new BlobBuilder();
+    blob.append(content);
+
     var link = document.createElement('a'); // Tmp link
-    link.href = 'data:text/x-download;charset=utf-8,' + content;
+    link.href = URL.createObjectURL(
+        blob.getBlob('application/force-download'));
+
     link.download = file;
     link.mouseClick();          // Simulate mouse click to download
-}
+};

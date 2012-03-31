@@ -308,8 +308,8 @@ section {
     position: relative;
 
     display:none;
-    width: 70%;
-    margin-left: 15%;
+    width: 800px;
+    margin-left: 160px;
     margin-top: 0;
     z-index: 21;
     border-radius: 5px;

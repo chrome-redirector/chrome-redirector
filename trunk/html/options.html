@@ -73,22 +73,23 @@
               <summary>
                 <input type="checkbox" id="pref_proto_all"
                        onclick="$v.pref.onChgProto('all')" />
-                <label i18n="PROTO_ALL"></label><br />
+                <label i18n="PROTO_ALL" for="pref_proto_all">
+                </label><br />
               </summary>
 
               <section>
                 <input type="checkbox" id="pref_proto_http"
                        onclick="$v.pref.onChgProto('http')" />
-                <label>HTTP://</label><br />
+                <label for="pref_proto_http">HTTP://</label><br />
                 <input type="checkbox" id="pref_proto_https"
                        onclick="$v.pref.onChgProto('https')" />
-                <label>HTTPS://</label><br />
+                <label for="pref_proto_https">HTTPS://</label><br />
                 <input type="checkbox" id="pref_proto_ftp"
                        onclick="$v.pref.onChgProto('ftp')" />
-                <label>FTP://</label><br />
+                <label for="pref_proto_ftp">FTP://</label><br />
                 <input type="checkbox" id="pref_proto_file"
                        onclick="$v.pref.onChgProto('file')" />
-                <label>FILE://</label><br />
+                <label for="pref_proto_file">FILE://</label><br />
               </section>
             </details>
           </section>
@@ -98,10 +99,12 @@
           <section>
             <input type="checkbox" id="pref_context_link"
                    onclick="$v.pref.onChgContext()" />
-            <label i18n="CONTEXT_LINK"></label><br />
+            <label i18n="CONTEXT_LINK" for="pref_context_link">
+            </label><br />
             <input type="checkbox" id="pref_context_page"
                    onclick="$v.pref.onChgContext()" />
-            <label i18n="CONTEXT_PAGE"></label><br />
+            <label i18n="CONTEXT_PAGE" for="pref_context_page">
+            </label><br />
           </section>
 
           <!-- Input prompt settings -->
@@ -109,7 +112,16 @@
           <section>
             <input type="checkbox" id="pref_prompt"
                    onclick="$v.pref.onChgPrompt()" />
-            <label i18n="PROMPT_CHKBOX"></label>
+            <label i18n="PROMPT_CHKBOX" for="pref_prompt"></label>
+          </section>
+
+          <!-- Icon notification settings -->
+          <h3 i18n="PAGEACTION_TITLE"></h3>
+          <section>
+            <input type="checkbox" id="pref_pageAction"
+                   onclick="$v.pref.onChgPageAction()" />
+            <label i18n="PAGEACTION_DISABLE" for="pref_pageAction">
+            </label>
           </section>
         </div>
 
@@ -185,31 +197,31 @@
             <input type="url" id="dbg_url"
                    class="input-text"
                    i18n="placeholder:PH_DEBUG_URL" required />
-            <input type="checkbox"
+            <input type="checkbox" id="dbg-chkbox-1"
                    onchange="$v.debugger.quiet=this.checked" />
-            <label i18n="DBG_QUIET"></label>
-            <input type="checkbox" checked
+            <label i18n="DBG_QUIET" for="dbg-chkbox-1"></label>
+            <input type="checkbox" id="dbg-chkbox-2" checked
                    onchange="$v.debugger.trackRedir=this.checked" />
-            <label i18n="DBG_TRACK_REDIR"></label>
-            <input type="checkbox" checked
+            <label i18n="DBG_TRACK_REDIR" for="dbg-chkbox-2"></label>
+            <input type="checkbox" id="dbg-chkbox-3" checked
                    onchange="$v.debugger.trackReqHdr=this.checked" />
-            <label i18n="DBG_TRACK_REQHDR"></label>
-            <input type="checkbox" checked
+            <label i18n="DBG_TRACK_REQHDR" for="dbg-chkbox-3"></label>
+            <input type="checkbox" id="dbg-chkbox-4" checked
                    onchange="$v.debugger.trackRespHdr=this.checked" />
-            <label i18n="DBG_TRACK_RESPHDR"></label>
-            <input type="checkbox"
+            <label i18n="DBG_TRACK_RESPHDR" for="dbg-chkbox-4"></label>
+            <input type="checkbox" id="dbg-chkbox-5"
                    onchange="$v.debugger.testSpeed=this.checked" />
-            <label i18n="DBG_TEST_SPEED"></label>
+            <label i18n="DBG_TEST_SPEED" for="dbg-chkbox-5"></label>
 
             <div class="action-area">
               <input type="submit" id="dbg_start"
                      i18n="value:BTN_DBG_START"
-                     onclick="this.hidden=true;
+                     onclick="$('dbg_start').hidden=true;
                               $('dbg_stop').hidden=false;
                               $v.debugger.start()" />
               <input type="button" id="dbg_stop" hidden="true"
                      i18n="value:BTN_DBG_STOP"
-                     onclick="this.hidden=true;
+                     onclick="$('dbg_stop').hidden=true;
                               $('dbg_start').hidden=false;
                               $v.debugger.stop()" />
               <input type="button" id="dbg_unfold" hidden="true"
@@ -297,9 +309,11 @@
                   </option>
                   <option i18n="TYPE_GLOB"></option>
                   <option i18n="TYPE_MANUAL"></option>
+                  <option i18n="TYPE_GLOB_SMART"></option>
                 </select>
                 <input type="checkbox" id="ruleEdit_matchcase" />
-                <label i18n="LBL_IGNCASE"></label>
+                <label i18n="LBL_IGNCASE" for="ruleEdit_matchcase">
+                </label>
                 <br />
                 <input id="ruleEdit_matchstr"
                        i18n="placeholder:PH_MATCH" required />
@@ -318,9 +332,11 @@
                   <option i18n="TYPE_RESP_HDR"></option>
                 </select>
                 <input type="checkbox" id="ruleEdit_subcase" />
-                <label i18n="LBL_IGNCASE"></label>
+                <label i18n="LBL_IGNCASE" for="ruleEdit_subcase">
+                </label>
                 <input type="checkbox" id="ruleEdit_subglob" />
-                <label i18n="LBL_SUBGLOB"></label>
+                <label i18n="LBL_SUBGLOB" for="ruleEdit_subglob">
+                </label>
                 <br />
                 <input id="ruleEdit_substr"
                        i18n="placeholder:PH_SUB" required />
@@ -330,7 +346,8 @@
                 <!-- Replacement -->
                 <h3 i18n="LBL_REPL"></h3>
                 <input type="checkbox" id="ruleEdit_replDecode" />
-                <label i18n="LBL_REPLDECODE"></label>
+                <label i18n="LBL_REPLDECODE" for="ruleEdit_replDecode">
+                </label>
                 <br />
                 <input id="ruleEdit_replstr" i18n="placeholder:PH_REPL" />
               </section>

@@ -39,19 +39,16 @@ Debugger.prototype.start = function () { // Start debugging
         {url: url, active: false, pinned: true},
         this.prepare.bind(this)
     );
+    $v.ext_bg.onInit(true);
 
     $('dbg_unfold').hidden = false;
     $('dbg_fold').hidden = true;
+
+    $v.ext_bg.chrome.tabs.onRemoved.addListener($v.ext_bg.onRemoved);
 };
 
 Debugger.prototype.stop = function () { // Stop and cleanup
-    // No need to detach, just remove the debugging tab
-    try {
-        chrome.tabs.remove(this.tabId);
-    } catch (e) {}
-
-    // Attach clean listeners
-    $v.ext_bg.onInit();
+    $v.ext_bg.onRemoved($v.ext_bg.$v.optionTabId);
 };
 
 Debugger.prototype.setColor = function (text, textC, bgC) {
@@ -132,7 +129,7 @@ Debugger.prototype.trimHdr = function (Hdr) {
 
 Debugger.prototype.prepare = function (tab) {
     // WARN: Error in onBeforeRequest is not captured!!!
-    this.tabId = tab.id;
+    $v.ext_bg.$v.debugeeTabId = tab.id;
 
     // Attach debug listeners
     $v.ext_bg.chrome.webRequest.onErrorOccurred.addListener(

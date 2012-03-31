@@ -387,15 +387,42 @@
 
 
 <p>
-     <b>NOTE:</b> If you want to match these two characters literally, use
-     <code>\?</code> and <code>\*</code> instead.
-</p>
+     <b>NOTE:</b>
+</p><ul>
+<li>If you want to match these two characters literally, use
+       <code>\?</code> and <code>\*</code> instead.
+</li>
+<li>A URL matches a <i>Match</i> pattern so long as part of it matches.
+       For strict matching, see <i>Smart wildcard</i>.
+</li>
+</ul>
+
+
 </li>
 </ul>
 <ul>
 <li id="sec-4-4-2-3"><a name="BASIC-MATCH-MANUAL" id="BASIC-MATCH-MANUAL"></a>Manual<br/>
      A special type of <i>Match</i> method, indicating this rule is used
      for manual redirection.
+
+</li>
+</ul>
+<ul>
+<li id="sec-4-4-2-4">Smart wildcard<br/>
+     <i>Smart wildcard</i> was introduced to facilitate
+     the composing of <i>Match</i> patterns.
+     Features:
+<ul>
+<li>Smart wildcard do strictly matching
+</li>
+<li>Patterns without the protocol part will match
+       either <a href="http://">http://</a> or <a href="https://">https://</a>
+</li>
+<li>For patterns without paths, query strings and fragment identifiers,
+       A implied slash will be automatically appended.
+</li>
+</ul>
+
 
 </li>
 </ul>

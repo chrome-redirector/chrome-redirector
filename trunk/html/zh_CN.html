@@ -347,13 +347,35 @@
 
 
 <p>
-     <b>注意：</b> 若要直接匹配上述两个字符，请分别使用 <code>\?</code> 和 <code>\*</code> 。
-</p>
+     <b>注意：</b>
+</p><ul>
+<li>若要直接匹配上述两个字符，请分别使用 <code>\?</code> 和 <code>\*</code> 。
+</li>
+<li>URL只要部分匹配就算匹配上。如要严格地匹配，参见 <i>智能通配符</i> 。
+</li>
+</ul>
+
+
 </li>
 </ul>
 <ul>
 <li id="sec-4-4-2-3"><a name="BASIC-MATCH-MANUAL" id="BASIC-MATCH-MANUAL"></a>手动<br/>
      特殊的匹配方式，意指规则用于手动重定向。
+
+</li>
+</ul>
+<ul>
+<li id="sec-4-4-2-4">智能通配符<br/>
+     引入 <i>智能通配符</i> 是为了简化匹配模式的编写。特点：
+<ul>
+<li><i>智能通配符</i> 进行严格的匹配
+</li>
+<li>无协议的模式将匹配<a href="http://">http://</a> 或 <a href="https://">https://</a>
+</li>
+<li>无路径、查询字串或段标识符的模式会自动附加上隐含的斜线
+</li>
+</ul>
+
 
 </li>
 </ul>

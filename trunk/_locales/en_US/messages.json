@@ -1,7 +1,10 @@
 {
     "DESCRIPTION": {"message": "Redirects URLs, views/modifies HTTP request/response headers arbitrarily."},
+    "DEFAUL_TITLE": {"message": "Redirector treated this page"},
     "PAGE_TITLE": {"message": "Options"},
     "PREF_TITLE": {"message": "Preferences"},
+    "PAGEACTION_TITLE": {"message": "Icon Notification"},
+    "PAGEACTION_DISABLE": {"message": "Disable icon notification"},
     "RULEMGR_TITLE": {"message": "Rules Manager"},
     "DBG_TITLE": {"message": "Debugger"},
     "DOC_TITLE": {"message": "Help"},
@@ -19,6 +22,7 @@
     "TYPE_BLOCK": {"message": "Block"},
     "TYPE_REQ_HDR": {"message": "Request Header"},
     "TYPE_RESP_HDR": {"message": "Response Header"},
+    "TYPE_GLOB_SMART": {"message": "Smart wildcard"},
     "LBL_TITLE": {"message": "Rules List"},
     "LBL_NAME": {"message": "Name"},
     "LBL_MATCH": {"message": "Match"},

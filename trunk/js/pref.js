@@ -64,6 +64,10 @@ Pref = function () {            // Obj holds preferences data/method
     try {                       // Load prompts pref to UI
         $('pref_prompt').checked = this.data.prompt;
     } catch (e) {}
+
+    try {
+        $('pref_pageAction').checked = this.data.disablePageAction;
+    } catch (e) {}
 };
 
 Pref.prototype.refresh = function () { // Save & reload pref data
@@ -121,5 +125,10 @@ Pref.prototype.onChgPrompt = function () {
         } catch (e) {}
     }
 
+    this.refresh();
+};
+
+Pref.prototype.onChgPageAction = function () {
+    this.data.disablePageAction = $('pref_pageAction').checked;
     this.refresh();
 };

@@ -52,6 +52,10 @@ $f.switchNav = function () {
 };
 
 $f.initOpt = function () {                         // Option page init
+    chrome.tabs.getCurrent(function (tab) {
+        $v.ext_bg.$v.optionTabId = tab.id;
+    });
+
     $v.ext_bg = chrome.extension.getBackgroundPage(); // Bg page
     $v.pref = new Pref();         // Preferences obj
     $v.ruleList = new RuleList(); // Rules list obj

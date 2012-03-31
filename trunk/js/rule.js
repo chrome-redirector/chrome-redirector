@@ -114,7 +114,7 @@ RuleList.prototype.update = function (idx) {
         ($('ruleEdit_matchtype').selectedIndex = rule.match.type);
     $('ruleEdit_matchcase').checked = rule.match.modi;
 
-    // Disable substitution if substitution's type is manual
+    // Disable substitution if substitution's type is block
     $('ruleEdit_substr').disabled = $v.type.block ===
         ($('ruleEdit_subtype').selectedIndex = rule.sub.type);
     $('ruleEdit_subcase').checked = rule.sub.modi;

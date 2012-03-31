@@ -1,7 +1,10 @@
 {
     "DESCRIPTION": {"message": "任意重定向URL、查看／修改HTTP请求／响应头"},
+    "DEFAUL_TITLE": {"message": "Redirector处理过本页面"},
     "PAGE_TITLE": {"message": "选项"},
     "PREF_TITLE": {"message": "首选项"},
+    "PAGEACTION_TITLE": {"message": "图标提示"},
+    "PAGEACTION_DISABLE": {"message": "禁用图标提示"},
     "RULEMGR_TITLE": {"message": "规则管理器"},
     "DBG_TITLE": {"message": "调试器"},
     "DOC_TITLE": {"message": "帮助"},
@@ -19,6 +22,7 @@
     "TYPE_BLOCK": {"message": "封锁"},
     "TYPE_REQ_HDR": {"message": "请求头"},
     "TYPE_RESP_HDR": {"message": "响应头"},
+    "TYPE_GLOB_SMART": {"message": "智能通配符"},
     "LBL_TITLE": {"message": "规则列表"},
     "LBL_NAME": {"message": "名称"},
     "LBL_MATCH": {"message": "匹配"},

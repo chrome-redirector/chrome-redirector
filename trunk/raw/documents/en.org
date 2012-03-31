@@ -182,13 +182,26 @@ From Cyril Feng.
                 =~ ~https://www.google.com/~
                 and =~ ~https://google.com/~.
 
-     *NOTE:* If you want to match these two characters literally, use
-     ~\?~ and ~\*~ instead.
+     *NOTE:*
+     - If you want to match these two characters literally, use
+       ~\?~ and ~\*~ instead.
+     - A URL matches a /Match/ pattern so long as part of it matches.
+       For strict matching, see /Smart wildcard/.
 
 #<<BASIC-MATCH-MANUAL>>
 **** Manual
      A special type of /Match/ method, indicating this rule is used
      for manual redirection.
+
+**** Smart wildcard
+     /Smart wildcard/ was introduced to facilitate
+     the composing of /Match/ patterns.
+     Features:
+     - Smart wildcard do strictly matching
+     - Patterns without the protocol part will match
+       either http:// or https://
+     - For patterns without paths, query strings and fragment identifiers,
+       A implied slash will be automatically appended.
 
 *** Substitution
     A /Substitution/ defined which part(s) of a URL should be replaced.

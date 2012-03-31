@@ -25,6 +25,7 @@
 
 var onBeforeRequestListener = function (details) {
     if ($v.redirected.hasOwnProperty(details.requestId)) {
+        $v.iconStatus[details.tabId] = true;
         return;
     }
 
@@ -45,7 +46,10 @@ var onBeforeRequestListener = function (details) {
 var onBeforeSendHeadersListener = function (details) {
     for (var i = 0; i < $v.ruleReqHdr.length; i++) {
         var currentRule = $v.ruleReqHdr[i];
+
         if (currentRule.match.test(details.url)) { // match this URL
+            $v.iconStatus[details.tabId] = true;
+
             var currentHeaders = [];
             for (var j = 0; j < details.requestHeaders.length; j++) {
                 currentHeaders.push(details.requestHeaders[j].name);
@@ -80,7 +84,10 @@ var onBeforeSendHeadersListener = function (details) {
 var onHeadersReceivedListener = function (details) {
     for (var i = 0; i < $v.ruleRespHdr.length; i++) {
         var currentRule = $v.ruleRespHdr[i];
+
         if (currentRule.match.test(details.url)) { // match this URL
+            $v.iconStatus[details.tabId] = true;
+
             var currentHeaders = [];
             for (var j = 0; j < details.responseHeaders.length; j++) {
                 currentHeaders.push(details.responseHeaders[j].name);
@@ -143,12 +150,18 @@ var updateContext = function () {      // Update the context menu
         if (info.hasOwnProperty('srcUrl')) {
             chrome.tabs.create({
                 url: $f.getRedirUrl(info.srcUrl, rule)
+            }, function (tab2) {
+                $v.iconStatus[tab2.id] = true;
             });
         } else if (info.hasOwnProperty('linkUrl')) {
             chrome.tabs.create({
                 url: $f.getRedirUrl(info.linkUrl, rule)
+            }, function (tab2) {
+                $v.iconStatus[tab2.id] = true;
             });
         } else {
+            $v.iconStatus[tab.id] = true;
+
             chrome.tabs.update(tab.id, {
                 url: $f.getRedirUrl(info.pageUrl, rule)
             });
@@ -352,8 +365,63 @@ var loadRule = function (data) { // Called when rule list needs update
     updateContext();            // Now referesh context menu
 };
 
-var onInit = function () {
+var onRemoved = function (tabId) {
+    switch (tabId) {
+    case $v.optionTabId:
+        chrome.tabs.remove($v.debugeeTabId);
+        // $('dbg_stop').onclick();
+        break;
+    case $v.debugeeTabId:
+        var page = chrome.extension.getExtensionTabs()[0];
+        page.$('dbg_stop').hidden=true;
+        page.$('dbg_start').hidden=false;
+        break;
+    default:
+        return;
+    }
+
+    onInit();
+
+    chrome.tabs.onRemoved.removeListener(onRemoved);
+};
+
+var onInit = function (debug) {
     $v.redirected = {};
+    $v.iconStatus = {};
+
+    // Show/hide notification icon
+    if (typeof debug === 'undefined') {
+        chrome.webNavigation.onCompleted.addListener(function (details) {
+            if ($v.prefData.disablePageAction === true ||
+                details.frameId > 0) {
+                return;
+            }
+
+            chrome.webNavigation.getFrame(
+                {tabId: details.tabId, frameId: 0},
+                function (info) {
+                    if (info === null) {
+                        return;
+                    }
+
+                    switch ($v.iconStatus[details.tabId]) {
+                    case true:
+                        try {
+                            chrome.pageAction.show(details.tabId);
+                        } catch (e) {}
+                        break;
+                    default:
+                        try {
+                            chrome.pageAction.hide(details.tabId);
+                        } catch (e) {}
+                        break;
+                    };
+
+                    $v.iconStatus[details.tabId] = false;
+                }
+            );
+        });
+    }
 
     if (chrome.webRequest.onBeforeRequest.hasListener(
         onBeforeRequestListener)) {
@@ -376,7 +444,7 @@ var onInit = function () {
         );
     }
 
-    if ($v.status === true) {
+    if ($v.status === true && typeof debug === 'undefined') {
         chrome.webRequest.onBeforeRequest.addListener( // Auto redir
             onBeforeRequestListener, {urls: $v.validUrl}, ['blocking']
         );

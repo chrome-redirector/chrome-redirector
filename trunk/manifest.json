@@ -1,6 +1,10 @@
 {
     "background_page": "/html/background.html",
     "options_page": "/html/options.html",
+    "page_action": {
+        "default_icon": "/icons/icon_16.png",
+        "default_title": "__MSG_DEFAUL_TITLE__"
+    },
     "icons": {
         "16": "/icons/icon_16.png",
         "128": "/icons/icon_128.png"
@@ -8,8 +12,8 @@
     "name": "Redirector",
     "description": "__MSG_DESCRIPTION__",
     "permissions": ["webRequest", "webRequestBlocking",
-                    "contextMenus", "<all_urls>"],
+                    "contextMenus", "<all_urls>", "webNavigation", "tabs"],
     "default_locale": "en_US",
-    "version": "2.2.19.4",
+    "version": "2.2.19.5",
     "minimum_chrome_version": "17"
 }
