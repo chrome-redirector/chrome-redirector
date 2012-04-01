@@ -15,6 +15,7 @@
     "CONTEXT_PAGE": {"message": "页面右键菜单"},
     "PROMPT": {"message": "输入提示(Beta)"},
     "PROMPT_CHKBOX": {"message": "启用输入提示"},
+    "PROMPT_TITLE": {"message": "ESC隐藏，TAB显示"},
     "RULEMGR_BAK_TITLE": {"message": "备份规则"},
     "TYPE_REGEXP": {"message": "正则表达式"},
     "TYPE_GLOB": {"message": "通配符"},
@@ -98,7 +99,8 @@
     "DBG_SEND_REQHDR": {"message": "向服务器发送请求头"},
     "DBG_NO_MOD_RESPHDR": {"message": "未修改响应头"},
     "DBG_MOD_RESPHDR": {"message": "修改了响应头"},
-    "DBG_REDIRED": {"message": "发生了重定向（由Redirector或服务器发起）"},
+    "DBG_REDIRED": {"message": "重定向成功"},
+    "DBG_REDIRED_SRV": {"message": "服务器发起发起了重定向！"},
     "DBG_COMPLETE": {"message": "完成"},
     "DBG_IMPORT_ERR": {"message": "无法从文件导入！"},
     "DBG_INSEC_FILE": {"message": "不安全的文件！"}

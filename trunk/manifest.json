@@ -16,6 +16,6 @@
                     "webNavigation", "tabs",
                     "contextMenus", "<all_urls>"],
     "default_locale": "en_US",
-    "version": "2.2.19.6",
+    "version": "2.2.19.7",
     "minimum_chrome_version": "17"
 }

@@ -15,6 +15,7 @@
     "CONTEXT_PAGE": {"message": "頁面右鍵選單"},
     "PROMPT": {"message": "輸入提示(Beta)"},
     "PROMPT_CHKBOX": {"message": "啟用輸入提示"},
+    "PROMPT_TITLE": {"message": "ESC隱藏，TAB顯示"},
     "RULEMGR_BAK_TITLE": {"message": "備份規則"},
     "TYPE_REGEXP": {"message": "正規表式"},
     "TYPE_GLOB": {"message": "萬用字元"},
@@ -98,7 +99,8 @@
     "DBG_SEND_REQHDR": {"message": "向伺服器發送請求頭"},
     "DBG_NO_MOD_RESPHDR": {"message": "未修改響應頭"},
     "DBG_MOD_RESPHDR": {"message": "修改了響應頭"},
-    "DBG_REDIRED": {"message": "發生了重定向（由Redirector或伺服器發起）"},
+    "DBG_REDIRED": {"message": "重定向成功"},
+    "DBG_REDIRED_SRV": {"message": "伺服器發起了重定向！"},
     "DBG_COMPLETE": {"message": "完成"},
     "DBG_IMPORT_ERR": {"message": "無法自檔案匯入！"},
     "DBG_INSEC_FILE": {"message": "不安全的檔案！"}

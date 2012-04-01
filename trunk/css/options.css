@@ -78,6 +78,23 @@ details summary::-webkit-details-marker {
   font-size: 120%;
 }
 
+::scrollbar,::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+
+::scrollbar-track,::-webkit-scrollbar-track {
+    box-shadow: inset 0 0 6px gray;
+    -webkit-box-shadow: inset 0 0 6px gray;
+    border-radius: 3px;
+}
+
+::scrollbar-thumb,::-webkit-scrollbar-thumb {
+    box-shadow: inset 0 0 6px black;
+    -webkit-box-shadow: inset 0 0 6px black;
+    border-radius: 3px;
+}
+
 /* Navigation begin */
 #navBar {
     height: 100%;
@@ -145,7 +162,6 @@ details summary::-webkit-details-marker {
     -webkit-transition: margin 100ms, opacity 100ms;
     bottom: 0;
     left: 0;
-    /* opacity: 0; */
     position: absolute;
     right: 0;
     top: 0;
@@ -162,7 +178,6 @@ details summary::-webkit-details-marker {
     -webkit-transition: margin 200ms, opacity 200ms;
     transition-delay: 100ms;
     -webkit-transition-delay: 100ms;
-    /* opacity: 1; */
     z-index: 2;
 }
 
@@ -424,7 +439,6 @@ pre {
 }
 
 table {
-    /* font-size: 80%; */
     width: 100%;
     border-collapse: collapse;
     margin: 1em 0;
@@ -522,7 +536,7 @@ th {
 
 /* Prompt begin */
 .prompt {
-    background-color: rgba(255, 255, 153, 0.9);
+    background-color: rgba(241, 241, 241, 0.9);
     margin-top: 28px;
     float: left;
     display: none;
@@ -531,7 +545,7 @@ th {
     z-index: 51;
     border: 1px solid #BFBFBF;
     border-radius: 2px;
-    min-width: 10%;
+    max-width: 100%;
 }
 
 .prompt ul {
@@ -544,7 +558,7 @@ th {
 }
 
 .prompt li:hover, .prompt li.selected {
-    background-color: #f00;
+    background-color: lightgray;
 }
 
 .prompt li span {
@@ -555,20 +569,13 @@ th {
 
 .prompt li span:first-child {
     color: #555;
-    max-width: 25%;
+    display: inline-block;
+    min-width: 60px;
 }
 
 .prompt li span:last-child {
-    color: #0f0;
-    float: right;
-    max-width: 70%;
-}
-
-.prompt li:hover span {
-    color: #fff;
-}
-.prompt li.selected span {
-    color: #fff;
+    color: green;
+    padding-left: 1em;
 }
 /* Prompt end */
 

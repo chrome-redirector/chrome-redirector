@@ -119,6 +119,10 @@ Prompt.prototype.refresh = function (id) { // Refresh prompt data
                     list = list.concat(this.re.esc);
                     break;
                 case '':
+                    list = list.concat([{'msg': '^', 'desc': ''}]);
+                    list = list.concat(this.re.com);
+                    list = list.concat(this.re.esc);
+                    break;
                 case '^':
                 case '|':
                 case '*':
@@ -139,43 +143,85 @@ Prompt.prototype.refresh = function (id) { // Refresh prompt data
                 }
             }
             break;
-        case $v.type.glob:      // Globbing
+        case $v.type.glob: case $v.type.glob_smart: // Globbing
+            if ($(id + 'type').selectedIndex !== $v.type.glob_smart ||
+                id === 'ruleEdit_match') {
+                switch (last) {
+                case '*':
+                case '?':
+                    list = [];
+                    break;
+                default:
+                    list =
+                        [{'msg': '*', 'desc': ''},
+                         {'msg': '?', 'desc': ''}];
+                }
+                break;          // Not typo
+            }
+        case $v.type.reqHdr:    // Http Request Header
+            if (id !== 'ruleEdit_sub') {
+                break;
+            }
+
             switch (last) {
-            case '':
-            case '*':
-            case '?':
-                list = [];
+            case '': case '|':
+                list = [{'msg': '-',
+                         'desc': 'Header remover, e.g. -Referer'
+                        }].concat(this.reqHdr);
+                break;
+            case '-':
+                list = this.reqHdr;
                 break;
             default:
-                list =
-                    [{'msg': '*', 'desc': ''},
-                     {'msg': '?', 'desc': ''}];
+                list = [{'msg': ' | ',
+                         'desc': 'Header separator, e.g. Referer|User-Agent'
+                        }];
+                break;
             }
             break;
-        case $v.type.reqHdr:    // Http request Header
-            if (id === 'ruleEdit_sub') {
-                list = this.reqHdr;
+        case $v.type.respHdr:   // Http Response Header
+            if (id !== 'ruleEdit_sub') {
+                break;
             }
-            break;
-        case $v.type.respHdr:    // Http request Header
-            if (id === 'ruleEdit_sub') {
+
+            switch (last) {
+            case '': case '|':
+                list = [{'msg': '-',
+                         'desc': 'Header remover, e.g. -Server'
+                        }].concat(this.respHdr);
+                break;
+            case '-':
                 list = this.respHdr;
+                break;
+            default:
+                list = [{'msg': '|',
+                         'desc': 'Header separator, e.g. Content-Type|Content-Disposition'
+                        }];
+                break;
             }
             break;
         }
         break;
     case 'ruleEdit_repl':
-        if ($('ruleEdit_subtype').selectedIndex !== $v.type.reqHdr &&
-            $('ruleEdit_subtype').selectedIndex !== $v.type.respHdr) {
+        switch ($('ruleEdit_subtype').selectedIndex) {
+        case $v.type.reqHdr: case $v.type.respHdr:
+            if (last !== '|' && last !== '') {
+                list = [{'msg': '|', 'desc': 'Value separator'}];
+            }
+            break;
+        default:
             var prefix = '';
             if (last !== '$') {
                 prefix = '$';
             }
 
             list =
-                [{'msg': prefix + '`', 'desc': ''},
-                 {'msg': prefix + '&', 'desc': ''},
-                 {'msg': prefix + '\'', 'desc': ''}];
+                [{'msg': prefix + '`',
+                  'desc': 'part proceeds the matched one'},
+                 {'msg': prefix + '&',
+                  'desc': 'matched string'},
+                 {'msg': prefix + '\'',
+                  'desc': 'part following the matched one'}];
 
             // Add $n
             if ($('ruleEdit_subtype').selectedIndex ===
@@ -194,64 +240,13 @@ Prompt.prototype.refresh = function (id) { // Refresh prompt data
         break;
     case 'ruleEdit_test':
         if ($('ruleEdit_subtype').selectedIndex !== $v.type.reqHdr &&
-            $('ruleEdit_subtype').selectedIndex !== $v.type.respHdr) {
-            switch (frag) {
-            case '':
-                list =          // URLs
-                [{'msg': 'http://', 'desc': ''},
-                 {'msg': 'https://', 'desc': ''},
-                 {'msg': 'ftp://', 'desc': ''},
-                 {'msg': 'file://', 'desc': ''}];
-                break;
-            case 'h':
-                list =
-                [{'msg': 'ttp://', 'desc': ''},
-                 {'msg': 'ttps://', 'desc': ''}];
-                break;
-            case 'ht':
-                list =
-                [{'msg': 'tp://', 'desc': ''},
-                 {'msg': 'tps://', 'desc': ''}];
-                break;
-            case 'htt':
-                list =
-                [{'msg': 'p://', 'desc': ''},
-                 {'msg': 'ps://', 'desc': ''}];
-                break;
-            case 'http':
-                list =
-                [{'msg': '://', 'desc': ''},
-                 {'msg': 's://', 'desc': ''}];
-                break;
-            case 'f':
-                list =
-                [{'msg': 'tp://', 'desc': ''},
-                 {'msg': 'ile://', 'desc': ''}];
-                break;
-            case 'ft':
-                list =
-                    [{'msg': 'p://', 'desc': ''}];
-                break;
-            case 'fi':
-                list =
-                    [{'msg': 'le://', 'desc': ''}];
-                break;
-            case 'fil':
-                list =
-                    [{'msg': 'e://', 'desc': ''}];
-                break;
-            case 'https':
-            case 'ftp':
-            case 'file':
-                list =
-                    [{'msg': '://', 'desc': ''}];
-                break;
-            default:
-                if ((/^\w*:$/).test(frag)) {
-                    list =
-                        [{'msg': '//', 'desc': ''}];
-                }
-            }
+            $('ruleEdit_subtype').selectedIndex !== $v.type.respHdr &&
+            frag === '') {
+            list =          // URLs
+            [{'msg': 'http://', 'desc': ''},
+             {'msg': 'https://', 'desc': ''},
+             {'msg': 'ftp://', 'desc': ''},
+             {'msg': 'file://', 'desc': ''}];
         }
         break;
     }
@@ -289,7 +284,7 @@ Prompt.prototype.update = function (id, list, callback) {
         var dom = document.createElement('li');
         dom.onclick = onClick;
         dom.innerHTML = '<span>' + list[i].msg + '</span>' +
-            '<span>&nbsp;' + list[i].desc + '</span>';
+            '<span>' + list[i].desc + '</span>';
         html.appendChild(dom);
     }
 
@@ -307,6 +302,7 @@ Prompt.prototype.init = function (id, list, callback) { // Initialize
     var node = document.createElement('div'); // Prompt menu
     node.id = id + 'prompt';
     node.className = 'prompt';
+    node.title = $i18n('PROMPT_TITLE');
 
     node.onmouseover = function () {
         this.hovered = true;
@@ -384,18 +380,7 @@ Prompt.prototype.init = function (id, list, callback) { // Initialize
     };
 
     txt.onkeyup = function (e) { // On key released
-        switch (e.keyCode) {
-        case 9: case 16: case 17: case 18: case 19: case 20: case 27:
-        case 33: case 34: case 38: case 40: case 45: case 46:
-        case 91: case 92:
-        case 112: case 113: case 114: case 115: case 116: case 117:
-        case 118: case 119: case 120: case 121: case 122: case 123:
-        case 144: case 145:
-            // No action on those keys
-            break;
-        default:                // Regenerate prompts
-            $v['prompt_' + id.replace('ruleEdit_', '')].refresh(id);
-        }
+        $v['prompt_' + id.replace('ruleEdit_', '')].refresh(id);
         this.colorize();
     };
 
@@ -468,17 +453,18 @@ Prompt.prototype.init = function (id, list, callback) { // Initialize
             this.selectedIdx = 0;
             e.preventDefault(); // Prevent jumping to next tabIndex
             return;
-        case 16: case 17: case 18: case 19: case 20:
-        case 45: case 46: case 91: case 92:
-        case 112: case 113: case 114: case 115: case 116: case 117:
-        case 118: case 119: case 120: case 121: case 122: case 123:
-        case 144: case 145:     // Other keys with no input
-            break;
-        default:                // Other key
-            num++;
         }
 
         node.adjPos(num);
+        this.colorize();
+    };
+
+    txt.onkeypress = function (e) { // On key pressed (printable keys)
+        if ($(node.id) === null) {  // Prompts disabled
+            return;
+        }
+
+        node.adjPos(this.selectionStart + 1);
         this.colorize();
     };
 };
@@ -509,9 +495,9 @@ Prompt.prototype.re = {         // Prompts for RegExp
         {'msg': '\\|', 'desc': ''},
         {'msg': '\\b', 'desc': ''},
         {'msg': '\\B', 'desc': ''},
-        {'msg': '\\', 'desc': '\\ddd'},
-        {'msg': '\\x', 'desc': '\\xdd'},
-        {'msg': '\\u', 'desc': '\\udddd'}
+        {'msg': '\\', 'desc': '\\ddd, ascii in oct'},
+        {'msg': '\\x', 'desc': '\\xdd, ascii in hex'},
+        {'msg': '\\u', 'desc': '\\udddd, unicode'}
     ],
 
     'qt': [                     // Quantifiers
@@ -524,10 +510,10 @@ Prompt.prototype.re = {         // Prompts for RegExp
 
 Prompt.prototype.reqHdr = [     // Prompts for request headers
     {'msg': 'Accept',
-     'desc': 'Content-Types that are acceptable'
+     'desc': 'Acceptable Content-Types'
     },
     {'msg': 'Accept-Charset',
-     'desc': 'Character sets that are acceptable'
+     'desc': 'Acceptable Character sets '
     },
     {'msg': 'Accept-Encoding',
      'desc': 'Acceptable encodings'
@@ -536,22 +522,22 @@ Prompt.prototype.reqHdr = [     // Prompts for request headers
      'desc': 'Acceptable languages for response'
     },
     {'msg': 'Cookie',
-     'desc': 'An HTTP cookie previously sent by the server with Set-Cookie'
+     'desc': 'HTTP cookie previously sent by the server with Set-Cookie'
     },
     {'msg': 'Content-MD5',
-     'desc': 'A Base64-encoded binary MD5 sum of the content of the request body'
+     'desc': 'Base64-encoded binary MD5 sum of the content of the request body'
     },
     {'msg': 'Content-Type',
-     'desc': 'The mime type of the body of the request'
+     'desc': 'Mime type of the body of the request'
     },
     {'msg': 'Date',
-     'desc': 'The date and time that the message was sent'
+     'desc': 'Date and time the message was sent'
     },
     {'msg': 'Expect',
-     'desc': 'Indicates that particular server behaviors are required by the client'
+     'desc': 'Particular server behaviors required by the client'
     },
     {'msg': 'From',
-     'desc': 'The email address of the user making the request'
+     'desc': 'Email address of the user making the request'
     },
     {'msg': 'If-Match',
      'desc': 'Only perform the action if the client supplied entity matches the same entity on the server'
@@ -560,61 +546,61 @@ Prompt.prototype.reqHdr = [     // Prompts for request headers
      'desc': 'Only send the response if the entity has not been modified since a specific time'
     },
     {'msg': 'Max-Forwards',
-     'desc': 'Limit the number of times the message can be forwarded through proxies or gateways'
+     'desc': 'Number of times the message can be forwarded through proxies or gateways'
     },
     {'msg': 'Range',
      'desc': 'Request only part of an entity'
     },
     {'msg': 'Referer',
-     'desc': 'This is the address of the previous web page from which a link to the currently requested page was followed'
+     'desc': 'Address of the previous web page from which a link to the currently requested page was followed'
     },
     {'msg': 'TE',
-     'desc': 'The transfer encodings the user agent is willing to accept'
+     'desc': 'Transfer encodings the user agent is willing to accept'
     },
     {'msg': 'Upgrade',
      'desc': 'Ask the server to upgrade to another protocol'
     },
     {'msg': 'User-Agent',
-     'desc': 'The user agent string of the user agent'
+     'desc': 'User agent string'
     },
     {'msg': 'Via',
-     'desc': 'Informs the server of proxies through which the request was sent'
+     'desc': 'Through which the request was sent'
     },
     {'msg': 'Warning',
-     'desc': 'A general warning about possible problems with the entity body'
+     'desc': 'Possible problems with the entity body'
     }
 ];
 
 Prompt.prototype.respHdr = [    // Prompts for response headers
     {'msg': 'Accept-Ranges',
-     'desc': 'What partial content range types this server supports'
+     'desc': 'Partial content range types this server supports'
     },
     {'msg': 'Age',
-     'desc': 'The age the object has been in a proxy cache in seconds'
+     'desc': 'Age the object has been in a proxy cache in seconds'
     },
     {'msg': 'Allow',
      'desc': 'Valid actions for a specified resource'
     },
     {'msg': 'Cache-Control',
-     'desc': 'Tells all caching mechanisms from server to client whether they may cache this object'
+     'desc': 'Whether cache this object'
     },
     {'msg': 'Connection',
      'desc': 'Options that are desired for the connection'
     },
     {'msg': 'Content-Encoding',
-     'desc': 'The type of encoding used on the data'
+     'desc': 'Type of encoding used on the data'
     },
     {'msg': 'Content-Language',
-     'desc': 'The language the content is in'
+     'desc': 'Language the content is in'
     },
     {'msg': 'Content-Length',
-     'desc': 'The length of the response body in octets'
+     'desc': 'Length of the response body in octets'
     },
     {'msg': 'Content-Location',
-     'desc': 'An alternate location for the returned data'
+     'desc': 'Alternate location for the returned data'
     },
     {'msg': 'Content-MD5',
-     'desc': 'A Base64-encoded binary MD5 sum of the content of the response'
+     'desc': 'Base64-encoded binary MD5 sum of the content of the response'
     },
     {'msg': 'Content-Disposition',
      'desc': 'An opportunity to raise a "File Download" dialogue box for a known MIME type'
@@ -623,28 +609,28 @@ Prompt.prototype.respHdr = [    // Prompts for response headers
      'desc': 'Where in a full body message this partial message belongs'
     },
     {'msg': 'Content-Type',
-     'desc': 'The mime type of this content'
+     'desc': 'Mime type of this content'
     },
     {'msg': 'Date',
-     'desc': 'The date and time that the message was sent'
+     'desc': 'Date and time the message was sent'
     },
     {'msg': 'ETag',
-     'desc': 'An identifier for a specific version of a resource'
+     'desc': 'Identifier for a specific version of a resource'
     },
     {'msg': 'Expires',
-     'desc': 'Gives the date/time after which the response is considered stale'
+     'desc': 'Date/time after which the response is considered stale'
     },
     {'msg': 'Last-Modified',
-     'desc': 'The last modified date for the requested object'
+     'desc': 'Last modified date for the requested object'
     },
     {'msg': 'Link',
-     'desc': 'Used to express a typed relationship with another resource'
+     'desc': 'Express a typed relationship with another resource'
     },
     {'msg': 'Location',
      'desc': 'Used in redirection, or when a new resource has been created'
     },
     {'msg': 'P3P',
-     'desc': 'Supposed to set P3P policy'
+     'desc': 'Set P3P policy'
     },
     {'msg': 'Pragma',
      'desc': 'Implementation-specific headers that may have various effects anywhere along the request-response chain'
@@ -659,30 +645,30 @@ Prompt.prototype.respHdr = [    // Prompts for response headers
      'desc': 'If an entity is temporarily unavailable'
     },
     {'msg': 'Server',
-     'desc': 'A name for the server'
+     'desc': 'Name for the server'
     },
     {'msg': 'Set-Cookie',
-     'desc': 'an HTTP cookie'
+     'desc': 'HTTP cookie'
     },
     {'msg': 'Strict-Transport-Security',
-     'desc': 'A HSTS Policy informing the HTTP client how long to cache the HTTPS only policy and whether this applies to subdomains'
+     'desc': 'How long to cache the HTTPS only policy and whether this applies to subdomains'
     },
     {'msg': 'Trailer',
      'desc': 'Indicates that the given set of header fields is present in the trailer of a message encoded with chunked transfer-coding'
     },
     {'msg': 'Transfer-Encoding',
-     'desc': 'The form of encoding used to safely transfer the entity to the user'
+     'desc': 'Form of encoding used to safely transfer the entity to the user'
     },
     {'msg': 'Vary',
-     'desc': 'Tells downstream proxies how to match future request headers'
+     'desc': 'How to match future request headers'
     },
     {'msg': 'Via',
-     'desc': 'Informs the client of proxies through which the response was sent'
+     'desc': 'Through which the response was sent'
     },
     {'msg': 'Warning',
-     'desc': 'A general warning about possible problems with the entity body'
+     'desc': 'Possible problems with the entity body'
     },
     {'msg': 'WWW-Authenticate',
-     'desc': 'Indicates the authentication scheme that should be used to access the requested entity'
+     'desc': 'Authentication scheme that should be used to access the requested entity'
     }
 ];

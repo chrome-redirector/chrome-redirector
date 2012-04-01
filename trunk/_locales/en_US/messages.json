@@ -15,6 +15,7 @@
     "CONTEXT_PAGE": {"message": "Enable context menu for Pages"},
     "PROMPT": {"message": "Input Prompts (Beta)"},
     "PROMPT_CHKBOX": {"message": "Enable input prompts"},
+    "PROMPT_TITLE": {"message": "ESC to Hide and TAB to show"},
     "RULEMGR_BAK_TITLE": {"message": "Backup Rules List"},
     "TYPE_REGEXP": {"message": "RegExp"},
     "TYPE_GLOB": {"message": "Wildcard"},
@@ -98,7 +99,8 @@
     "DBG_SEND_REQHDR": {"message": "Sending request headers to server"},
     "DBG_NO_MOD_RESPHDR": {"message": "Response headers are not changed"},
     "DBG_MOD_RESPHDR": {"message": "Response headers are modified"},
-    "DBG_REDIRED": {"message": "Redirected (initiated by Redirector or server)"},
+    "DBG_REDIRED": {"message": "Redirected successfully"},
+    "DBG_REDIRED_SRV": {"message": "Server initiated a redirection!"},
     "DBG_COMPLETE": {"message": "Completed"},
     "DBG_IMPORT_ERR": {"message": "Cannot import anything from file!"},
     "DBG_INSEC_FILE": {"message": "Insecure file!"}
