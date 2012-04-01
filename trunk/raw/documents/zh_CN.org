@@ -24,7 +24,7 @@ From Cyril Feng.
 #+TITLE:     Redirector指南
 #+AUTHOR:    Cyril Feng
 #+EMAIL:     CyrilFeng@gmail.com
-#+DATE:      2012-03-16
+#+DATE:      2012-03-31
 #+DESCRIPTION:
 #+KEYWORDS:
 #+LANGUAGE:  zh-CN
@@ -218,6 +218,9 @@ From Cyril Feng.
      那么你很可能会感受到0.5s的延迟。
 
    - 重定向和头修改用时之和即可估计 /Redirector/ 真实需时。
+
+   *警告：* Redirector会暂时停止正常的工作直到调试会话结束
+   （当你按下停止按钮、关闭被调试标签页或关闭选项页）。
 
 #<<ADVANCED_MATCH>>
 * 高级匹配

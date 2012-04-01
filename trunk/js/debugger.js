@@ -31,7 +31,7 @@ Debugger = function () {
 
 Debugger.prototype.start = function () { // Start debugging
     var url = $('dbg_url').value;
-    if (url.length === 0) {
+    if (url.length === 0 || ! $f.verifyUrl(url)) {
         return;
     }
 
@@ -466,6 +466,7 @@ Debugger.prototype.import = function () {
 
         try {
             $('dbg_info').innerHTML = data;
+            $('dbg_fold').onclick();
         } catch (e) {
             $f.err($i18n('DBG_IMPORT_ERR'));
         }

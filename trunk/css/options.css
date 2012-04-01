@@ -25,6 +25,7 @@ body {
     margin: 0;
     font-family: 'Open Sans', Arial, sans-serif;
     font-size: 75%;
+    user-select: none;
     -webkit-user-select: none;
 }
 
@@ -42,6 +43,7 @@ h1 {
 }
 
 h1, h2, h3 {
+    user-select: none;
     -webkit-user-select: none;
     font-weight: normal;
     line-height: 1;
@@ -70,6 +72,7 @@ form>section>details, #dbg>details {
     padding-bottom: 3em;
 }
 
+details summary::details-marker,
 details summary::-webkit-details-marker {
   color: gray;
   font-size: 120%;
@@ -87,8 +90,11 @@ details summary::-webkit-details-marker {
 }
 
 #navBar h1 {
+    margin-after: 1em;
     -webkit-margin-after: 1em;
+    margin-before: 1.2em;
     -webkit-margin-before: 1.2em;
+    margin-start: 23px;
     -webkit-margin-start: 23px;
 
     border-bottom-style: none;
@@ -100,7 +106,9 @@ details summary::-webkit-details-marker {
 }
 
 #navBar li {
+    border-start: 6px solid transparent;
     -webkit-border-start: 6px solid transparent;
+    padding-start: 18px;
     -webkit-padding-start: 18px;
     line-height: 17px;
     margin: 5px 0;
@@ -119,6 +127,7 @@ details summary::-webkit-details-marker {
 }
 
 #navBar li.selected {
+    border-start-color: rgb(78, 87, 100);
     -webkit-border-start-color: rgb(78, 87, 100);
 }
 
@@ -130,7 +139,9 @@ details summary::-webkit-details-marker {
 
 /* Main view begin */
 #main-container {
+    margin-start: -20px;
     -webkit-margin-start: -20px;
+    transition: margin 100ms, opacity 100ms;
     -webkit-transition: margin 100ms, opacity 100ms;
     bottom: 0;
     left: 0;
@@ -145,14 +156,18 @@ details summary::-webkit-details-marker {
 }
 
 #main-container.selected {
+    margin-start: 0;
     -webkit-margin-start: 0;
+    transition: margin 200ms, opacity 200ms;
     -webkit-transition: margin 200ms, opacity 200ms;
+    transition-delay: 100ms;
     -webkit-transition-delay: 100ms;
     /* opacity: 1; */
     z-index: 2;
 }
 
 #main {
+    margin-start: 155px;
     -webkit-margin-start: 155px;
     z-index: 5;
 }
@@ -170,11 +185,17 @@ details summary::-webkit-details-marker {
 
 /* Selector begin */
 select {
+    appearance: button;
     -webkit-appearance: button;
+    border-radius: 3px;
     -webkit-border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    padding-end: 20px;
     -webkit-padding-end: 20px;
+    padding-start: 8px;
     -webkit-padding-start: 8px;
+    user-select: none;
     -webkit-user-select: none;
     background-position: center right;
     background-repeat: no-repeat;
@@ -188,11 +209,14 @@ select {
     text-overflow: ellipsis;
     white-space: nowrap;
 
+    background: linear-gradient(
+        white, #E6E6E6);
     background: -webkit-linear-gradient(
         white, #E6E6E6);
 }
 
 select:hover {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     color: #333;
 }
@@ -200,10 +224,14 @@ select:hover {
 
 /* Button begin */
 .action-area {
+    box-align: center;
     -webkit-box-align: center;
+    box-orient: horizontal;
     -webkit-box-orient: horizontal;
+    box-pack: end;
     -webkit-box-pack: end;
     border-top: 1px solid rgba(188, 193, 208, .5);
+    display: box;
     display: -webkit-box;
     padding: 12px;
 
@@ -211,7 +239,10 @@ select:hover {
 }
 
 input[type="button"]:hover, input[type="submit"]:hover {
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    background: #EBEBEB linear-gradient(
+        #FEFEFE, #F8F8F8 40%, #E9E9E9);
     background: #EBEBEB -webkit-linear-gradient(
         #FEFEFE, #F8F8F8 40%, #E9E9E9);
     border-color: #999;
@@ -219,9 +250,14 @@ input[type="button"]:hover, input[type="submit"]:hover {
 }
 
 input[type="button"], input[type="submit"] {
+    border-radius: 3px;
     -webkit-border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+    user-select: none;
     -webkit-user-select: none;
+    background: linear-gradient(
+        #FAFAFA, #F4F4F4 40%, #E5E5E5);
     background: -webkit-linear-gradient(
         #FAFAFA, #F4F4F4 40%, #E5E5E5);
     border: 1px solid #AAA;
@@ -234,13 +270,17 @@ input[type="button"], input[type="submit"] {
 }
 
 input[type="file"] {
+    border-radius: 3px;
     -webkit-border-radius: 3px;
+    user-select: none;
     -webkit-user-select: none;
     color: #222;
 }
 
 input[type="file"] {
+    border-radius: 3px;
     -webkit-border-radius: 3px;
+    user-select: none;
     -webkit-user-select: none;
     color: #444;
     font-family: inherit;
@@ -253,6 +293,8 @@ input[type="file"] {
 
 /* Checkbox begin */
 input[type="checkbox"]:not(:disabled):not(:active):hover {
+    background: linear-gradient(
+        white, #E6E6E6);
     background: -webkit-linear-gradient(
         white, #E6E6E6);
     text-shadow: 0 1px 0 rgba(255, 255, 255, 1);
@@ -263,9 +305,14 @@ input[type="checkbox"] {
     height: 16px;
     width: 16px;
 
+    box-shadow: inset 0 1px 2px white, 0 1px 2px rgba(0, 0, 0, .2);
     -webkit-box-shadow: inset 0 1px 2px white, 0 1px 2px rgba(0, 0, 0, .2);
+    margin-start: 0;
     -webkit-margin-start: 0;
+    margin-end: 3px;
     -webkit-margin-end: 3px;
+    background: linear-gradient(
+        #FAFAFA, gainsboro);
     background: -webkit-linear-gradient(
         #FAFAFA, gainsboro);
     border: 1px solid #A0A0A0;
@@ -291,7 +338,9 @@ input[type="text"], input[type="url"], input:not([type]) {
 
 /* Section begin */
 section {
+    padding-start: 18px;
     -webkit-padding-start: 18px;
+    padding-end: 18px;
     -webkit-padding-end: 18px;
     margin-bottom: 24px;
     margin-top: 8px;
@@ -316,12 +365,17 @@ section {
 }
 
 #overlay {
+    box-align: center;
     -webkit-box-align: center;
+    box-orient: vertical;
     -webkit-box-orient: vertical;
+    box-pack: center;
     -webkit-box-pack: center;
+    transition: 200ms opacity;
     -webkit-transition: 200ms opacity;
     background-color: rgba(255, 255, 255, 0.75);
     bottom: 0;
+    display: box;
     display: -webkit-box;
     left: 0;
     overflow: auto;
@@ -347,6 +401,7 @@ section {
     cursor: pointer;
     opacity: 0.8;
     padding: 10px;
+    transition: top 1s ease-out;
     -webkit-transition: top 1s ease-out;
 }
 
@@ -415,6 +470,7 @@ th {
 #div_bak {
     height: 0;
     opacity: 0;
+    transition: opacity 200ms ease-out;
     -webkit-transition: opacity 200ms ease-out;
     overflow: auto;
 }
@@ -426,7 +482,19 @@ th {
 /* Backup end */
 
 /* Animation begin */
-@-webkit-keyframes shake {
+@keyframes shake {
+    0% {
+        transform: translateX(-5px) rotateZ(-0.5deg) translateY(-2px);
+    }
+    50% {
+        transform: translateX(0px) rotateZ(0deg) translateY(0px);
+    }
+    100% {
+        transform: translateX(5px) rotateZ(0.5deg) translateY(-2px);
+    }
+}
+
+@-webkit-keyframes -webkit-shake {
     0% {
         -webkit-transform: translateX(-5px) rotateZ(-0.5deg) translateY(-2px);
     }
@@ -439,10 +507,15 @@ th {
 }
 
 .shake {
+    animation-direction: alternate;
     -webkit-animation-direction: alternate;
+    animation-duration: 60ms;
     -webkit-animation-duration: 60ms;
+    animation-iteration-count: 7;
     -webkit-animation-iteration-count: 7;
-    -webkit-animation-name: shake;
+    animation-name: shake;
+    -webkit-animation-name: -webkit-shake;
+    animation-timing-function: ease-in-out;
     -webkit-animation-timing-function: ease-in-out;
 }
 /* Animation end */
@@ -464,7 +537,9 @@ th {
 .prompt ul {
     list-style-type: none;
     padding: 0;
+    margin-before: 0;
     -webkit-margin-before: 0;
+    margin-after: 0;
     -webkit-margin-after: 0;
 }
 
@@ -502,6 +577,7 @@ th {
     height: 0;
     opacity: 0;
     margin-top: -10px;
+    transition: opacity 200ms ease-out;
     -webkit-transition: opacity 200ms ease-out;
 }
 
@@ -519,8 +595,11 @@ th {
     height: 40em;
     margin-top: 1em;
     overflow: auto;
+    user-select: text;
     -webkit-user-select: text;
+    border-radius: 3px;
     -webkit-border-radius: 3px;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
     -webkit-box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 /* Debugger end */

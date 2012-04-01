@@ -2,18 +2,20 @@
     "background_page": "/html/background.html",
     "options_page": "/html/options.html",
     "page_action": {
-        "default_icon": "/icons/icon_16.png",
+        "default_icon": "/icons/icon_19.png",
         "default_title": "__MSG_DEFAUL_TITLE__"
     },
     "icons": {
         "16": "/icons/icon_16.png",
+        "19": "/icons/icon_19.png",
         "128": "/icons/icon_128.png"
     },
     "name": "Redirector",
     "description": "__MSG_DESCRIPTION__",
     "permissions": ["webRequest", "webRequestBlocking",
-                    "contextMenus", "<all_urls>", "webNavigation", "tabs"],
+                    "webNavigation", "tabs",
+                    "contextMenus", "<all_urls>"],
     "default_locale": "en_US",
-    "version": "2.2.19.5",
+    "version": "2.2.19.6",
     "minimum_chrome_version": "17"
 }

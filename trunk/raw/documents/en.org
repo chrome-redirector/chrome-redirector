@@ -24,7 +24,7 @@ From Cyril Feng.
 #+TITLE:     Redirector Guide
 #+AUTHOR:    Cyril Feng
 #+EMAIL:     CyrilFeng@gmail.com
-#+DATE:      2012-03-16
+#+DATE:      2012-03-31
 #+DESCRIPTION:
 #+KEYWORDS:
 #+LANGUAGE:  en
@@ -265,7 +265,7 @@ From Cyril Feng.
 
 ** Debugger
    Debugger is introduced since /Redirector/ ver.2.2.8
-   to make it easy to find out problems with rules.
+   to make it easier to find out problems with rules.
    Matters need attention:
 
    - First lines of each debug record indicate the time sequence.
@@ -279,7 +279,12 @@ From Cyril Feng.
      you're likely to experience a delay of 0.5s.
 
    - Sum of time elapsed in redirection and headers modification is
-     an estimation to how long /Redirector/ will take in reality.
+     an estimation of how long /Redirector/ will take in reality.
+
+   *WARN:* Redirector will temporarily put normal works aside
+   until debugging session finishes
+   (when you click on the stop button,
+   close the debugee tab or quit the options page).
 
 #<<ADVANCED_MATCH>>
 * Advanced Match

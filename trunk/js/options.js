@@ -66,8 +66,10 @@ $f.initOpt = function () {                         // Option page init
     $f.applyI18n();             // Apply i18n messages
 
     // Navigation bar (work with $f.switchNav)
+    var transitionEndEvent = window.TransitionEvent ?
+        'transitionEnd' : 'webkitTransitionEnd';
     $('main-container').addEventListener(
-        "webkitTransitionEnd",
+        transitionEndEvent,
         function (e) {           // Fade in
             $('main-container').className = '';
             $('main-container').style.margin = '0 0';
@@ -80,7 +82,9 @@ $f.initOpt = function () {                         // Option page init
             e.target.classList.add('shake');
         }
     }, false);
-    $('overlay').addEventListener('webkitAnimationEnd', function (e) {
+    var animationEndEvent = window.AnimationEnd ?
+        'animationEnd' : 'webkitAnimationEnd'
+    $('overlay').addEventListener(animationEndEvent, function (e) {
         e.target.classList.remove('shake');
     }, false);
 
