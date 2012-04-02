@@ -35,6 +35,58 @@ RuleList = function (noInit) {
     }
 };
 
+RuleList.prototype.attachEventListener = function () {
+    var that = this;
+
+    [].forEach.call($$('#ruleListTable tr:not(:first-child)'), function (row) {
+        row.ondblclick = function (e) { // Double click to edit
+            that.edit();
+            e.preventDefault();
+            return false;
+        };
+
+        row.oncontextmenu = function (e) { // Context menu
+            that.onSel(e);
+
+            $('ruleContextMenu').style.marginLeft = e.pageX - 270 + 'px';
+            $('ruleContextMenu').style.marginTop = e.pageY + 'px';
+            $('ruleContextMenu').className = 'show';
+            clearTimeout($('ruleContextMenu').timeOut);
+            $('ruleContextMenu').timeOut =
+                setTimeout("$('ruleContextMenu').className = null", 1000);
+
+            e.preventDefault();
+            return false;
+        };
+
+        // Drag to change priority
+        row.draggable = true;
+        row.ondragstart = function (e) {
+            that.onSel(e);
+            that.dragClientY = e.pageY;
+            that.dragValid = false;
+            var canvas = document.createElement('canvas');
+            var img = document.createElement('img');
+            img.src = canvas.toDataURL();
+            e.dataTransfer.setDragImage(img, -10, -10);
+        };
+        row.ondragenter = function (e) {
+            if (that.dragValid !== true) {
+                that.dragValid = true;
+                return;
+            }
+
+            if (e.pageY > that.dragClientY) {
+                that.move(1);
+            } else {
+                that.move(-1);
+            }
+
+            that.dragClientY = e.pageY;
+        };
+    });
+};
+
 RuleList.prototype.init = function () { // Initialize
     // Remove existing list
     var table = $('ruleListTable');
@@ -51,6 +103,7 @@ RuleList.prototype.init = function () { // Initialize
 
         this.update(i);         // Fillin data
     }
+    this.attachEventListener();
 
     this.loadBuiltin();            // Load builtin rules
     this.chg = this.isNew = false; // No new or changed rules
@@ -70,16 +123,30 @@ RuleList.prototype.add = function () { // Add a rule
         '<td><input type="checkbox" /></td>' +
         '<td></td><td></td><td></td><td></td>';
 
+    this.attachEventListener();
     this.isNew = true;          // It's a new rule
     this.edit();                // Edit the new rule
 };
 
 RuleList.prototype.del = function () { // Delete a rule
+    if (this.sel === undefined) {
+        return;
+    }
+
     this.data.splice(this.sel, 1);     // Delete data
     this.refresh(true);
     $('ruleListTable').deleteRow(this.sel + 1); // Delete display
 
-    this.sel = undefined;       // No rule selected
+    $('ruleContextMenu').className = null;
+
+    if (this.data.length === 0) {
+        this.sel = undefined;       // No rule selected
+        return;
+    } else if (this.data.length <= this.sel) {
+        this.sel = this.data.length - 1;
+    }
+
+    this.onSel();
 };
 
 RuleList.prototype.edit = function () {
@@ -91,6 +158,8 @@ RuleList.prototype.edit = function () {
 
 // Make multiple updates according to idx (rule obj or rule num)
 RuleList.prototype.update = function (idx) {
+    $('ruleContextMenu').className = null;
+
     if (typeof idx === 'object') { // idx may be a rule obj specified
         var rule = idx;
         var row = $$('#ruleListTable tr')[this.sel + 1].children;
@@ -127,6 +196,8 @@ RuleList.prototype.update = function (idx) {
 };
 
 RuleList.prototype.onSel = function (e) { // On a row selected
+    $('ruleContextMenu').className = null;
+
     var tmp = $$('#ruleListTable .sel-td');    // All selected cells
     for (var i = 0; i < tmp.length; i++) { // Decolor all cells
         tmp[i].className = '';
@@ -139,7 +210,9 @@ RuleList.prototype.onSel = function (e) { // On a row selected
             if (/^input$/i.test(elem.tagName)) { // Clicked the chkbox
                 var isChk = true;
             } else if (/^(th|body)$/i.test(elem.tagName)) { // Outside
-                this.sel = undefined;
+                if (elem !== $$('#ruleListTable th')[0]) {
+                    this.sel = undefined;
+                }
                 return;
             }
 
@@ -304,6 +377,7 @@ RuleList.prototype.discard = function () { // Discard changes
     this.chg = false;
 
     if (this.isNew) {
+        this.sel = this.data.length - 1;
         this.del();
         this.isNew = false;
     }
@@ -430,7 +504,7 @@ RuleList.prototype.refresh = function (force) { // Refresh the list
 RuleList.prototype.move = function (inc) { // Change the priority
     if (this.sel + inc < 0 ||
         this.sel + inc >= this.data.length) { // Move has limit
-        return;
+        return false;
     }
 
     var tmp = this.data[this.sel]; // Swap data order
@@ -443,6 +517,7 @@ RuleList.prototype.move = function (inc) { // Change the priority
     this.onSel();
 
     this.refresh(true);
+    return true;
 };
 
 RuleList.prototype.bak = function (single) { // Backup rule list

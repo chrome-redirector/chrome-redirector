@@ -65,6 +65,32 @@ $f.initOpt = function () {                         // Option page init
 
     $f.applyI18n();             // Apply i18n messages
 
+    // Rulelist navigation
+    $$('body')[0].addEventListener('keydown', function (e) {
+        if ($$('#ruleListTable:hover').length === 0) {
+            return;
+        }
+
+        switch (e.keyCode) {
+        case 38: case 75:       // Up/k
+            $v.ruleList.move(-1);
+            break;
+        case 40: case 74:       // Down/j
+            $v.ruleList.move(1);
+            break;
+        case 46:                // Delete
+            $v.ruleList.del();
+            break;
+        case 13:                // Enter
+            $v.ruleList.edit();
+        default:
+            return;
+        }
+
+        e.preventDefault();
+        return false;
+    });
+
     // Navigation bar (work with $f.switchNav)
     var transitionEndEvent = window.TransitionEvent ?
         'transitionEnd' : 'webkitTransitionEnd';

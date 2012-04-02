@@ -16,7 +16,7 @@
     "PROMPT": {"message": "输入提示(Beta)"},
     "PROMPT_CHKBOX": {"message": "启用输入提示"},
     "PROMPT_TITLE": {"message": "ESC隐藏，TAB显示"},
-    "RULEMGR_BAK_TITLE": {"message": "备份规则"},
+    "RULEMGR_BAK_TITLE": {"message": "备份／还原／导出／导入"},
     "TYPE_REGEXP": {"message": "正则表达式"},
     "TYPE_GLOB": {"message": "通配符"},
     "TYPE_MANUAL": {"message": "手动"},
@@ -24,6 +24,7 @@
     "TYPE_REQ_HDR": {"message": "请求头"},
     "TYPE_RESP_HDR": {"message": "响应头"},
     "TYPE_GLOB_SMART": {"message": "智能通配符"},
+    "TYPE_GLOB_DEPRECATED": {"message": "不推荐，请使用智能通配符"},
     "LBL_TITLE": {"message": "规则列表"},
     "LBL_NAME": {"message": "名称"},
     "LBL_MATCH": {"message": "匹配"},
@@ -36,6 +37,7 @@
     "RULE_EDITOR": {"message": "规则编辑器"},
     "DBG_INFO_EXPORT": {"message": "导出／导入调试信息"},
     "DOC_SUPPORT": {"message": "支持＆资源"},
+    "DOC_REVIEW": {"message": "评论"},
 
     "BTN_SAVE": {"message": "保存"},
     "BTN_CANCEL": {"message": "取消"},
@@ -72,6 +74,7 @@
     "DBG_TRACK_RESPHDR": {"message": "跟踪响应头"},
     "DBG_TEST_SPEED": {"message": "测速"},
 
+    "RULELIST_USAGE": {"message": "用法:\n编辑：<ENTER>或双击\n删除：<DEL>\n调整优先级：j/k或方向键或拖拽\n取消选择：点击标题栏\n杂项：右键菜单"},
     "CONTEXT_NEW_TAB": {"message": "在新标签页打开并应用规则……"},
     "CONTEXT_RELOAD_TAB": {"message": "刷新当前页并应用规则……"},
     "CONTEXT_STATUS_ENABLED": {"message": "启用"},

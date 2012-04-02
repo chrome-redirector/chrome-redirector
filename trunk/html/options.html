@@ -127,37 +127,24 @@
 
         <!-- Page for rules -->
         <div id="ruleMgr" class="mainview">
+          <div id="ruleContextMenu"
+               onmouseover="clearTimeout(this.timeOut)"
+               onmouseout="this.timeOut=setTimeout(
+                           '$(\'ruleContextMenu\').className=null',
+                           1000)">
+            <ul>
+              <li i18n="BTN_NEW" onclick="$v.ruleList.add()"></li>
+              <li i18n="BTN_EDIT" onclick="$v.ruleList.edit()"></li>
+              <li i18n="BTN_DEL" onclick="$v.ruleList.del()"></li>
+              <li i18n="BTN_UP" onclick="$v.ruleList.move(-1)"></li>
+              <li i18n="BTN_DOWN" onclick="$v.ruleList.move(1)"></li>
+            </ul>
+          </div>
+
           <h1 i18n="RULEMGR_TITLE"></h1>
 
           <!-- Rules list -->
           <h3 i18n="LBL_TITLE"></h3>
-          <section>
-            <div class="div-center">
-              <input type="button" i18n="value:BTN_NEW"
-                     onclick="$v.ruleList.add()" />
-              <input type="button" i18n="value:BTN_EDIT"
-                     onclick="$v.ruleList.edit()" />
-              <input type="button" i18n="value:BTN_DEL"
-                     onclick="$v.ruleList.del()" />
-              <input type="button" i18n="value:BTN_UP"
-                     onclick="$v.ruleList.move(-1)" />
-              <input type="button" i18n="value:BTN_DOWN"
-                     onclick="$v.ruleList.move(1)" />
-            </div>
-
-            <table id="ruleListTable">
-              <colgroup>
-               <col width="4%">
-                <col width="24%" span="4">
-              </colgroup>
-              <tr>
-                <th i18n="LBL_NAME" colspan="2"></th>
-                <th i18n="LBL_MATCH"></th>
-                <th i18n="LBL_SUB"></th>
-                <th i18n="LBL_REPL"></th>
-              </tr>
-            </table>
-          </section>
 
           <!-- Backup rule list -->
           <section>
@@ -186,6 +173,25 @@
                        accept="text/plain" />
               </p>
             </details>
+          </section>
+
+          <section>
+            <pre i18n="RULELIST_USAGE"></pre>
+            <table id="ruleListTable" i18n="title:RULELIST_USAGE">
+              <colgroup>
+                <col width="4%">
+                <col width="24%" span="4">
+              </colgroup>
+              <tr>
+                <th i18n="title:BTN_NEW"
+                    onclick="event.preventDefault();$v.ruleList.add();return false">
+                  &#43;</th>
+                <th i18n="LBL_NAME"></th>
+                <th i18n="LBL_MATCH"></th>
+                <th i18n="LBL_SUB"></th>
+                <th i18n="LBL_REPL"></th>
+              </tr>
+            </table>
           </section>
         </div>
 
@@ -267,10 +273,6 @@
 
           <section>
             <h3>
-              <a href="https://code.google.com/p/chrome-redirector/issues/list"
-                 target="_blank" i18n="DOC_SUPPORT"></a>
-            </h3>
-            <h3>
               <a href="/html/en.html" target="_blank">
                 Redirector Guide
               </a>
@@ -279,6 +281,14 @@
               <a href="/html/zh_CN.html" target="_blank">
                 Redirector指南
               </a>
+            </h3>
+            <h3>
+              <a href="https://code.google.com/p/chrome-redirector/issues/list"
+                 target="_blank" i18n="DOC_SUPPORT"></a>
+            </h3>
+            <h3>
+              <a href="https://chrome.google.com/webstore/detail/lacckjdlmkdhcacjdodpjokfobckjclh/reviews"
+                 target="_blank" i18n="DOC_REVIEW"></a>
             </h3>
           </section>
         </div>
@@ -307,7 +317,7 @@
                         onchange="$v.ruleList.onChgMatchType()">
                   <option selected="selected" i18n="TYPE_REGEXP">
                   </option>
-                  <option i18n="TYPE_GLOB"></option>
+                  <option i18n="TYPE_GLOB;title:TYPE_GLOB_DEPRECATED"></option>
                   <option i18n="TYPE_MANUAL"></option>
                   <option i18n="TYPE_GLOB_SMART"></option>
                 </select>

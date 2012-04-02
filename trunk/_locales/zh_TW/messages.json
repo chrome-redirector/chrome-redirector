@@ -16,7 +16,7 @@
     "PROMPT": {"message": "輸入提示(Beta)"},
     "PROMPT_CHKBOX": {"message": "啟用輸入提示"},
     "PROMPT_TITLE": {"message": "ESC隱藏，TAB顯示"},
-    "RULEMGR_BAK_TITLE": {"message": "備份規則"},
+    "RULEMGR_BAK_TITLE": {"message": "備份／還原／匯出／匯入"},
     "TYPE_REGEXP": {"message": "正規表式"},
     "TYPE_GLOB": {"message": "萬用字元"},
     "TYPE_MANUAL": {"message": "手动"},
@@ -24,6 +24,7 @@
     "TYPE_REQ_HDR": {"message": "請求頭"},
     "TYPE_RESP_HDR": {"message": "響應頭"},
     "TYPE_GLOB_SMART": {"message": "智能萬用字元"},
+    "TYPE_GLOB_DEPRECATED": {"message": "不推薦，請使用智能萬用字元"},
     "LBL_TITLE": {"message": "規則列表"},
     "LBL_NAME": {"message": "名稱"},
     "LBL_MATCH": {"message": "匹配"},
@@ -36,6 +37,7 @@
     "RULE_EDITOR": {"message": "規則編輯器"},
     "DBG_INFO_EXPORT": {"message": "匯出／匯入調試訊息"},
     "DOC_SUPPORT": {"message": "支援&資源"},
+    "DOC_REVIEW": {"message": "評論"},
 
     "BTN_SAVE": {"message": "儲存"},
     "BTN_CANCEL": {"message": "取消"},
@@ -72,6 +74,7 @@
     "DBG_TRACK_RESPHDR": {"message": "跟踪響應頭"},
     "DBG_TEST_SPEED": {"message": "測速"},
 
+    "RULELIST_USAGE": {"message": "用法:\n編輯：<ENTER>或雙擊\n刪除：<DEL>\n調整優先級：j/k或方向鍵或拖拉\n取消選擇：點擊標題欄\n雜項：右鍵選單"},
     "CONTEXT_NEW_TAB": {"message": "在新分頁打開並應用規則……"},
     "CONTEXT_RELOAD_TAB": {"message": "重新載入頁框並應用規則……"},
     "CONTEXT_STATUS_ENABLED": {"message": "啟用"},
