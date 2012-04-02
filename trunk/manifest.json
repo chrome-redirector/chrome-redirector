@@ -1,5 +1,8 @@
 {
-    "background_page": "/html/background.html",
+    "background": {
+        "scripts": ["/js/common.js", "/js/pref.js",
+                    "/js/rule.js", "/js/background.js"]
+    },
     "options_page": "/html/options.html",
     "page_action": {
         "default_icon": "/icons/icon_19.png",
