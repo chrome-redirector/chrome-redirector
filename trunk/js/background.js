@@ -34,7 +34,7 @@ var onBeforeRequestListener = function (details) {
         if ((rule.content === undefined ||
              rule.content.indexOf(details.type) !== -1) &&
             rule.match.test(details.url)) {    // Match
-            if (rule.sub === null) { // To block
+            if (rule.sub === null) {           // To block
                 return {cancel: true};
             } else {            // To redirect
                 $v.redirected[details.requestId] = true;
@@ -101,7 +101,7 @@ var onHeadersReceivedListener = function (details) {
                     // Exists
                     details.responseHeaders[idx].value = rule.repl[j];
                 } else if ((idx = currentHeaders.indexOf(
-                    rule.sub[j].replace(/^-/, ''))) !== -1) {    // To del
+                    rule.sub[j].replace(/^-/, ''))) !== -1) { // To del
                     details.responseHeaders.splice(idx, 1);
                 } else {        // To create
                     if ((/^(?!-)/).test(rule.sub[j])) {

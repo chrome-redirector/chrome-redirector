@@ -187,7 +187,7 @@ $f.err = function (innerHTML) { // Orange
 $f.openOptions = function (search) {
     var views = chrome.extension.getViews();
     for (var i = 0; i < views.length; i++) {
-        if (! (/\/html\/background.html$/).test(
+        if (! (/background_page.html$/).test(
             views[i].location.pathname)) {
             views[i].close();
         }
