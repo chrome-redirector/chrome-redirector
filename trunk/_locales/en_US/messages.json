@@ -1,5 +1,5 @@
 {
-    "DESCRIPTION": {"message": "Redirects URLs, views/modifies HTTP request/response headers arbitrarily."},
+    "DESCRIPTION": {"message": "Redirects URLs / modifies HTTP headers arbitrarily."},
     "DEFAUL_TITLE": {"message": "Redirector treated this page"},
     "PAGE_TITLE": {"message": "Options"},
     "PREF_TITLE": {"message": "Preferences"},
@@ -38,6 +38,14 @@
     "DBG_INFO_EXPORT": {"message": "Export/Import Debug info"},
     "DOC_SUPPORT": {"message": "Support & Resources"},
     "DOC_REVIEW": {"message": "Review"},
+    "CONTENT_FILTER": {"message": "Content Filter"},
+    "CONTENT_ALL_TYPE": {"message": "All types"},
+    "CONTENT_MAIN_FRAME": {"message": "Main frame"},
+    "CONTENT_SUB_FRAME": {"message": "Sub frame"},
+    "CONTENT_SCRIPT": {"message": "Script"},
+    "CONTENT_IMAGE": {"message": "Image"},
+    "CONTENT_OBJECT": {"message": "Object"},
+    "CONTENT_OTHER": {"message": "Other"},
 
     "BTN_SAVE": {"message": "Save"},
     "BTN_CANCEL": {"message": "Cancel"},

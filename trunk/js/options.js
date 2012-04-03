@@ -67,7 +67,9 @@ $f.initOpt = function () {                         // Option page init
 
     // Rulelist navigation
     $$('body')[0].addEventListener('keydown', function (e) {
-        if ($$('#ruleListTable:hover').length === 0) {
+        if ($$('#ruleMgr:target').length === 0 ||
+            $$('#overlay:hover').length > 0 ||
+            $$('#navBar:hover').length > 0) {
             return;
         }
 

@@ -1,5 +1,5 @@
 {
-    "DESCRIPTION": {"message": "任意重定向URL、檢視／修改HTTP請求／響應頭"},
+    "DESCRIPTION": {"message": "任意重定向URL／修改HTTP頭"},
     "DEFAUL_TITLE": {"message": "Redirector處理過本頁面"},
     "PAGE_TITLE": {"message": "選項"},
     "PREF_TITLE": {"message": "首選項"},
@@ -38,6 +38,14 @@
     "DBG_INFO_EXPORT": {"message": "匯出／匯入調試訊息"},
     "DOC_SUPPORT": {"message": "支援&資源"},
     "DOC_REVIEW": {"message": "評論"},
+    "CONTENT_FILTER": {"message": "內容過濾"},
+    "CONTENT_ALL_TYPE": {"message": "所有類型"},
+    "CONTENT_MAIN_FRAME": {"message": "主框架"},
+    "CONTENT_SUB_FRAME": {"message": "子框架"},
+    "CONTENT_SCRIPT": {"message": "腳本"},
+    "CONTENT_IMAGE": {"message": "圖片"},
+    "CONTENT_OBJECT": {"message": "對象"},
+    "CONTENT_OTHER": {"message": "其它"},
 
     "BTN_SAVE": {"message": "儲存"},
     "BTN_CANCEL": {"message": "取消"},

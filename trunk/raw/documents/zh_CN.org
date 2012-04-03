@@ -24,7 +24,7 @@ From Cyril Feng.
 #+TITLE:     Redirector指南
 #+AUTHOR:    Cyril Feng
 #+EMAIL:     CyrilFeng@gmail.com
-#+DATE:      2012-04-02
+#+DATE:      2012-04-03
 #+DESCRIPTION:
 #+KEYWORDS:
 #+LANGUAGE:  zh-CN
@@ -134,6 +134,18 @@ From Cyril Feng.
 *** 匹配
     匹配模式用于确定规则是否适用于特定的URL。
     你可以勾选 /忽略大小写/ 选项进行大小写不敏感的匹配。
+    你可指定规则适用的内容：
+      * 所有类型 :: 所有下面的类型
+      * 主框架 :: 即顶层框架，它的地址显示在地址栏中
+      * 子框架 :: 内嵌的框架
+      * CSS :: 样式表
+      * 脚本 :: JavaScript、Tcl等
+      * 图片 :: 内联的图片（<img>元素）
+      * 对象 :: 视频、音频、某些各类的图片等
+      * XHR :: XMLHttpRequest
+      * 其它 ::
+    要确定某个内容的真实类型，请求助于调试器。
+
     匹配有主要三种形式：
 **** /正则/
      用 /正则/ 进行匹配将会在[[ADVANCED_MATCH][高级匹配]]中介绍。

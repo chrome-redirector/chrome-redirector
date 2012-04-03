@@ -27,7 +27,6 @@ Debugger = function () {
     this.timeStamp = [];
     this.quiet = this.testSpeed = false;
     this.trackRedir = this.trackReqHdr = this.trackRespHdr = true;
-    this.redirected = false;    // Whether redirected
 };
 
 Debugger.prototype.start = function () { // Start debugging
@@ -81,7 +80,7 @@ Debugger.prototype.disp = function (details) {
         $('dbg_info').appendChild(document.createElement('hr'));
 
         prompt = (new Date()).toLocaleTimeString() +
-            ' #' + details.requestId;
+            ' #' + details.requestId + ' @' + details.type;
     } else {
         prompt = '+' +
             (
@@ -172,11 +171,9 @@ Debugger.prototype.prepare = function (tab) {
 
             var sum, det;
             if (typeof result === 'undefined') {
-                this.redirected = false;
                 sum = $i18n('DBG_NO_REDIR') + elapse;
                 det = 'URL: ' + details.url;
             } else {
-                this.redirected = true;
                 sum = this.setColor($i18n('DBG_REDIR') + elapse, 'blue');
                 det =
                     this.setColor(
@@ -196,6 +193,7 @@ Debugger.prototype.prepare = function (tab) {
                     url: details.url,
                     timeStamp: details.timeStamp,
                     requestId: details.requestId,
+                    type: details.type,
                     data: '<details>' +
                         '<summary>' + sum + '</summary>' +
                         det + '</details>'
@@ -339,7 +337,7 @@ Debugger.prototype.prepare = function (tab) {
     $v.ext_bg.chrome.webRequest.onBeforeRedirect.addListener(
         (function (details) {
             if (this.trackRedir === true) {
-                var msg = this.redirected ?
+                var msg = details.statusCode === -1 ?
                     $i18n('DBG_REDIRED') : $i18n('DBG_REDIRED_SRV');
 
                 this.disp({

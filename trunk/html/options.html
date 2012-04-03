@@ -324,7 +324,69 @@
                 <input type="checkbox" id="ruleEdit_matchcase" />
                 <label i18n="LBL_IGNCASE" for="ruleEdit_matchcase">
                 </label>
+
+                <input type="button" id="ruleEdit_matchContent"
+                       i18n="value:CONTENT_FILTER"
+                       onclick="t=$('ruleEdit_matchContentType');
+                                if(t.style.display!=='block'){
+                                t.style.display='block';
+                                t.style.left=this.offsetLeft+'px';
+                                }else{
+                                t.style.display='none';
+                                }" />
+                <div id="ruleEdit_matchContentType">
+                  <ul>
+                    <li>
+                      <input type="checkbox" id="rmct1" checked
+                             onclick="that=this;[].forEach.call(
+                                      $$('#ruleEdit_matchContentType input'),
+                                      function(i){i.checked=that.checked});" />
+                      <label for="rmct1" i18n="CONTENT_ALL_TYPE">All Type</label>
+                    </li><li>
+                      <input type="checkbox" id="rmct2" checked
+                             onclick="$$('#ruleEdit_matchContentType'+
+                                      ' input')[0].checked=false" />
+                      <label for="rmct2" i18n="CONTENT_MAIN_FRAME"></label>
+                    </li><li>
+                      <input type="checkbox" id="rmct3" checked
+                             onclick="$$('#ruleEdit_matchContentType'+
+                                      ' input')[0].checked=false" />
+                      <label for="rmct3" i18n="CONTENT_SUB_FRAME"></label>
+                    </li><li>
+                      <input type="checkbox" id="rmct4" checked
+                             onclick="$$('#ruleEdit_matchContentType'+
+                                      ' input')[0].checked=false" />
+                      <label for="rmct4">CSS</label>
+                    </li><li>
+                      <input type="checkbox" id="rmct5" checked
+                             onclick="$$('#ruleEdit_matchContentType'+
+                                      ' input')[0].checked=false" />
+                      <label for="rmct5" i18n="CONTENT_SCRIPT"></label>
+                    </li><li>
+                      <input type="checkbox" id="rmct6" checked
+                             onclick="$$('#ruleEdit_matchContentType'+
+                                      ' input')[0].checked=false" />
+                      <label for="rmct6" i18n="CONTENT_IMAGE"></label>
+                    </li><li>
+                      <input type="checkbox" id="rmct7" checked
+                             onclick="$$('#ruleEdit_matchContentType'+
+                                      ' input')[0].checked=false" />
+                      <label for="rmct7" i18n="CONTENT_OBJECT"></label>
+                    </li><li>
+                      <input type="checkbox" id="rmct8" checked
+                             onclick="$$('#ruleEdit_matchContentType'+
+                                      ' input')[0].checked=false" />
+                      <label for="rmct8">XHR</label>
+                    </li><li>
+                      <input type="checkbox" id="rmct9" checked
+                             onclick="$$('#ruleEdit_matchContentType'+
+                                      ' input')[0].checked=false" />
+                      <label for="rmct9" i18n="CONTENT_OTHER"></label>
+                    </li>
+                  </ul>
+                </div>
                 <br />
+
                 <input id="ruleEdit_matchstr"
                        i18n="placeholder:PH_MATCH" required />
               </section>

@@ -30,14 +30,15 @@ var onBeforeRequestListener = function (details) {
     }
 
     for (var i = 0; i < $v.ruleAuto.length; i++) {
-        if ($v.ruleAuto[i].match.test(details.url)) { // Match
-            if ($v.ruleAuto[i].sub === null) {        // To block
+        var rule = $v.ruleAuto[i];
+        if ((rule.content === undefined ||
+             rule.content.indexOf(details.type) !== -1) &&
+            rule.match.test(details.url)) {    // Match
+            if (rule.sub === null) { // To block
                 return {cancel: true};
             } else {            // To redirect
                 $v.redirected[details.requestId] = true;
-
-                return {redirectUrl:
-                        $f.getRedirUrl(details.url, $v.ruleAuto[i])};
+                return {redirectUrl: $f.getRedirUrl(details.url, rule)};
             }
         }
     }
@@ -45,9 +46,11 @@ var onBeforeRequestListener = function (details) {
 
 var onBeforeSendHeadersListener = function (details) {
     for (var i = 0; i < $v.ruleReqHdr.length; i++) {
-        var currentRule = $v.ruleReqHdr[i];
+        var rule = $v.ruleReqHdr[i];
 
-        if (currentRule.match.test(details.url)) { // match this URL
+        if ((rule.content === undefined ||
+             rule.content.indexOf(details.type) !== -1) &&
+            rule.match.test(details.url)) { // match this URL
             $v.iconStatus[details.tabId] = true;
 
             var currentHeaders = [];
@@ -55,22 +58,19 @@ var onBeforeSendHeadersListener = function (details) {
                 currentHeaders.push(details.requestHeaders[j].name);
             }
 
-            for (var j = 0; j < currentRule.sub.length; j++) {
+            for (var j = 0; j < rule.sub.length; j++) {
                 var idx;
-                if ((idx = currentHeaders.indexOf(
-                    currentRule.sub[j])) !== -1) { // Exists
-                    details.requestHeaders[idx].value =
-                        currentRule.repl[j];
+                if ((idx = currentHeaders.indexOf(rule.sub[j])) !== -1) {
+                    // Exists
+                    details.requestHeaders[idx].value = rule.repl[j];
                 } else if ((idx = currentHeaders.indexOf(
-                    currentRule.sub[j].replace(/^-/, '')
-                )) !== -1) { // To del
+                    rule.sub[j].replace(/^-/, ''))) !== -1) { // To del
                     details.requestHeaders.splice(idx, 1);
-                } else {    // To create
-                    if ((/^(?!-)/).test(currentRule.sub[j])) {
+                } else {        // To create
+                    if ((/^(?!-)/).test(rule.sub[j])) {
                         // Do not create headers with name `-...'
                         details.requestHeaders.push({
-                            name: currentRule.sub[j],
-                            value: currentRule.repl[j]
+                            name: rule.sub[j], value: rule.repl[j]
                         });
                     }
                 }
@@ -83,9 +83,11 @@ var onBeforeSendHeadersListener = function (details) {
 
 var onHeadersReceivedListener = function (details) {
     for (var i = 0; i < $v.ruleRespHdr.length; i++) {
-        var currentRule = $v.ruleRespHdr[i];
+        var rule = $v.ruleRespHdr[i];
 
-        if (currentRule.match.test(details.url)) { // match this URL
+        if ((rule.content === undefined ||
+             rule.content.indexOf(details.type) !== -1) &&
+            rule.match.test(details.url)) { // match this URL
             $v.iconStatus[details.tabId] = true;
 
             var currentHeaders = [];
@@ -93,22 +95,19 @@ var onHeadersReceivedListener = function (details) {
                 currentHeaders.push(details.responseHeaders[j].name);
             }
 
-            for (var j = 0; j < currentRule.sub.length; j++) {
+            for (var j = 0; j < rule.sub.length; j++) {
                 var idx;
-                if ((idx = currentHeaders.indexOf(
-                    currentRule.sub[j])) !== -1) { // Exists
-                    details.responseHeaders[idx].value =
-                        currentRule.repl[j];
+                if ((idx = currentHeaders.indexOf(rule.sub[j])) !== -1) {
+                    // Exists
+                    details.responseHeaders[idx].value = rule.repl[j];
                 } else if ((idx = currentHeaders.indexOf(
-                    currentRule.sub[j].replace(/^-/, '')
-                )) !== -1) { // To del
+                    rule.sub[j].replace(/^-/, ''))) !== -1) {    // To del
                     details.responseHeaders.splice(idx, 1);
-                } else {    // To create
-                    if ((/^(?!-)/).test(currentRule.sub[j])) {
+                } else {        // To create
+                    if ((/^(?!-)/).test(rule.sub[j])) {
                         // Do not create headers with name `-...'
                         details.responseHeaders.push({
-                            name: currentRule.sub[j],
-                            value: currentRule.repl[j]
+                            name: rule.sub[j], value: rule.repl[j]
                         });
                     }
                 }
@@ -291,6 +290,7 @@ var loadRule = function (data) { // Called when rule list needs update
             try {
                 var tmp = {
                     match: $f.str2re(rule.match),
+                    content: rule.match.content,
                     sub: $f.splitVl(rule.sub.str),
                     repl: $f.splitVl(rule.repl.str)
                 };
@@ -317,6 +317,7 @@ var loadRule = function (data) { // Called when rule list needs update
             try {
                 var tmp = {
                     match: $f.str2re(rule.match),
+                    content: rule.match.content,
                     sub: $f.splitVl(rule.sub.str),
                     repl: $f.splitVl(rule.repl.str)
                 };
@@ -342,6 +343,7 @@ var loadRule = function (data) { // Called when rule list needs update
         try {
             var tmp = {             // Tmp auto rule, to be chked
                 match: $f.str2re(rule.match),
+                content: rule.match.content,
                 sub: $f.str2re(rule.sub),
                 repl: rule.repl.str,
                 decode: rule.repl.decode

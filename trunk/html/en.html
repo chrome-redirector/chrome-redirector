@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Redirector Guide"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-04-02"/>
+<meta name="generated" content="2012-04-03"/>
 <meta name="author" content="Cyril Feng"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -359,6 +359,32 @@
 <p>    A <i>Match</i> pattern defines which URLs this rule will apply to.
     You may want to check the option <i>Ignore case</i> to perform a
     case-insensitive match.
+    You may specify which content this rule apply to:
+</p><dl>
+<dt>All types</dt><dd>all of the types below
+</dd>
+<dt>Main Frame</dt><dd>the top-level frame, whose address is displayed in the address bar
+</dd>
+<dt>Sub Frame</dt><dd>embedded frames
+</dd>
+<dt>CSS</dt><dd>stylesheets
+</dd>
+<dt>Script</dt><dd>JavaScript, Tcl, etc
+</dd>
+<dt>Image</dt><dd>inline images (&lt;img&gt; elements)
+</dd>
+<dt>Object</dt><dd>videos, audios, some kind of images, etc
+</dd>
+<dt>XHR</dt><dd>XMLHttpRequest
+</dd>
+<dt>Other</dt><dd>
+</dd>
+</dl>
+
+<p>    To determine which type a content really belongs to,
+    please seek help from the debugger.
+</p>
+<p>
     <i>Match</i> patterns are typically in three forms:
 </p><ul>
 <li id="sec-4-4-2-1"><i>RegExp</i><br/>
@@ -1089,7 +1115,7 @@
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-04-02</p>
+<p class="date">Date: 2012-04-03</p>
 <p class="author">Author: Cyril Feng</p>
 <p class="creator">Org version 7.8.03 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>

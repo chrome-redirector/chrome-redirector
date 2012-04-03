@@ -7,7 +7,7 @@
 <meta http-equiv="Content-Type" content="text/html;charset=utf-8"/>
 <meta name="title" content="Redirector指南"/>
 <meta name="generator" content="Org-mode"/>
-<meta name="generated" content="2012-04-02"/>
+<meta name="generated" content="2012-04-03"/>
 <meta name="author" content="Cyril Feng"/>
 <meta name="description" content=""/>
 <meta name="keywords" content=""/>
@@ -320,6 +320,31 @@
 
 <p>    匹配模式用于确定规则是否适用于特定的URL。
     你可以勾选 <i>忽略大小写</i> 选项进行大小写不敏感的匹配。
+    你可指定规则适用的内容：
+</p><dl>
+<dt>所有类型</dt><dd>所有下面的类型
+</dd>
+<dt>主框架</dt><dd>即顶层框架，它的地址显示在地址栏中
+</dd>
+<dt>子框架</dt><dd>内嵌的框架
+</dd>
+<dt>CSS</dt><dd>样式表
+</dd>
+<dt>脚本</dt><dd>JavaScript、Tcl等
+</dd>
+<dt>图片</dt><dd>内联的图片（&lt;img&gt;元素）
+</dd>
+<dt>对象</dt><dd>视频、音频、某些各类的图片等
+</dd>
+<dt>XHR</dt><dd>XMLHttpRequest
+</dd>
+<dt>其它</dt><dd>
+</dd>
+</dl>
+
+<p>    要确定某个内容的真实类型，请求助于调试器。
+</p>
+<p>
     匹配有主要三种形式：
 </p><ul>
 <li id="sec-4-4-2-1"><i>正则</i><br/>
@@ -981,7 +1006,7 @@
 </div>
 
 <div id="postamble">
-<p class="date">Date: 2012-04-02</p>
+<p class="date">Date: 2012-04-03</p>
 <p class="author">Author: Cyril Feng</p>
 <p class="creator">Org version 7.8.03 with Emacs version 23</p>
 <a href="http://validator.w3.org/check?uri=referer">Validate XHTML 1.0</a>

@@ -1,5 +1,5 @@
 {
-    "DESCRIPTION": {"message": "任意重定向URL、查看／修改HTTP请求／响应头"},
+    "DESCRIPTION": {"message": "任意重定向URL／修改HTTP头"},
     "DEFAUL_TITLE": {"message": "Redirector处理过本页面"},
     "PAGE_TITLE": {"message": "选项"},
     "PREF_TITLE": {"message": "首选项"},
@@ -38,6 +38,14 @@
     "DBG_INFO_EXPORT": {"message": "导出／导入调试信息"},
     "DOC_SUPPORT": {"message": "支持＆资源"},
     "DOC_REVIEW": {"message": "评论"},
+    "CONTENT_FILTER": {"message": "内容过滤"},
+    "CONTENT_ALL_TYPE": {"message": "所有类型"},
+    "CONTENT_MAIN_FRAME": {"message": "主框架"},
+    "CONTENT_SUB_FRAME": {"message": "子框架"},
+    "CONTENT_SCRIPT": {"message": "脚本"},
+    "CONTENT_IMAGE": {"message": "图片"},
+    "CONTENT_OBJECT": {"message": "对象"},
+    "CONTENT_OTHER": {"message": "其它"},
 
     "BTN_SAVE": {"message": "保存"},
     "BTN_CANCEL": {"message": "取消"},

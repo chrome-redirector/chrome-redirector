@@ -182,6 +182,49 @@ RuleList.prototype.update = function (idx) {
     $('ruleEdit_matchstr').disabled = $v.type.manual ===
         ($('ruleEdit_matchtype').selectedIndex = rule.match.type);
     $('ruleEdit_matchcase').checked = rule.match.modi;
+    if (rule.match.content !== undefined) {
+        [].forEach.call(
+            $$('#ruleEdit_matchContentType input'),
+            function (elem) {elem.checked = false;}
+        );
+        var num;
+        rule.match.content.forEach(function (elem) {
+            switch (elem) {
+            case 'main_frame':
+                num = 2;
+                break;
+            case 'sub_frame':
+                num = 3;
+                break;
+            case 'stylesheet':
+                num = 4;
+                break;
+            case 'script':
+                num = 5;
+                break;
+            case 'image':
+                num = 6;
+                break;
+            case 'object':
+                num = 7;
+                break;
+            case 'xmlhttprequest':
+                num = 8;
+                break;
+            case 'other':
+                num = 9;
+                break;
+            }
+
+            $$('#ruleEdit_matchContentType li:nth-child(' + num +
+               ') input')[0].checked = true;
+        });
+    } else {
+        [].forEach.call(
+            $$('#ruleEdit_matchContentType input'),
+            function (elem) {elem.checked = true;}
+        );
+    }
 
     // Disable substitution if substitution's type is block
     $('ruleEdit_substr').disabled = $v.type.block ===
@@ -221,6 +264,10 @@ RuleList.prototype.onSel = function (e) { // On a row selected
 
         this.sel = elem.rowIndex - 1; // Selected index
     } else {
+        if (this.sel === undefined) {
+            return;
+        }
+
         elem = $$('#ruleListTable tr')[this.sel + 1]; // Default
     }
 
@@ -272,6 +319,7 @@ RuleList.prototype.onChgMatchType = function () { // On chg match type
     // Disable several componets when select manual
     var tmp = $('ruleEdit_matchstr').disabled =
         $('ruleEdit_matchcase').disabled =
+        $('ruleEdit_matchContent').disabled =
         $$('#ruleEdit_subtype>option')[$v.type.block].disabled =
         $$('#ruleEdit_subtype>option')[$v.type.reqHdr].disabled =
         $$('#ruleEdit_subtype>option')[$v.type.respHdr].disabled =
@@ -281,6 +329,7 @@ RuleList.prototype.onChgMatchType = function () { // On chg match type
     // Else and previous not manual, clear
     if (tmp === true) {
         $('ruleEdit_matchstr').value = 'MANUAL';
+        $('ruleEdit_matchContentType').style.display = 'none';
 
         if ($('ruleEdit_subtype').selectedIndex === $v.type.block ||
             $('ruleEdit_subtype').selectedIndex === $v.type.reqHdr ||
@@ -345,10 +394,45 @@ RuleList.prototype.save = function () { // Save changes
     // Name
     this.data[this.sel].name = $('ruleEdit_namestr').value;
     // Match
+    var content = [];
+    var obj = $$('#ruleEdit_matchContentType input:checked');
+    outmost:
+    for (var i = 0; i < obj.length; i++) {
+        switch (parseInt(obj[i].id.substr(-1))) {
+        case 1:
+            content = undefined;
+            break outmost;
+        case 2:
+            content.push('main_frame');
+            break;
+        case 3:
+            content.push('sub_frame');
+            break;
+        case 4:
+            content.push('stylesheet');
+            break;
+        case 5:
+            content.push('script');
+            break;
+        case 6:
+            content.push('image');
+            break;
+        case 7:
+            content.push('object');
+            break;
+        case 8:
+            content.push('xmlhttprequest');
+            break;
+        case 9:
+            content.push('other');
+            break;
+        }
+    }
     this.data[this.sel].match = {
         str: $('ruleEdit_matchstr').value,
         type: $('ruleEdit_matchtype').selectedIndex,
-        modi: $('ruleEdit_matchcase').checked
+        modi: $('ruleEdit_matchcase').checked,
+        content: content
     };
     // Substitution
     this.data[this.sel].sub = {
@@ -377,10 +461,11 @@ RuleList.prototype.discard = function () { // Discard changes
     this.chg = false;
 
     if (this.isNew) {
-        this.sel = this.data.length - 1;
         this.del();
+        this.sel = undefined;
         this.isNew = false;
     }
+    this.onSel();
 
     $('layerFront').style.display = "none";
     $('overlay').style.display = "none";
@@ -502,7 +587,8 @@ RuleList.prototype.refresh = function (force) { // Refresh the list
 };
 
 RuleList.prototype.move = function (inc) { // Change the priority
-    if (this.sel + inc < 0 ||
+    if (this.sel === undefined ||
+        this.sel + inc < 0 ||
         this.sel + inc >= this.data.length) { // Move has limit
         return false;
     }

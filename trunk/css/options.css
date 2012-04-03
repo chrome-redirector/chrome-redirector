@@ -276,9 +276,10 @@ input[type="button"], input[type="submit"] {
     color: #444;
     font-family: inherit;
     font-size: inherit;
-    margin-bottom: 0;
     min-width: 6em;
     padding: 3px 12px;
+
+    margin-bottom: 2px;
 }
 
 input[type="file"] {
@@ -399,6 +400,38 @@ section {
 
     display: none;
     z-index: 11;
+}
+
+#ruleEdit_matchContent {
+    width: 120px;
+}
+
+#ruleEdit_matchContentType {
+    width: 120px;
+    position: absolute;
+    display: none;
+    z-index: 1;
+    background: linear-gradient(
+        white, #E6E6E6);
+    background: -webkit-linear-gradient(
+        white, #E6E6E6);
+}
+
+#ruleEdit_matchContentType ul {
+    margin: 0;
+}
+
+#ruleEdit_matchContentType li:hover {
+    background-color: #eee;
+    color: #dd4b39;
+}
+
+#ruleEdit_matchContentType label {
+    display: inline-block;
+    width: 85px;
+    margin: 0;
+    max-width: 100%;
+    text-align: left;
 }
 /* RuleEditor end */
 
