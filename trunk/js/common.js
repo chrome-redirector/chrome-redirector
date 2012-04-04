@@ -186,9 +186,9 @@ $f.err = function (innerHTML) { // Orange
 
 $f.openOptions = function (search) {
     var views = chrome.extension.getViews();
+    var bg = chrome.extension.getBackgroundPage();
     for (var i = 0; i < views.length; i++) {
-        if (! (/background_page.html$/).test(
-            views[i].location.pathname)) {
+        if (views[i] !== bg) {
             views[i].close();
         }
     }
@@ -198,7 +198,7 @@ $f.openOptions = function (search) {
     }
 
     chrome.tabs.create({
-        url: chrome.extension.getURL('/html/options.html' + search)
+        url: chrome.extension.getURL('html/options.html' + search)
     });
 };
 

@@ -36,7 +36,7 @@ Debugger.prototype.start = function () { // Start debugging
     }
 
     chrome.tabs.create(
-        {url: url, active: false, pinned: true},
+        {url: url, active: false},
         this.prepare.bind(this)
     );
     $v.ext_bg.onInit(true);
@@ -130,6 +130,10 @@ Debugger.prototype.trimHdr = function (Hdr) {
 Debugger.prototype.prepare = function (tab) {
     // WARN: Error in onBeforeRequest is not captured!!!
     $v.ext_bg.$v.debugeeTabId = tab.id;
+
+    // Change the title
+    chrome.tabs.executeScript(tab.id, {
+        code: 'document.title="Redirector debugee"'});
 
     // Attach debug listeners
     $v.ext_bg.chrome.webRequest.onErrorOccurred.addListener(

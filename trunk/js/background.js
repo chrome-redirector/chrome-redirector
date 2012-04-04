@@ -24,17 +24,16 @@
 /*global chrome: true, localStorage: true, RuleList: true, Pref: true*/
 
 var onBeforeRequestListener = function (details) {
-    if ($v.redirected.hasOwnProperty(details.requestId)) {
-        $v.iconStatus[details.tabId] = true;
+    if ($v.redirected[details.requestId] !== undefined) {
         return;
     }
 
-    for (var i = 0; i < $v.ruleAuto.length; i++) {
+    for (var i = 0, n = $v.ruleAuto.length; i < n; i++) {
         var rule = $v.ruleAuto[i];
         if ((rule.content === undefined ||
              rule.content.indexOf(details.type) !== -1) &&
-            rule.match.test(details.url)) {    // Match
-            if (rule.sub === null) {           // To block
+            rule.match.test(details.url)) { // Match
+            if (rule.sub === null) {        // To block
                 return {cancel: true};
             } else {            // To redirect
                 $v.redirected[details.requestId] = true;
@@ -45,18 +44,17 @@ var onBeforeRequestListener = function (details) {
 };
 
 var onBeforeSendHeadersListener = function (details) {
-    for (var i = 0; i < $v.ruleReqHdr.length; i++) {
+    for (var i = 0, n = $v.ruleReqHdr.length; i < n; i++) {
         var rule = $v.ruleReqHdr[i];
 
         if ((rule.content === undefined ||
              rule.content.indexOf(details.type) !== -1) &&
-            rule.match.test(details.url)) { // match this URL
-            $v.iconStatus[details.tabId] = true;
-
+            rule.match.test(details.url)
+           ) {                  // match this URL
             var currentHeaders = [];
-            for (var j = 0; j < details.requestHeaders.length; j++) {
-                currentHeaders.push(details.requestHeaders[j].name);
-            }
+            details.requestHeaders.forEach(function (header) {
+                currentHeaders.push(header.name);
+            });
 
             for (var j = 0; j < rule.sub.length; j++) {
                 var idx;
@@ -82,18 +80,17 @@ var onBeforeSendHeadersListener = function (details) {
 };
 
 var onHeadersReceivedListener = function (details) {
-    for (var i = 0; i < $v.ruleRespHdr.length; i++) {
+    for (var i = 0, n = $v.ruleRespHdr.length; i < n; i++) {
         var rule = $v.ruleRespHdr[i];
 
         if ((rule.content === undefined ||
              rule.content.indexOf(details.type) !== -1) &&
-            rule.match.test(details.url)) { // match this URL
-            $v.iconStatus[details.tabId] = true;
-
+            rule.match.test(details.url)
+           ) {                  // match this URL
             var currentHeaders = [];
-            for (var j = 0; j < details.responseHeaders.length; j++) {
-                currentHeaders.push(details.responseHeaders[j].name);
-            }
+            details.responseHeaders.forEach(function (header) {
+                currentHeaders.push(header.name);
+            });
 
             for (var j = 0; j < rule.sub.length; j++) {
                 var idx;
@@ -118,7 +115,7 @@ var onHeadersReceivedListener = function (details) {
     }
 };
 
-var loadPref = function () {           // Load preferences data
+var loadPref = function () {         // Load preferences data
     $v.prefData = (new Pref()).data; // All preferences data
 
     if ($v.prefData.proto.all) {      // All protocols enabled
@@ -149,18 +146,12 @@ var updateContext = function () {      // Update the context menu
         if (info.hasOwnProperty('srcUrl')) {
             chrome.tabs.create({
                 url: $f.getRedirUrl(info.srcUrl, rule)
-            }, function (tab2) {
-                $v.iconStatus[tab2.id] = true;
             });
         } else if (info.hasOwnProperty('linkUrl')) {
             chrome.tabs.create({
                 url: $f.getRedirUrl(info.linkUrl, rule)
-            }, function (tab2) {
-                $v.iconStatus[tab2.id] = true;
             });
         } else {
-            $v.iconStatus[tab.id] = true;
-
             chrome.tabs.update(tab.id, {
                 url: $f.getRedirUrl(info.pageUrl, rule)
             });
@@ -176,14 +167,14 @@ var updateContext = function () {      // Update the context menu
                 contexts: ['link', 'image']
             });
 
-            for (var i = 0; i < $v.ruleManual.length; i++) { // Sub
+            $v.ruleManual.forEach(function (rule) { // Sub entry
                 chrome.contextMenus.create({
-                    title: $v.ruleManual[i].name,
+                    title: rule.name,
                     contexts: ['link', 'image'],
                     parentId: parentLink,
                     onclick: onClick
                 });
-            }
+            });
         }
 
         if ($v.prefData.context.page) { // Pages' context menu enabled
@@ -192,21 +183,21 @@ var updateContext = function () {      // Update the context menu
                 contexts: ['page', 'frame']
             });
 
-            for (var i = 0; i < $v.ruleManual.length; i++) { // Sub
+            $v.ruleManual.forEach(function (rule) { // Sub entry
                 chrome.contextMenus.create({
-                    title: $v.ruleManual[i].name,
+                    title: rule.name,
                     contexts: ['page', 'frame'],
                     parentId: parentPage,
                     onclick: onClick
                 });
-            }
+            });
         }
     }
 
     var title = $v.status === true ?
         $i18n('CONTEXT_STATUS_ENABLED') :
         $i18n('CONTEXT_STATUS_DISABLED');
-    chrome.contextMenus.create({ // Open options page
+    chrome.contextMenus.create({ // Enable/Disable
         type: 'checkbox',
         title: title,
         checked: $v.status,
@@ -215,7 +206,7 @@ var updateContext = function () {      // Update the context menu
             $v.status = info.checked;
             localStorage.STATUS = JSON.stringify($v.status);
             updateContext();
-            init();
+            onInit();
         }
     });
 
@@ -251,7 +242,7 @@ var loadRule = function (data) { // Called when rule list needs update
         $v.ruleAuto = [];       // Rules for auto redir
         $v.ruleManual = [];     // Rules for manual redir
         $v.ruleReqHdr = [];     // Rules for http request header
-        $v.ruleRespHdr = [];     // Rules for http request header
+        $v.ruleRespHdr = [];    // Rules for http request header
     }
     for (var i = 0; i < data.length; i++) {
         var rule = data[i];     // Current rule
@@ -375,8 +366,8 @@ var onRemoved = function (tabId) {
         break;
     case $v.debugeeTabId:
         var page = chrome.extension.getExtensionTabs()[0];
-        page.$('dbg_stop').hidden=true;
-        page.$('dbg_start').hidden=false;
+        page.$('dbg_stop').hidden = true;
+        page.$('dbg_start').hidden = false;
         break;
     default:
         return;
@@ -387,99 +378,214 @@ var onRemoved = function (tabId) {
     chrome.tabs.onRemoved.removeListener(onRemoved);
 };
 
-var onInit = function (debug) {
-    $v.redirected = {};
-    $v.iconStatus = {};
+var updatePageAction = function (details) {
+    if ($v.prefData.disablePageAction === true || details.tabId === -1) {
+        return;
+    }
 
-    // Show/hide notification icon
-    if (typeof debug === 'undefined') {
-        chrome.webNavigation.onCompleted.addListener(function (details) {
-            if ($v.prefData.disablePageAction === true ||
-                details.frameId > 0) {
+    if (details.error !== undefined) { // Error occurrs
+        if ($v.hasError === true ||    // Already marked as error
+            $v.redirected[details.requestId] === undefined) {
+            return;
+        }
+    } else {                        // Suceeded
+        if ($v.hasError !== null || // Already changed
+            $v.redirected[details.requestId] === undefined) {
+            return;
+        }
+    }
+
+    chrome.webNavigation.getFrame(
+        {tabId: details.tabId, frameId: details.frameId},
+        function (info) {
+            if (info === null) { // tabId/frameId is invalid
                 return;
             }
 
-            chrome.webNavigation.getFrame(
-                {tabId: details.tabId, frameId: 0},
-                function (info) {
-                    if (info === null) {
-                        return;
-                    }
+            var pA;
+            if (details.error !== undefined) {
+                $v.hasError = true;
+                pA = $v.pageAction.error;
+            } else {
+                $v.hasError = false;
+                pA = $v.pageAction.success;
+            }
 
-                    switch ($v.iconStatus[details.tabId]) {
-                    case true:
-                        try {
-                            chrome.pageAction.show(details.tabId);
-                        } catch (e) {}
-                        break;
-                    default:
-                        try {
-                            chrome.pageAction.hide(details.tabId);
-                        } catch (e) {}
-                        break;
-                    };
+            chrome.pageAction.setTitle({
+                tabId: details.tabId, title: pA.title
+            });
+            chrome.pageAction.setIcon({
+                tabId: details.tabId, imageData: pA.imageData
+            });
+        }
+    );
+};
 
-                    $v.iconStatus[details.tabId] = false;
-                }
-            );
+var togglePageAction = function () {
+    chrome.tabs.query({}, function (tabs) {
+        var pA;
+        if ($v.status === false) {
+            pA = $v.pageAction.disabled;
+        } else {
+            pA = $v.pageAction.ready;
+        }
+
+        tabs.forEach(function (tab) {
+            chrome.pageAction.setTitle({
+                tabId: tab.id, title: pA.title
+            });
+            chrome.pageAction.setIcon({
+                tabId: tab.id, imageData: pA.imageData
+            });
+            chrome.pageAction.show(tab.id);
         });
+    });
+};
+
+var onInit = function (debug) {
+    $v.redirected = {};
+
+    try {                       // Enabled or disabled
+        $v.status = JSON.parse(localStorage.STATUS);
+    } catch (e) {
+        $v.status = true;
+        localStorage.STATUS = JSON.stringify(true);
     }
 
-    if (chrome.webRequest.onBeforeRequest.hasListener(
-        onBeforeRequestListener)) {
-        chrome.webRequest.onBeforeRequest.removeListener(
-            onBeforeRequestListener
-        );
-    }
+    loadPref();                 // Load preferences data
+    loadRule();                 // Load rule list
 
-    if (chrome.webRequest.onBeforeSendHeaders.hasListener(
-        onBeforeSendHeadersListener)) {
-        chrome.webRequest.onBeforeSendHeaders.removeListener(
-            onBeforeSendHeadersListener
-        );
-    }
+    $v.pageAction = {};
 
-    if (chrome.webRequest.onHeadersReceived.hasListener(
-        onHeadersReceivedListener)) {
-        chrome.webRequest.onHeadersReceived.removeListener(
-            onHeadersReceivedListener
-        );
-    }
+    var createIcon = function (process) {
+        var ctx = document.createElement('canvas').getContext('2d');
+        var img = new Image();
+        img.onload = function () {
+            ctx.drawImage(img, 0, 0);
+            process(ctx);
+        };
+        img.src = chrome.extension.getURL('icons/icon_19.png');
+    };
+
+    createIcon(function (context) { // pageAction on ready
+        $v.pageAction.ready = {
+            title: 'Redirector is ready',
+            imageData: context.getImageData(0, 0, 19, 19)
+        };
+    });
+
+    createIcon(function (context) { // pageAction on success
+        context.strokeStyle = "#008800";
+        context.lineWidth = 2;
+        context.moveTo(1.5, 11.5);
+        context.lineTo(5.5, 17.5);
+        context.lineTo(17.5, 5.5);
+        context.stroke();
+
+        $v.pageAction.success = {
+            title: 'Redirector works without any error',
+            imageData: context.getImageData(0, 0, 19, 19)
+        };
+    });
+
+    createIcon(function (context) { // pageAction on error
+        context.strokeStyle = "#ff0000";
+        context.lineWidth = 2;
+        context.moveTo(1.5, 5.5);
+        context.lineTo(17.5, 17.5);
+        context.moveTo(1.5, 17.5);
+        context.lineTo(17.5, 5.5);
+        context.stroke();
+
+        $v.pageAction.error = {
+            title: 'Redirector encountered at least a error',
+            imageData: context.getImageData(0, 0, 19, 19)
+        };
+    });
+
+    createIcon(function (context) { // pageAction on disabled
+        var imageData = context.getImageData(0, 0, 19, 19);
+        var data = imageData.data;
+        for (var i = 0, n = data.length; i < n; i += 4) {
+            var gs = 0.2126 * data[i] +
+                0.7152 * data[i + 1] + 0.0722 * data[i + 2];
+            data[i] = data[i + 1] = data[i + 2] = gs;
+        }
+
+        $v.pageAction.disabled = {
+            title: 'Redirector is disabled',
+            imageData: imageData
+        };
+    });
+
+    togglePageAction();
+
+    // Remove event listeners if already attached
+    [[chrome.webRequest.onBeforeRequest, onBeforeRequestListener],
+     [chrome.webRequest.onBeforeSendHeaders, onBeforeSendHeadersListener],
+     [chrome.webRequest.onHeadersReceived, onHeadersReceivedListener],
+     [chrome.webRequest.onErrorOccurred, updatePageAction],
+     [chrome.webRequest.onCompleted, updatePageAction]
+    ].forEach(function (i) {
+        if (i[0].hasListener(i[1])) {
+            i[0].removeListener(i[1]);
+        }
+    });
+
+    chrome.tabs.onCreated.addListener(function (tab) { // Original state
+        var pA;
+        if ($v.status === false) {
+            pA = $v.pageAction.disabled;
+        } else {
+            pA = $v.pageAction.ready;
+        }
+        chrome.pageAction.setTitle({
+            tabId: tab.id, title: pA.title
+        });
+        chrome.pageAction.setIcon({
+            tabId: tab.id, imageData: pA.imageData
+        });
+
+        chrome.pageAction.show(tab.id);
+    });
+
+    chrome.tabs.onUpdated.addListener(function (tabId) { // Make zero
+        $v.hasError = null;
+        chrome.pageAction.show(tabId);
+    });
 
     if ($v.status === true && typeof debug === 'undefined') {
-        chrome.webRequest.onBeforeRequest.addListener( // Auto redir
+        // Automatic redirection
+        chrome.webRequest.onBeforeRequest.addListener(
             onBeforeRequestListener, {urls: $v.validUrl}, ['blocking']
         );
-
+        // Modify request headers
         chrome.webRequest.onBeforeSendHeaders.addListener(
             onBeforeSendHeadersListener,
             {urls: $v.validUrl},
             ['blocking', 'requestHeaders']
         );
-
+        // Modify response headers
         chrome.webRequest.onHeadersReceived.addListener(
             onHeadersReceivedListener,
             {urls: $v.validUrl},
             ['blocking', 'responseHeaders']
         );
+        // Show error icon
+        chrome.webRequest.onErrorOccurred.addListener(
+            updatePageAction, {urls: $v.validUrl});
+        // Show complete icon
+        chrome.webRequest.onCompleted.addListener(
+            updatePageAction, {urls: $v.validUrl});
+    }
+
+    try {                       // First install
+        var version = JSON.parse(localStorage.VERSION);
+    } catch (e) {
+        localStorage.VERSION =
+            JSON.stringify(chrome.app.getDetails().version);
+        $f.openOptions();
     }
 };
 
-try {                           // Enabled or disabled
-    $v.status = JSON.parse(localStorage.STATUS);
-} catch (e) {
-    $v.status = true;
-    localStorage.STATUS = JSON.stringify(true);
-}
-
-loadPref();                     // Load preferences data
-loadRule();                     // Load rule list
 onInit();                       // Initialize
-
-try {                           // First install
-    var version = JSON.parse(localStorage.VERSION);
-} catch (e) {
-    localStorage.VERSION =
-        JSON.stringify(chrome.app.getDetails().version);
-    $f.openOptions();
-}
