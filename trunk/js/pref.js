@@ -72,7 +72,7 @@ Pref = function () {            // Obj holds preferences data/method
 
 Pref.prototype.refresh = function () { // Save & reload pref data
     localStorage.PREF = JSON.stringify(this.data);
-    $v.ext_bg.loadPref();
+    $v.ext_bg.onInit();
 };
 
 Pref.prototype.onChgProto = function (proto) { // On protocols changed

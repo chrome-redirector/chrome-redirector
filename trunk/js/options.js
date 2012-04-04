@@ -52,10 +52,6 @@ $f.switchNav = function () {
 };
 
 $f.initOpt = function () {                         // Option page init
-    chrome.tabs.getCurrent(function (tab) {
-        $v.ext_bg.$v.optionTabId = tab.id;
-    });
-
     $v.ext_bg = chrome.extension.getBackgroundPage(); // Bg page
     $v.pref = new Pref();         // Preferences obj
     $v.ruleList = new RuleList(); // Rules list obj
@@ -140,6 +136,10 @@ $f.initOpt = function () {                         // Option page init
         // Display the preferences tab
         $$('#prefTag a')[0].mouseClick();
     }
+
+    chrome.tabs.getCurrent(function (tab) {
+        $v.ext_bg.$v.optionTabId = tab.id;
+    });
 };
 
 $f.verifyUrl = function (url) { // Verify a URL (Not strict enough)

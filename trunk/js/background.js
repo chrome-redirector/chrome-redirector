@@ -24,7 +24,7 @@
 /*global chrome: true, localStorage: true, RuleList: true, Pref: true*/
 
 var onBeforeRequestListener = function (details) {
-    if ($v.redirected[details.requestId] !== undefined) {
+    if ($v.treated[details.requestId] !== undefined) {
         return;
     }
 
@@ -36,7 +36,7 @@ var onBeforeRequestListener = function (details) {
             if (rule.sub === null) {        // To block
                 return {cancel: true};
             } else {            // To redirect
-                $v.redirected[details.requestId] = true;
+                $v.treated[details.requestId] = true;
                 return {redirectUrl: $f.getRedirUrl(details.url, rule)};
             }
         }
@@ -74,6 +74,7 @@ var onBeforeSendHeadersListener = function (details) {
                 }
             }
 
+            $v.treated[details.requestId] = true;
             return {requestHeaders: details.requestHeaders};
         }
     }
@@ -110,6 +111,7 @@ var onHeadersReceivedListener = function (details) {
                 }
             }
 
+            $v.treated[details.requestId] = true;
             return {responseHeaders: details.responseHeaders};
         }
     }
@@ -362,7 +364,6 @@ var onRemoved = function (tabId) {
     switch (tabId) {
     case $v.optionTabId:
         chrome.tabs.remove($v.debugeeTabId);
-        // $('dbg_stop').onclick();
         break;
     case $v.debugeeTabId:
         var page = chrome.extension.getExtensionTabs()[0];
@@ -385,12 +386,12 @@ var updatePageAction = function (details) {
 
     if (details.error !== undefined) { // Error occurrs
         if ($v.hasError === true ||    // Already marked as error
-            $v.redirected[details.requestId] === undefined) {
+            $v.treated[details.requestId] === undefined) {
             return;
         }
     } else {                        // Suceeded
         if ($v.hasError !== null || // Already changed
-            $v.redirected[details.requestId] === undefined) {
+            $v.treated[details.requestId] === undefined) {
             return;
         }
     }
@@ -402,49 +403,56 @@ var updatePageAction = function (details) {
                 return;
             }
 
-            var pA;
             if (details.error !== undefined) {
                 $v.hasError = true;
-                pA = $v.pageAction.error;
+                setPageAction(details.tabId, $v.pA_error);
+                // BUGGY
+                $v.iconStatus[details.tabId] = false;
             } else {
                 $v.hasError = false;
-                pA = $v.pageAction.success;
+                setPageAction(details.tabId, $v.pA_success);
+                // BUGGY
+                // $v.iconStatus[details.tabId] = true;
             }
-
-            chrome.pageAction.setTitle({
-                tabId: details.tabId, title: pA.title
-            });
-            chrome.pageAction.setIcon({
-                tabId: details.tabId, imageData: pA.imageData
-            });
         }
     );
 };
 
 var togglePageAction = function () {
     chrome.tabs.query({}, function (tabs) {
+        if ($v.prefData.disablePageAction === true) {
+            tabs.forEach(function (tab) {
+                chrome.pageAction.hide(tab.id);
+            });
+
+            return;
+        }
+
         var pA;
         if ($v.status === false) {
-            pA = $v.pageAction.disabled;
+            pA = $v.pA_disabled;
         } else {
-            pA = $v.pageAction.ready;
+            pA = $v.pA_ready;
         }
 
         tabs.forEach(function (tab) {
-            chrome.pageAction.setTitle({
-                tabId: tab.id, title: pA.title
-            });
-            chrome.pageAction.setIcon({
-                tabId: tab.id, imageData: pA.imageData
-            });
+            setPageAction(tab.id, pA);
             chrome.pageAction.show(tab.id);
         });
     });
 };
 
-var onInit = function (debug) {
-    $v.redirected = {};
+var setPageAction = function (tabId, pA) {
+    chrome.pageAction.setTitle({
+        tabId: tabId, title: pA.title
+    });
 
+    chrome.pageAction.setIcon({
+        tabId: tabId, imageData: pA.imageData
+    });
+};
+
+var onInit = function (debug) {
     try {                       // Enabled or disabled
         $v.status = JSON.parse(localStorage.STATUS);
     } catch (e) {
@@ -455,7 +463,8 @@ var onInit = function (debug) {
     loadPref();                 // Load preferences data
     loadRule();                 // Load rule list
 
-    $v.pageAction = {};
+    $v.treated = {};
+    $v.iconStatus = {};
 
     var createIcon = function (process) {
         var ctx = document.createElement('canvas').getContext('2d');
@@ -468,7 +477,7 @@ var onInit = function (debug) {
     };
 
     createIcon(function (context) { // pageAction on ready
-        $v.pageAction.ready = {
+        $v.pA_ready = {
             title: 'Redirector is ready',
             imageData: context.getImageData(0, 0, 19, 19)
         };
@@ -482,7 +491,7 @@ var onInit = function (debug) {
         context.lineTo(17.5, 5.5);
         context.stroke();
 
-        $v.pageAction.success = {
+        $v.pA_success = {
             title: 'Redirector works without any error',
             imageData: context.getImageData(0, 0, 19, 19)
         };
@@ -497,7 +506,7 @@ var onInit = function (debug) {
         context.lineTo(17.5, 5.5);
         context.stroke();
 
-        $v.pageAction.error = {
+        $v.pA_error = {
             title: 'Redirector encountered at least a error',
             imageData: context.getImageData(0, 0, 19, 19)
         };
@@ -512,7 +521,7 @@ var onInit = function (debug) {
             data[i] = data[i + 1] = data[i + 2] = gs;
         }
 
-        $v.pageAction.disabled = {
+        $v.pA_disabled = {
             title: 'Redirector is disabled',
             imageData: imageData
         };
@@ -533,23 +542,31 @@ var onInit = function (debug) {
     });
 
     chrome.tabs.onCreated.addListener(function (tab) { // Original state
-        var pA;
-        if ($v.status === false) {
-            pA = $v.pageAction.disabled;
-        } else {
-            pA = $v.pageAction.ready;
+        if ($v.prefData.disablePageAction === true) {
+            return;
         }
-        chrome.pageAction.setTitle({
-            tabId: tab.id, title: pA.title
-        });
-        chrome.pageAction.setIcon({
-            tabId: tab.id, imageData: pA.imageData
-        });
+
+        if ($v.status === false) {
+            setPageAction(tab.id, $v.pA_disabled);
+        } else {
+            setPageAction(tab.id, $v.pA_ready);
+        }
 
         chrome.pageAction.show(tab.id);
     });
 
-    chrome.tabs.onUpdated.addListener(function (tabId) { // Make zero
+    chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
+        if ($v.prefData.disablePageAction === true) {
+            return;
+        }
+
+        // BUGGY
+        if ($v.iconStatus[tab.id] === false) {
+            setPageAction(tabId, $v.pA_error);
+        }//  else if ($v.iconStatus[tab.id] === true) {
+        //     setPageAction(tabId, $v.pA_success);
+        // }
+
         $v.hasError = null;
         chrome.pageAction.show(tabId);
     });
@@ -574,18 +591,18 @@ var onInit = function (debug) {
         // Show error icon
         chrome.webRequest.onErrorOccurred.addListener(
             updatePageAction, {urls: $v.validUrl});
-        // Show complete icon
+        // Show success icon
         chrome.webRequest.onCompleted.addListener(
             updatePageAction, {urls: $v.validUrl});
-    }
-
-    try {                       // First install
-        var version = JSON.parse(localStorage.VERSION);
-    } catch (e) {
-        localStorage.VERSION =
-            JSON.stringify(chrome.app.getDetails().version);
-        $f.openOptions();
     }
 };
 
 onInit();                       // Initialize
+
+try {                           // First install
+    JSON.parse(localStorage.VERSION);
+} catch (e) {
+    localStorage.VERSION =
+        JSON.stringify(chrome.app.getDetails().version);
+    $f.openOptions();
+}
