@@ -379,79 +379,6 @@ var onRemoved = function (tabId) {
     chrome.tabs.onRemoved.removeListener(onRemoved);
 };
 
-var updatePageAction = function (details) {
-    if ($v.prefData.disablePageAction === true || details.tabId === -1) {
-        return;
-    }
-
-    if (details.error !== undefined) { // Error occurrs
-        if ($v.hasError === true ||    // Already marked as error
-            $v.treated[details.requestId] === undefined) {
-            return;
-        }
-    } else {                        // Suceeded
-        if ($v.hasError !== null || // Already changed
-            $v.treated[details.requestId] === undefined) {
-            return;
-        }
-    }
-
-    chrome.webNavigation.getFrame(
-        {tabId: details.tabId, frameId: details.frameId},
-        function (info) {
-            if (info === null) { // tabId/frameId is invalid
-                return;
-            }
-
-            if (details.error !== undefined) {
-                $v.hasError = true;
-                setPageAction(details.tabId, $v.pA_error);
-                // BUGGY
-                $v.iconStatus[details.tabId] = false;
-            } else {
-                $v.hasError = false;
-                setPageAction(details.tabId, $v.pA_success);
-                // BUGGY
-                // $v.iconStatus[details.tabId] = true;
-            }
-        }
-    );
-};
-
-var togglePageAction = function () {
-    chrome.tabs.query({}, function (tabs) {
-        if ($v.prefData.disablePageAction === true) {
-            tabs.forEach(function (tab) {
-                chrome.pageAction.hide(tab.id);
-            });
-
-            return;
-        }
-
-        var pA;
-        if ($v.status === false) {
-            pA = $v.pA_disabled;
-        } else {
-            pA = $v.pA_ready;
-        }
-
-        tabs.forEach(function (tab) {
-            setPageAction(tab.id, pA);
-            chrome.pageAction.show(tab.id);
-        });
-    });
-};
-
-var setPageAction = function (tabId, pA) {
-    chrome.pageAction.setTitle({
-        tabId: tabId, title: pA.title
-    });
-
-    chrome.pageAction.setIcon({
-        tabId: tabId, imageData: pA.imageData
-    });
-};
-
 var onInit = function (debug) {
     try {                       // Enabled or disabled
         $v.status = JSON.parse(localStorage.STATUS);
@@ -464,69 +391,6 @@ var onInit = function (debug) {
     loadRule();                 // Load rule list
 
     $v.treated = {};
-    $v.iconStatus = {};
-
-    var createIcon = function (process) {
-        var ctx = document.createElement('canvas').getContext('2d');
-        var img = new Image();
-        img.onload = function () {
-            ctx.drawImage(img, 0, 0);
-            process(ctx);
-        };
-        img.src = chrome.extension.getURL('icons/icon_19.png');
-    };
-
-    createIcon(function (context) { // pageAction on ready
-        $v.pA_ready = {
-            title: 'Redirector is ready',
-            imageData: context.getImageData(0, 0, 19, 19)
-        };
-    });
-
-    createIcon(function (context) { // pageAction on success
-        context.strokeStyle = "#008800";
-        context.lineWidth = 2;
-        context.moveTo(1.5, 11.5);
-        context.lineTo(5.5, 17.5);
-        context.lineTo(17.5, 5.5);
-        context.stroke();
-
-        $v.pA_success = {
-            title: 'Redirector works without any error',
-            imageData: context.getImageData(0, 0, 19, 19)
-        };
-    });
-
-    createIcon(function (context) { // pageAction on error
-        context.strokeStyle = "#ff0000";
-        context.lineWidth = 2;
-        context.moveTo(1.5, 5.5);
-        context.lineTo(17.5, 17.5);
-        context.moveTo(1.5, 17.5);
-        context.lineTo(17.5, 5.5);
-        context.stroke();
-
-        $v.pA_error = {
-            title: 'Redirector encountered at least a error',
-            imageData: context.getImageData(0, 0, 19, 19)
-        };
-    });
-
-    createIcon(function (context) { // pageAction on disabled
-        var imageData = context.getImageData(0, 0, 19, 19);
-        var data = imageData.data;
-        for (var i = 0, n = data.length; i < n; i += 4) {
-            var gs = 0.2126 * data[i] +
-                0.7152 * data[i + 1] + 0.0722 * data[i + 2];
-            data[i] = data[i + 1] = data[i + 2] = gs;
-        }
-
-        $v.pA_disabled = {
-            title: 'Redirector is disabled',
-            imageData: imageData
-        };
-    });
-
     togglePageAction();
 
     // Remove event listeners if already attached
@@ -534,41 +398,13 @@ var onInit = function (debug) {
      [chrome.webRequest.onBeforeSendHeaders, onBeforeSendHeadersListener],
      [chrome.webRequest.onHeadersReceived, onHeadersReceivedListener],
      [chrome.webRequest.onErrorOccurred, updatePageAction],
-     [chrome.webRequest.onCompleted, updatePageAction]
+     [chrome.webRequest.onCompleted, updatePageAction],
+     [chrome.tabs.onCreated, onCreatedListener],
+     [chrome.tabs.onUpdated, onUpdatedListener]
     ].forEach(function (i) {
         if (i[0].hasListener(i[1])) {
             i[0].removeListener(i[1]);
         }
-    });
-
-    chrome.tabs.onCreated.addListener(function (tab) { // Original state
-        if ($v.prefData.disablePageAction === true) {
-            return;
-        }
-
-        if ($v.status === false) {
-            setPageAction(tab.id, $v.pA_disabled);
-        } else {
-            setPageAction(tab.id, $v.pA_ready);
-        }
-
-        chrome.pageAction.show(tab.id);
-    });
-
-    chrome.tabs.onUpdated.addListener(function (tabId, changeInfo, tab) {
-        if ($v.prefData.disablePageAction === true) {
-            return;
-        }
-
-        // BUGGY
-        if ($v.iconStatus[tab.id] === false) {
-            setPageAction(tabId, $v.pA_error);
-        }//  else if ($v.iconStatus[tab.id] === true) {
-        //     setPageAction(tabId, $v.pA_success);
-        // }
-
-        $v.hasError = null;
-        chrome.pageAction.show(tabId);
     });
 
     if ($v.status === true && typeof debug === 'undefined') {
@@ -594,12 +430,16 @@ var onInit = function (debug) {
         // Show success icon
         chrome.webRequest.onCompleted.addListener(
             updatePageAction, {urls: $v.validUrl});
+        // Set Original Icon state
+        chrome.tabs.onCreated.addListener(onCreatedListener);
+        // Show hidden icon after tab update and set the correct type
+        chrome.tabs.onUpdated.addListener(onUpdatedListener);
     }
 };
 
 onInit();                       // Initialize
 
-try {                           // First install
+try {                           // First installation
     JSON.parse(localStorage.VERSION);
 } catch (e) {
     localStorage.VERSION =

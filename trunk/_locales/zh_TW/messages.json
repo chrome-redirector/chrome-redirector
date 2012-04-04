@@ -114,5 +114,9 @@
     "DBG_REDIRED_SRV": {"message": "伺服器發起了重定向！"},
     "DBG_COMPLETE": {"message": "完成"},
     "DBG_IMPORT_ERR": {"message": "無法自檔案匯入！"},
-    "DBG_INSEC_FILE": {"message": "不安全的檔案！"}
+    "DBG_INSEC_FILE": {"message": "不安全的檔案！"},
+    "PA_READY": {"message": "Redirector已就緒"},
+    "PA_SUCCESS": {"message": "Redirector已生效"},
+    "PA_ERROR": {"message": "Redirector遇到錯誤"},
+    "PA_DISABLED": {"message": "Redirector已禁用"}
 }

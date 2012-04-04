@@ -39,7 +39,8 @@ Debugger.prototype.start = function () { // Start debugging
         {url: url, active: false},
         this.prepare.bind(this)
     );
-    $v.ext_bg.onInit(true);
+    $v.ext_bg.onInit(true);           // Remove event listeners
+    $v.ext_bg.togglePageAction(true); // Hide icons
 
     $('dbg_unfold').hidden = false;
     $('dbg_fold').hidden = true;

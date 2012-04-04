@@ -114,5 +114,9 @@
     "DBG_REDIRED_SRV": {"message": "Server initiated a redirection!"},
     "DBG_COMPLETE": {"message": "Completed"},
     "DBG_IMPORT_ERR": {"message": "Cannot import anything from file!"},
-    "DBG_INSEC_FILE": {"message": "Insecure file!"}
+    "DBG_INSEC_FILE": {"message": "Insecure file!"},
+    "PA_READY": {"message": "Redirector is ready"},
+    "PA_SUCCESS": {"message": "Redirector is in force"},
+    "PA_ERROR": {"message": "Redirector encountered an error"},
+    "PA_DISABLED": {"message": "Redirector is disabled"}
 }
