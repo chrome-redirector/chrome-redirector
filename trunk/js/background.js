@@ -139,24 +139,29 @@ var loadPref = function () {         // Load preferences data
     }
 };
 
-var updateContext = function () {      // Update the context menu
+var updateContext = function () { // Update the context menu
     var onClick = function (info, tab) {
         var rule = $v.ruleManual[
             info.menuItemId - info.parentMenuItemId - 1
         ];
 
+        var func = function (tab) {
+            $v.treated[tab.id] = true;
+            updatePageAction({tabId: tab.id, manual: true});
+        };
+
         if (info.hasOwnProperty('srcUrl')) {
             chrome.tabs.create({
                 url: $f.getRedirUrl(info.srcUrl, rule)
-            });
+            }, func);
         } else if (info.hasOwnProperty('linkUrl')) {
             chrome.tabs.create({
                 url: $f.getRedirUrl(info.linkUrl, rule)
-            });
+            }, func);
         } else {
             chrome.tabs.update(tab.id, {
                 url: $f.getRedirUrl(info.pageUrl, rule)
-            });
+            }, func);
         }
     };
 

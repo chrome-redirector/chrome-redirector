@@ -119,5 +119,6 @@
     "PA_READY": {"message": "Redirector已就绪"},
     "PA_SUCCESS": {"message": "规则已生效"},
     "PA_ERROR": {"message": "规则出错"},
+    "PA_DEBUG": {"message": "调试中"},
     "PA_DISABLED": {"message": "Redirector已禁用"}
 }

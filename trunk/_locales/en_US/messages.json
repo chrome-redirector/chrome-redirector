@@ -119,5 +119,6 @@
     "PA_READY": {"message": "Redirector is ready"},
     "PA_SUCCESS": {"message": "Rule(s) in operation"},
     "PA_ERROR": {"message": "Rule(s) gone wrong"},
+    "PA_DEBUG": {"message": "Debugging"},
     "PA_DISABLED": {"message": "Redirector is disabled"}
 }

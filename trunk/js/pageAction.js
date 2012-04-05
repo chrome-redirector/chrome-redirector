@@ -34,15 +34,18 @@ var updatePageAction = function (details) {
             $v.treated[details.requestId] === undefined) {
             return;
         }
+        delete $v.treated[details.requestId];
 
         $v.hasError = true;
         setPageAction(tabId, $v.pA_error);
         $v.timerQueue[tabId] = false;
     } else {                        // Suceeded
-        if ($v.hasError !== null || // Already changed
-            $v.treated[details.requestId] === undefined) {
+        if (details.manual === undefined &&
+            ($v.hasError !== null || // Already changed
+             $v.treated[details.requestId] === undefined)) {
             return;
         }
+        delete $v.treated[details.requestId];
 
         $v.hasError = false;
         setPageAction(tabId, $v.pA_success);
@@ -52,13 +55,12 @@ var updatePageAction = function (details) {
     // Better solution?
     setTimeout(function () {    // Delay 0.5s to prevent override
         delete $v.timerQueue[tabId];
-    }, 500);
+    }, details.manual === undefined ? 500 : 10000);
 };
 
-var togglePageAction = function (hide) { // Apply status to all tabs
+var togglePageAction = function (pA1) { // Apply status to all tabs
     chrome.tabs.query({}, function (tabs) {
-        if ($v.prefData.disablePageAction === true ||
-            typeof hide !== 'undefined') {
+        if ($v.prefData.disablePageAction === true) {
             tabs.forEach(function (tab) {
                 chrome.pageAction.hide(tab.id);
             });
@@ -67,7 +69,9 @@ var togglePageAction = function (hide) { // Apply status to all tabs
         }
 
         var pA;
-        if ($v.status === false) {
+        if (typeof pA1 !== 'undefined') {
+            pA = pA1;
+        } else if ($v.status === false) {
             pA = $v.pA_disabled;
         } else {
             pA = $v.pA_ready;
@@ -169,6 +173,21 @@ createIcon(function (context) { // pageAction on error
     };
 });
 
+createIcon(function (context) { // pageAction on debugging
+    context.strokeStyle = "#ff0000";
+    context.lineWidth = 2;
+    context.arc(8.5, 9.5, 6, 0, Math.PI * 2, true);
+    context.moveTo(8.5, 3.5);
+    context.lineTo(8.5, 9.5);
+    context.lineTo(13.5, 6.5);
+    context.stroke();
+
+    $v.pA_debug = {
+        title: $i18n('PA_DEBUG'),
+        imageData: context.getImageData(0, 0, 19, 19)
+    };
+});
+
 createIcon(function (context) { // pageAction on disabled
     var imageData = context.getImageData(0, 0, 19, 19);
     var data = imageData.data;
@@ -185,3 +204,10 @@ createIcon(function (context) { // pageAction on disabled
 });
 
 $v.timerQueue = {};
+
+chrome.pageAction.onClicked.addListener(function () { // Enable/Disable
+    $v.status = $v.status === true ? false : true;
+    localStorage.STATUS = JSON.stringify($v.status);
+    updateContext();
+    onInit();
+});

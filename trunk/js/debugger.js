@@ -40,7 +40,7 @@ Debugger.prototype.start = function () { // Start debugging
         this.prepare.bind(this)
     );
     $v.ext_bg.onInit(true);           // Remove event listeners
-    $v.ext_bg.togglePageAction(true); // Hide icons
+    $v.ext_bg.togglePageAction($v.ext_bg.$v.pA_debug); // Show debug icon
 
     $('dbg_unfold').hidden = false;
     $('dbg_fold').hidden = true;
@@ -81,7 +81,7 @@ Debugger.prototype.disp = function (details) {
         $('dbg_info').appendChild($c('hr'));
 
         prompt = (new Date()).toLocaleTimeString() +
-            ' #' + details.requestId + ' @' + details.type;
+            ' #' + details.requestId + ' @' + this.i18nType(details.type);
     } else {
         prompt = '+' +
             (
@@ -98,6 +98,29 @@ Debugger.prototype.disp = function (details) {
 
     $('req_' + details.requestId).appendChild(title);
     $('req_' + details.requestId).appendChild(data);
+};
+
+Debugger.prototype.i18nType = function (type) {
+    switch (type) {
+    case 'main_frame':
+        return $i18n('CONTENT_MAIN_FRAME');
+    case 'sub_frame':
+        return $i18n('CONTENT_SUB_FRAME');
+    case 'stylesheet':
+        return 'CSS';
+    case 'script':
+        return $i18n('CONTENT_SCRIPT');
+    case 'image':
+        return $i18n('CONTENT_IMAGE');
+    case 'object':
+        return $i18n('CONTENT_OBJECT');
+    case 'xmlhttprequest':
+        return 'XHR';
+    case 'other':
+        return $i18n('CONTENT_OTHER');
+    default:
+        return type;
+    }
 };
 
 Debugger.prototype.timer = function (testee, para) {
