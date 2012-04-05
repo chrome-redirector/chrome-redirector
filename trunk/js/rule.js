@@ -65,8 +65,8 @@ RuleList.prototype.attachEventListener = function () {
             that.onSel(e);
             that.dragClientY = e.pageY;
             that.dragValid = false;
-            var canvas = document.createElement('canvas');
-            var img = document.createElement('img');
+            var canvas = $c('canvas');
+            var img = $c('img');
             img.src = canvas.toDataURL();
             e.dataTransfer.setDragImage(img, -10, -10);
         };

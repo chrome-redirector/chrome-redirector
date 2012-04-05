@@ -115,8 +115,9 @@
     "DBG_COMPLETE": {"message": "完成"},
     "DBG_IMPORT_ERR": {"message": "无法从文件导入！"},
     "DBG_INSEC_FILE": {"message": "不安全的文件！"},
+    "DBG_DEBUGEE": {"message": "Redirector调试页"},
     "PA_READY": {"message": "Redirector已就绪"},
-    "PA_SUCCESS": {"message": "Redirector已生效"},
-    "PA_ERROR": {"message": "Redirector遇到错误"},
+    "PA_SUCCESS": {"message": "规则已生效"},
+    "PA_ERROR": {"message": "规则出错"},
     "PA_DISABLED": {"message": "Redirector已禁用"}
 }

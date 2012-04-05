@@ -23,12 +23,6 @@
 /*global $: true, $$: true, $v: true, $f: true, $i18n: true*/
 /*global chrome: true*/
 
-Element.prototype.mouseClick = function () {
-    var e = document.createEvent('MouseEvents');
-    e.initEvent('click', true, true);
-    this.dispatchEvent(e);
-};
-
 $ = function (id) {                // Id selector
     return document.getElementById(id);
 };
@@ -40,6 +34,18 @@ $$ = function () {                 // CSS-like selector
 $i18n = function (msg) {
     return chrome.i18n.getMessage(msg);
 };
+
+$c = function (element) {
+    return document.createElement(element);
+};
+
+if ($c('a').click === undefined) { // Backward compatible with Cr 17/18
+    Element.prototype.click = function () {
+        var e = document.createEvent('MouseEvents');
+        e.initEvent('click', true, true);
+        this.dispatchEvent(e);
+    };
+}
 
 $v = {type: {}};                        // Global values set
 $f = {};                                // Global functions set
@@ -253,10 +259,10 @@ $f.writeFile = function (file, content) {
     var blob = new BlobBuilder();
     blob.append(content);
 
-    var link = document.createElement('a'); // Tmp link
+    var link = $c('a'); // Tmp link
     link.href = URL.createObjectURL(
         blob.getBlob('application/force-download'));
 
     link.download = file;
-    link.mouseClick();          // Simulate mouse click to download
+    link.click();               // Simulate mouse click to download
 };

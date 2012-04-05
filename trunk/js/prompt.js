@@ -256,7 +256,7 @@ Prompt.prototype.refresh = function (id) { // Refresh prompt data
 
 Prompt.prototype.update = function (id, list, callback) {
     // id: section id; list: prompt data; callback: callback function
-    var html = document.createElement('ul');
+    var html = $c('ul');
     var txt = $(id + 'str');    // Input textbox
     var onClick = function () { // Function called when clicked
         // Text to be inserted
@@ -281,7 +281,7 @@ Prompt.prototype.update = function (id, list, callback) {
     };
 
     for (var i = 0; i < list.length; i++) { // Built up menu
-        var dom = document.createElement('li');
+        var dom = $c('li');
         dom.onclick = onClick;
         dom.innerHTML = '<span>' + list[i].msg + '</span>' +
             '<span>' + list[i].desc + '</span>';
@@ -299,7 +299,7 @@ Prompt.prototype.update = function (id, list, callback) {
 Prompt.prototype.init = function (id, list, callback) { // Initialize
     var txt = $(id + 'str');                        // Input textbox
 
-    var node = document.createElement('div'); // Prompt menu
+    var node = $c('div');       // Prompt menu
     node.id = id + 'prompt';
     node.className = 'prompt';
     node.title = $i18n('PROMPT_TITLE');

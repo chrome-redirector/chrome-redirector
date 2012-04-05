@@ -34,34 +34,25 @@ var updatePageAction = function (details) {
             $v.treated[details.requestId] === undefined) {
             return;
         }
+
+        $v.hasError = true;
+        setPageAction(tabId, $v.pA_error);
+        $v.timerQueue[tabId] = false;
     } else {                        // Suceeded
         if ($v.hasError !== null || // Already changed
             $v.treated[details.requestId] === undefined) {
             return;
         }
+
+        $v.hasError = false;
+        setPageAction(tabId, $v.pA_success);
+        $v.timerQueue[tabId] = true;
     }
 
-    chrome.webNavigation.getFrame({tabId: tabId, frameId: details.frameId},
-        function (info) {
-            if (info === null) { // tabId/frameId is invalid
-                return;
-            }
-
-            if (details.error !== undefined) {
-                $v.hasError = true;
-                setPageAction(tabId, $v.pA_error);
-                $v.timerQueue[tabId] = false;
-            } else {
-                $v.hasError = false;
-                setPageAction(tabId, $v.pA_success);
-                $v.timerQueue[tabId] = true;
-            }
-
-            setTimeout(function () { // Delay 1s to prevent override
-                delete $v.timerQueue[tabId];
-            }, 1000);
-        }
-    );
+    // Better solution?
+    setTimeout(function () {    // Delay 0.5s to prevent override
+        delete $v.timerQueue[tabId];
+    }, 500);
 };
 
 var togglePageAction = function (hide) { // Apply status to all tabs
@@ -113,7 +104,8 @@ var onCreatedListener = function (tab) { // Set Original Icon state
 
 // Show hidden icon after tab update and set the correct type
 var onUpdatedListener = function (tabId, changeInfo, tab) {
-    if ($v.prefData.disablePageAction === true) {
+    if ($v.prefData.disablePageAction === true ||
+        changeInfo.status === 'complete') { // Only change once
         return;
     }
 
@@ -132,7 +124,7 @@ var onUpdatedListener = function (tabId, changeInfo, tab) {
 };
 
 var createIcon = function (process) { // Template for creating icons
-    var ctx = document.createElement('canvas').getContext('2d');
+    var ctx = $c('canvas').getContext('2d');
     var img = new Image();
     img.onload = function () {
         ctx.drawImage(img, 0, 0);

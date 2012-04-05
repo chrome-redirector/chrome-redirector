@@ -75,10 +75,10 @@ Debugger.prototype.disp = function (details) {
     if (! this.timeStamp.hasOwnProperty(details.requestId)) {
         this.timeStamp[details.requestId] = details.timeStamp;
 
-        var list = document.createElement('dl');
+        var list = $c('dl');
         list.id = 'req_' + details.requestId;
         $('dbg_info').appendChild(list);
-        $('dbg_info').appendChild(document.createElement('hr'));
+        $('dbg_info').appendChild($c('hr'));
 
         prompt = (new Date()).toLocaleTimeString() +
             ' #' + details.requestId + ' @' + details.type;
@@ -90,10 +90,10 @@ Debugger.prototype.disp = function (details) {
             ' ms';
     }
 
-    var title = document.createElement('dt');
+    var title = $c('dt');
     title.innerHTML = this.setColor('[' + prompt + ']', 'darkGreen');
 
-    var data = document.createElement('dd');
+    var data = $c('dd');
     data.innerHTML = details.data;
 
     $('req_' + details.requestId).appendChild(title);
@@ -134,7 +134,7 @@ Debugger.prototype.prepare = function (tab) {
 
     // Change the title
     chrome.tabs.executeScript(tab.id, {
-        code: 'document.title="Redirector debugee"'});
+        code: 'document.title="' + $i18n('DBG_DEBUGEE') + '"'});
 
     // Attach debug listeners
     $v.ext_bg.chrome.webRequest.onErrorOccurred.addListener(
@@ -419,7 +419,7 @@ Debugger.prototype.export = function () {
 };
 
 Debugger.prototype.chkInnerHtml = function (html) {
-    var tmp = document.createElement('div');
+    var tmp = $c('div');
     tmp.innerHTML = html;
 
     // Pass1: check elements shall not appear

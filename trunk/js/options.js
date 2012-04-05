@@ -126,15 +126,15 @@ $f.initOpt = function () {                         // Option page init
     switch (location.search) {
     case '?1':
         // Display the rules manager tab
-        $$('#ruleMgrTag a')[0].mouseClick();
+        $$('#ruleMgrTag a')[0].click();
         break;
     case '?2':
         // Display the debugger tab
-        $$('#dbgTag a')[0].mouseClick();
+        $$('#dbgTag a')[0].click();
         break;
     default:
         // Display the preferences tab
-        $$('#prefTag a')[0].mouseClick();
+        $$('#prefTag a')[0].click();
     }
 
     chrome.tabs.getCurrent(function (tab) {
