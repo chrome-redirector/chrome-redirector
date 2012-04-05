@@ -55,7 +55,7 @@ var updatePageAction = function (details) {
     // Better solution?
     setTimeout(function () {    // Delay 0.5s to prevent override
         delete $v.timerQueue[tabId];
-    }, details.manual === undefined ? 500 : 10000);
+    }, details.manual === undefined ? 500 : 10000); // Is 10s enough?
 };
 
 var togglePageAction = function (pA1) { // Apply status to all tabs

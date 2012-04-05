@@ -15,6 +15,6 @@
     "permissions": ["webRequest", "webRequestBlocking",
                     "tabs", "contextMenus", "<all_urls>"],
     "default_locale": "en_US",
-    "version": "2.2.20.6",
+    "version": "2.2.20.7",
     "minimum_chrome_version": "17"
 }
