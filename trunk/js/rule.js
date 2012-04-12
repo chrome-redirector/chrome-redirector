@@ -30,6 +30,10 @@ RuleList = function (noInit) {
         this.data = [];         // Default to empty
     }
 
+    try {
+        this.data.remoteRuleUrl = JSON.parse(localStorage.REMOTE);
+    } catch (e) {}
+
     if (noInit === undefined) {   // No need to chg page
         this.init();
     }
@@ -104,6 +108,13 @@ RuleList.prototype.init = function () { // Initialize
         this.update(i);         // Fillin data
     }
     this.attachEventListener();
+
+    var url = this.data.remoteRuleUrl;
+    $('ruleList-remote-url').value = url ? url : '';
+    var num = $v.ext_bg.$v.remoteRules;
+    num = num === undefined ? 0 : num.length;
+    $('ruleList-remote-title').innerText = $i18n('RULELIST_REMOTE') +
+        ' [' + num + ']';
 
     this.loadBuiltin();            // Load builtin rules
     this.chg = this.isNew = false; // No new or changed rules
@@ -577,6 +588,7 @@ RuleList.prototype.refresh = function (force) { // Refresh the list
     }
 
     localStorage.RULELIST = JSON.stringify(this.data);
+    localStorage.REMOTE = JSON.stringify(this.data.remoteRuleUrl);
     if (typeof $v.ext_bg !== 'undefined') {
         $v.ext_bg.loadRule();
     } else {
@@ -669,4 +681,28 @@ RuleList.prototype.restoreData = function (data) {
     }
 
     return true;
+};
+
+RuleList.prototype.updateRemoteRule = function (fromButton) {
+    if (typeof fromButton !== undefined) {
+        var url = $('ruleList-remote-url').value;
+
+        if (url === undefined || !$f.verifyUrl(url)) {
+            this.data.remoteRuleUrl = undefined;
+        } else {
+            this.data.remoteRuleUrl = url;
+        }
+    }
+
+    this.refresh(true);
+    setTimeout((function () {
+        this.init();
+    }).bind(this), 1500);
+};
+
+RuleList.prototype.removeRemoteRule = function () {
+    $('ruleList-remote-url').value = '';
+    this.data.remoteRuleUrl = undefined;
+    this.refresh(true);
+    this.init();
 };

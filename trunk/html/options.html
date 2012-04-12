@@ -172,6 +172,19 @@
                 <input type="file" id="ruleEdit_appendFile"
                        accept="text/plain" />
               </p>
+              <!-- Remote rules -->
+              <details onclick="scroll(0, 0)">
+                <summary id="ruleList-remote-title"></summary>
+
+                <pre i18n="RULELIST_REMOTE_WARN"></pre>
+                <input type="url" id="ruleList-remote-url" />
+                <div class="action-area">
+                  <input type="submit" i18n="value:BTN_UPDATE"
+                         onclick="$v.ruleList.updateRemoteRule(true)" />
+                  <input type="button" i18n="value:BTN_DEL"
+                         onclick="$v.ruleList.removeRemoteRule()" />
+                </div>
+              </details>
             </details>
           </section>
 

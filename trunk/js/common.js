@@ -190,6 +190,15 @@ $f.err = function (innerHTML) { // Orange
     $f.iNotif(innerHTML, '#f60');
 };
 
+$f.desktopNotif = function (text) {
+    var Notifications = Notifications || webkitNotifications;
+    var notif = Notifications.createNotification(
+        '/icons/icon_128.png', 'Redirector', text
+    );
+
+    notif.show();
+};
+
 $f.openOptions = function (search) {
     var views = chrome.extension.getViews();
     var bg = chrome.extension.getBackgroundPage();
@@ -227,10 +236,30 @@ $f.readFile = function (file, callback) {
     if (typeof file === 'string') { // Path
         var xhr = new XMLHttpRequest();
 
-        xhr.open('GET', file, false);
-        xhr.send();
+        if (typeof callback === 'undefined') { // Sync
+            try {
+                xhr.open('GET', file, false);
+                xhr.send();
 
-        return xhr.responseText;
+                if (xhr.status === 200) {
+                    return xhr.responseText;
+                }
+            } catch (e) {}
+        } else {                // Async
+            xhr.onreadystatechange = function () {
+                if (xhr.readyState !== 4) {
+                    return;
+                }
+
+                if (xhr.status === 200) {
+                    callback(xhr.responseText);
+                } else {
+                    callback(false);
+                }
+            };
+            xhr.open('GET', file, true);
+            xhr.send();
+        }
     } else {                    // File Obj
         var reader = new FileReader();
 

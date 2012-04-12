@@ -237,12 +237,13 @@ var updateContext = function () { // Update the context menu
     });
 };
 
-var loadRule = function (data) { // Called when rule list needs update
-    var dry = false;
-    if (typeof data !== 'undefined') {
-        dry = true;             // Dry run
+var loadRule = function (info, dryRun) { // Called when rule list needs update
+    if (typeof info !== 'undefined') {
+        var dry = typeof dryRun === 'undefined' ? true : dryRun;
+        var data = info;
     } else {
-        data = (new RuleList(false)).data; // All rules list data
+        var dry = false;
+        var data = (new RuleList(false)).data; // All rules list data
     }
 
     if (dry !== true) {
@@ -250,7 +251,50 @@ var loadRule = function (data) { // Called when rule list needs update
         $v.ruleManual = [];     // Rules for manual redir
         $v.ruleReqHdr = [];     // Rules for http request header
         $v.ruleRespHdr = [];    // Rules for http request header
+        try {
+            $v.remoteRules = JSON.parse(localStorage.REMOTE_RULES);
+        } catch (e) {
+            $v.remoteRules = [];
+        }
+
+        if (typeof dryRun === 'undefined') {
+            if (data.remoteRuleUrl === undefined) {
+                localStorage.REMOTE_RULES = undefined;
+                $v.remoteRules = [];
+            } else {
+                $f.readFile(data.remoteRuleUrl, function (remoteRules) {
+                    var onFailed = function () {
+                        $f.desktopNotif($i18n('RULELIST_REMOTE_FAIL'));
+                        data = data.concat($v.remoteRules);
+                        loadRule(data, false);
+                    };
+
+                    try {
+                        remoteRules = JSON.parse(remoteRules);
+                    } catch (e) {
+                        onFailed();
+                        return;
+                    }
+
+                    if (typeof remoteRules === 'object' &&
+                        remoteRules.length !== undefined
+                       ) {          // Is an array
+                        remoteRules.forEach(function (rule) {
+                            rule.enabled = true;
+                        });
+
+                        localStorage.REMOTE_RULES = JSON.stringify(remoteRules);
+                        data = data.concat(remoteRules);
+                        loadRule(data, false);
+                    } else {
+                        onFailed();
+                        return;
+                    }
+                });
+            }
+        }
     }
+
     for (var i = 0; i < data.length; i++) {
         var rule = data[i];     // Current rule
 
