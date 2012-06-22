@@ -140,10 +140,10 @@ var loadPref = function () {         // Load preferences data
 };
 
 var updateContext = function () { // Update the context menu
-    var onClick = function (info, tab) {
-        var rule = $v.ruleManual[
-            info.menuItemId - info.parentMenuItemId - 1
-        ];
+    var onClick = function (info, tab, rule) {
+        // var rule = $v.ruleManual[
+        //     info.menuItemId - info.parentMenuItemId
+        // ];
 
         var func = function (tab) {
             $v.treated[tab.id] = true;
@@ -179,7 +179,7 @@ var updateContext = function () { // Update the context menu
                     title: rule.name,
                     contexts: ['link', 'image'],
                     parentId: parentLink,
-                    onclick: onClick
+                    onclick: function (info, tab) {onClick(info, tab, rule)}
                 });
             });
         }
@@ -195,7 +195,7 @@ var updateContext = function () { // Update the context menu
                     title: rule.name,
                     contexts: ['page', 'frame'],
                     parentId: parentPage,
-                    onclick: onClick
+                    onclick: function (info, tab) {onClick(info, tab, rule)}
                 });
             });
         }

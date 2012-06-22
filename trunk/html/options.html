@@ -34,27 +34,23 @@
     <link rel="stylesheet" href="/css/options.css" type="text/css">
   </head>
 
-  <body onload="$f.initOpt()">
+  <body>
     <!-- Navigation bar -->
     <div id="navBar">
       <h1>Redirector</h1>
 
       <ul id="navTags">
         <li id="prefTag">
-          <a href="#pref" i18n="PREF_TITLE"
-             onclick="$f.switchNav()"></a>
+          <a href="#pref" i18n="PREF_TITLE"></a>
         </li>
         <li id="ruleMgrTag">
-          <a href="#ruleMgr" i18n="RULEMGR_TITLE"
-             onclick="$f.switchNav()"></a>
+          <a href="#ruleMgr" i18n="RULEMGR_TITLE"></a>
         </li>
         <li id="dbgTag">
-          <a href="#dbg" i18n="DBG_TITLE"
-             onclick="$f.switchNav()"></a>
+          <a href="#dbg" i18n="DBG_TITLE"></a>
         </li>
         <li id="docTag">
-          <a href="#doc" i18n="DOC_TITLE"
-             onclick="$f.switchNav()"></a>
+          <a href="#doc" i18n="DOC_TITLE"></a>
         </li>
       </ul>
     </div>
@@ -71,24 +67,19 @@
           <section>
             <details>
               <summary>
-                <input type="checkbox" id="pref_proto_all"
-                       onclick="$v.pref.onChgProto('all')" />
+                <input type="checkbox" id="pref_proto_all" />
                 <label i18n="PROTO_ALL" for="pref_proto_all">
                 </label><br />
               </summary>
 
               <section>
-                <input type="checkbox" id="pref_proto_http"
-                       onclick="$v.pref.onChgProto('http')" />
+                <input type="checkbox" id="pref_proto_http" />
                 <label for="pref_proto_http">HTTP://</label><br />
-                <input type="checkbox" id="pref_proto_https"
-                       onclick="$v.pref.onChgProto('https')" />
+                <input type="checkbox" id="pref_proto_https" />
                 <label for="pref_proto_https">HTTPS://</label><br />
-                <input type="checkbox" id="pref_proto_ftp"
-                       onclick="$v.pref.onChgProto('ftp')" />
+                <input type="checkbox" id="pref_proto_ftp" />
                 <label for="pref_proto_ftp">FTP://</label><br />
-                <input type="checkbox" id="pref_proto_file"
-                       onclick="$v.pref.onChgProto('file')" />
+                <input type="checkbox" id="pref_proto_file" />
                 <label for="pref_proto_file">FILE://</label><br />
               </section>
             </details>
@@ -97,12 +88,10 @@
           <!-- Context menu settings -->
           <h3 i18n="CONTEXT_TITLE"></h3>
           <section>
-            <input type="checkbox" id="pref_context_link"
-                   onclick="$v.pref.onChgContext()" />
+            <input type="checkbox" id="pref_context_link" />
             <label i18n="CONTEXT_LINK" for="pref_context_link">
             </label><br />
-            <input type="checkbox" id="pref_context_page"
-                   onclick="$v.pref.onChgContext()" />
+            <input type="checkbox" id="pref_context_page" />
             <label i18n="CONTEXT_PAGE" for="pref_context_page">
             </label><br />
           </section>
@@ -110,16 +99,14 @@
           <!-- Input prompt settings -->
           <h3 i18n="PROMPT"></h3>
           <section>
-            <input type="checkbox" id="pref_prompt"
-                   onclick="$v.pref.onChgPrompt()" />
+            <input type="checkbox" id="pref_prompt" />
             <label i18n="PROMPT_CHKBOX" for="pref_prompt"></label>
           </section>
 
           <!-- Icon notification settings -->
           <h3 i18n="PAGEACTION_TITLE"></h3>
           <section>
-            <input type="checkbox" id="pref_pageAction"
-                   onclick="$v.pref.onChgPageAction()" />
+            <input type="checkbox" id="pref_pageAction" />
             <label i18n="PAGEACTION_DISABLE" for="pref_pageAction">
             </label>
           </section>
@@ -127,17 +114,13 @@
 
         <!-- Page for rules -->
         <div id="ruleMgr" class="mainview">
-          <div id="ruleContextMenu"
-               onmouseover="clearTimeout(this.timeOut)"
-               onmouseout="this.timeOut=setTimeout(
-                           '$(\'ruleContextMenu\').className=null',
-                           1000)">
+          <div id="ruleContextMenu">
             <ul>
-              <li i18n="BTN_NEW" onclick="$v.ruleList.add()"></li>
-              <li i18n="BTN_EDIT" onclick="$v.ruleList.edit()"></li>
-              <li i18n="BTN_DEL" onclick="$v.ruleList.del()"></li>
-              <li i18n="BTN_UP" onclick="$v.ruleList.move(-1)"></li>
-              <li i18n="BTN_DOWN" onclick="$v.ruleList.move(1)"></li>
+              <li id="ruleMgr-add" i18n="BTN_NEW"></li>
+              <li id="ruleMgr-edit" i18n="BTN_EDIT"></li>
+              <li id="ruleMgr-del" i18n="BTN_DEL"></li>
+              <li id="ruleMgr-move_up" i18n="BTN_UP"></li>
+              <li id="ruleMgr-move_down" i18n="BTN_DOWN"></li>
             </ul>
           </div>
 
@@ -148,41 +131,37 @@
 
           <!-- Backup rule list -->
           <section>
-            <details onclick="scroll(0, 0)">
+            <details class="scroll-area">
               <summary i18n="RULEMGR_BAK_TITLE"></summary>
 
               <p>
-                <input type="button"
-                       i18n="value:BTN_BAK;title:BTN_BAK_TITLE"
-                       onclick="$v.ruleList.bak()" />
+                <input type="button" id="ruleList-bak"
+                       i18n="value:BTN_BAK;title:BTN_BAK_TITLE" />
               </p><p>
-                <input type="button"
-                       i18n="value:BTN_RESTORE;title:BTN_RESTORE_TITLE"
-                       onclick="$v.ruleList.restore()" />
+                <input type="button" id="ruleList-restore"
+                       i18n="value:BTN_RESTORE;title:BTN_RESTORE_TITLE" />
                 <input type="file" id="ruleEdit_restoreFile"
                        accept="text/plain" />
               </p><p>
-                <input type="button"
-                       i18n="value:BTN_EXPORT;title:BTN_EXPORT_TITLE"
-                       onclick="$v.ruleList.bak(true)" />
+                <input type="button" id="ruleList-export"
+                       i18n="value:BTN_EXPORT;title:BTN_EXPORT_TITLE" />
               </p><p>
-                <input type="button"
-                       i18n="value:BTN_IMPORT;title:BTN_IMPORT_TITLE"
-                       onclick="$v.ruleList.restore(true)" />
+                <input type="button" id="ruleList-import"
+                       i18n="value:BTN_IMPORT;title:BTN_IMPORT_TITLE" />
                 <input type="file" id="ruleEdit_appendFile"
                        accept="text/plain" />
               </p>
               <!-- Remote rules -->
-              <details onclick="scroll(0, 0)">
+              <details class="scroll-area">
                 <summary id="ruleList-remote-title"></summary>
 
                 <pre i18n="RULELIST_REMOTE_WARN"></pre>
                 <input type="url" id="ruleList-remote-url" />
                 <div class="action-area">
-                  <input type="submit" i18n="value:BTN_UPDATE"
-                         onclick="$v.ruleList.updateRemoteRule(true)" />
-                  <input type="button" i18n="value:BTN_DEL"
-                         onclick="$v.ruleList.removeRemoteRule()" />
+                  <input type="button" id="ruleList-remote-update"
+                         i18n="value:BTN_UPDATE" />
+                  <input type="button" id="ruleList-remote-del"
+                         i18n="value:BTN_DEL" />
                 </div>
               </details>
             </details>
@@ -196,9 +175,7 @@
                 <col width="24%" span="4">
               </colgroup>
               <tr>
-                <th i18n="title:BTN_NEW"
-                    onclick="event.preventDefault();$v.ruleList.add();return false">
-                  &#43;</th>
+                <th id="ruleListTable-new" i18n="title:BTN_NEW">&#43;</th>
                 <th i18n="LBL_NAME"></th>
                 <th i18n="LBL_MATCH"></th>
                 <th i18n="LBL_SUB"></th>
@@ -212,68 +189,46 @@
         <div id="dbg" class="mainview">
           <h1 i18n="DBG_TITLE"></h1>
 
-          <form onsubmit="return false;">
+          <form id="dbg-form">
             <input type="url" id="dbg_url"
                    class="input-text"
                    i18n="placeholder:PH_DEBUG_URL" required />
-            <input type="checkbox" id="dbg-chkbox-1"
-                   onchange="$v.debugger.quiet=this.checked" />
+            <input type="checkbox" id="dbg-chkbox-1" />
             <label i18n="DBG_QUIET" for="dbg-chkbox-1"></label>
-            <input type="checkbox" id="dbg-chkbox-2" checked
-                   onchange="$v.debugger.trackRedir=this.checked" />
+            <input type="checkbox" id="dbg-chkbox-2" checked />
             <label i18n="DBG_TRACK_REDIR" for="dbg-chkbox-2"></label>
-            <input type="checkbox" id="dbg-chkbox-3" checked
-                   onchange="$v.debugger.trackReqHdr=this.checked" />
+            <input type="checkbox" id="dbg-chkbox-3" checked />
             <label i18n="DBG_TRACK_REQHDR" for="dbg-chkbox-3"></label>
-            <input type="checkbox" id="dbg-chkbox-4" checked
-                   onchange="$v.debugger.trackRespHdr=this.checked" />
+            <input type="checkbox" id="dbg-chkbox-4" checked />
             <label i18n="DBG_TRACK_RESPHDR" for="dbg-chkbox-4"></label>
-            <input type="checkbox" id="dbg-chkbox-5"
-                   onchange="$v.debugger.testSpeed=this.checked" />
+            <input type="checkbox" id="dbg-chkbox-5" />
             <label i18n="DBG_TEST_SPEED" for="dbg-chkbox-5"></label>
 
             <div class="action-area">
-              <input type="submit" id="dbg_start"
-                     i18n="value:BTN_DBG_START"
-                     onclick="$('dbg_start').hidden=true;
-                              $('dbg_stop').hidden=false;
-                              $v.debugger.start()" />
+              <input type="button" id="dbg_start"
+                     i18n="value:BTN_DBG_START" />
               <input type="button" id="dbg_stop" hidden="true"
-                     i18n="value:BTN_DBG_STOP"
-                     onclick="$('dbg_stop').hidden=true;
-                              $('dbg_start').hidden=false;
-                              $v.debugger.stop()" />
+                     i18n="value:BTN_DBG_STOP" />
               <input type="button" id="dbg_unfold" hidden="true"
-                     i18n="value:BTN_DBG_UNFOLD"
-                     onclick="this.hidden=true;
-                              $('dbg_fold').hidden=false;
-                              $v.debugger.openDetails(true)" />
+                     i18n="value:BTN_DBG_UNFOLD" />
               <input type="button" id="dbg_fold" hidden="true"
-                     i18n="value:BTN_DBG_FOLD"
-                     onclick="this.hidden=true;
-                              $('dbg_unfold').hidden=false;
-                              $v.debugger.openDetails(false)" />
-              <input type="button" i18n="value:BTN_DBG_CLEAR"
-                     onclick="$('dbg_unfold').hidden=true;
-                              $('dbg_fold').hidden=true;
-                              $('dbg_info').innerHTML=''" />
+                     i18n="value:BTN_DBG_FOLD" />
+              <input type="button" id="dbg_clear" i18n="value:BTN_DBG_CLEAR" />
             </div>
           </form>
 
           <div id="dbg_info">
           </div>
 
-          <details onclick="scroll(0, 0)">
+          <details class="scroll-area">
             <summary i18n="DBG_INFO_EXPORT"></summary>
 
             <p>
-              <input type="button"
-                     i18n="value:BTN_EXPORT;title:BTN_DBG_EXPORT_TITLE"
-                     onclick="$v.debugger.export()" />
+              <input type="button" id="dbg-export"
+                     i18n="value:BTN_EXPORT;title:BTN_DBG_EXPORT_TITLE" />
             </p><p>
-              <input type="button"
-                     i18n="value:BTN_IMPORT;title:BTN_DBG_IMPORT_TITLE"
-                     onclick="$v.debugger.import()" />
+              <input type="button" id="dbg-import"
+                     i18n="value:BTN_IMPORT;title:BTN_DBG_IMPORT_TITLE" />
               <input type="file" id="dbg_importFile"
                      accept="text/plain" />
             </p>
@@ -313,8 +268,7 @@
               <h1 i18n="RULE_EDITOR"></h1>
             </section>
             <!-- Main form -->
-            <form id="ruleEdit" onsubmit="return false;"
-                  autocomplete="off">
+            <form id="ruleEdit" autocomplete="off">
               <section id="ruleEdit_name">
                 <!-- Rule name -->
                 <h3 i18n="LBL_NAME"></h3>
@@ -326,8 +280,7 @@
               <section id="ruleEdit_match">
                 <!-- Match pattern -->
                 <h3 i18n="LBL_MATCH"></h3>
-                <select id="ruleEdit_matchtype"
-                        onchange="$v.ruleList.onChgMatchType()">
+                <select id="ruleEdit_matchtype">
                   <option selected="selected" i18n="TYPE_REGEXP">
                   </option>
                   <option i18n="TYPE_GLOB;title:TYPE_GLOB_DEPRECATED"></option>
@@ -339,61 +292,35 @@
                 </label>
 
                 <input type="button" id="ruleEdit_matchContent"
-                       i18n="value:CONTENT_FILTER"
-                       onclick="t=$('ruleEdit_matchContentType');
-                                if(t.style.display!=='block'){
-                                t.style.display='block';
-                                t.style.left=this.offsetLeft+'px';
-                                }else{
-                                t.style.display='none';
-                                }" />
+                       i18n="value:CONTENT_FILTER" />
                 <div id="ruleEdit_matchContentType">
                   <ul>
                     <li>
-                      <input type="checkbox" id="rmct1" checked
-                             onclick="that=this;[].forEach.call(
-                                      $$('#ruleEdit_matchContentType input'),
-                                      function(i){i.checked=that.checked});" />
+                      <input type="checkbox" id="rmct1" checked />
                       <label for="rmct1" i18n="CONTENT_ALL_TYPE">All Type</label>
                     </li><li>
-                      <input type="checkbox" id="rmct2" checked
-                             onclick="$$('#ruleEdit_matchContentType'+
-                                      ' input')[0].checked=false" />
+                      <input type="checkbox" id="rmct2" class="rmcts" checked />
                       <label for="rmct2" i18n="CONTENT_MAIN_FRAME"></label>
                     </li><li>
-                      <input type="checkbox" id="rmct3" checked
-                             onclick="$$('#ruleEdit_matchContentType'+
-                                      ' input')[0].checked=false" />
+                      <input type="checkbox" id="rmct3" class="rmcts" checked />
                       <label for="rmct3" i18n="CONTENT_SUB_FRAME"></label>
                     </li><li>
-                      <input type="checkbox" id="rmct4" checked
-                             onclick="$$('#ruleEdit_matchContentType'+
-                                      ' input')[0].checked=false" />
+                      <input type="checkbox" id="rmct4" class="rmcts" checked />
                       <label for="rmct4">CSS</label>
                     </li><li>
-                      <input type="checkbox" id="rmct5" checked
-                             onclick="$$('#ruleEdit_matchContentType'+
-                                      ' input')[0].checked=false" />
+                      <input type="checkbox" id="rmct5" class="rmcts" checked />
                       <label for="rmct5" i18n="CONTENT_SCRIPT"></label>
                     </li><li>
-                      <input type="checkbox" id="rmct6" checked
-                             onclick="$$('#ruleEdit_matchContentType'+
-                                      ' input')[0].checked=false" />
+                      <input type="checkbox" id="rmct6" class="rmcts" checked />
                       <label for="rmct6" i18n="CONTENT_IMAGE"></label>
                     </li><li>
-                      <input type="checkbox" id="rmct7" checked
-                             onclick="$$('#ruleEdit_matchContentType'+
-                                      ' input')[0].checked=false" />
+                      <input type="checkbox" id="rmct7" class="rmcts" checked />
                       <label for="rmct7" i18n="CONTENT_OBJECT"></label>
                     </li><li>
-                      <input type="checkbox" id="rmct8" checked
-                             onclick="$$('#ruleEdit_matchContentType'+
-                                      ' input')[0].checked=false" />
+                      <input type="checkbox" id="rmct8" class="rmcts" checked />
                       <label for="rmct8">XHR</label>
                     </li><li>
-                      <input type="checkbox" id="rmct9" checked
-                             onclick="$$('#ruleEdit_matchContentType'+
-                                      ' input')[0].checked=false" />
+                      <input type="checkbox" id="rmct9" class="rmcts" checked />
                       <label for="rmct9" i18n="CONTENT_OTHER"></label>
                     </li>
                   </ul>
@@ -407,8 +334,7 @@
               <section id="ruleEdit_sub">
                 <!-- Substitution -->
                 <h3 i18n="LBL_SUB"></h3>
-                <select id="ruleEdit_subtype"
-                        onchange="$v.ruleList.onChgSubType()">
+                <select id="ruleEdit_subtype">
                   <option selected="selected" i18n="TYPE_REGEXP">
                   </option>
                   <option i18n="TYPE_GLOB"></option>
@@ -440,10 +366,8 @@
               <!-- Save/Cancel buttons -->
               <section>
                 <div class="action-area">
-                  <input type="submit" i18n="value:BTN_SAVE"
-                         onclick="$v.ruleList.save()" />
-                  <input type="button" i18n="value:BTN_CANCEL"
-                         onclick="$v.ruleList.discard()" />
+                  <input type="button" id="ruleEdit-save" i18n="value:BTN_SAVE" />
+                  <input type="button" id="ruleEdit-discard" i18n="value:BTN_CANCEL" />
                 </div>
               </section>
             </form>
@@ -451,7 +375,7 @@
             <hr />
 
             <!-- Test form -->
-            <form onsubmit="return false;" autocomplete="off">
+            <form class="scroll-area" autocomplete="off">
               <section>
                 <details id="ruleEdit_test">
                   <summary i18n="LBL_TEST"></summary>
@@ -460,8 +384,7 @@
                          class="input-text"
                          i18n="placeholder:PH_TEST_URL" required />
                   <div class="action-area">
-                    <input type="submit" i18n="value:BTN_TEST"
-                           onclick="$v.ruleList.test()" />
+                    <input type="button" id="ruleEdit-test" i18n="value:BTN_TEST" />
                   </div>
                 </details>
               </section>
@@ -472,7 +395,7 @@
     </div>
 
     <!-- Notification layer -->
-    <div id="layerNotif" onclick="this.className=''">
+    <div id="layerNotif">
       <div  class="div-center">
         <div id="layerNotif_disp"></div>
       </div>

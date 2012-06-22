@@ -1,5 +1,10 @@
 {
-    "background_page": "html/background.html",
+    "manifest_version": 2,
+    "background": {
+        "scripts": ["/js/common.js", "/js/pref.js",
+                    "/js/rule.js", "/js/pageAction.js",
+                    "js/background.js"]
+    },
     "options_page": "html/options.html",
     "page_action": {
         "default_icon": "icons/icon_19.png",
@@ -16,6 +21,6 @@
                     "tabs", "contextMenus", "<all_urls>",
                     "notifications"],
     "default_locale": "en_US",
-    "version": "2.2.20.8",
-    "minimum_chrome_version": "17"
+    "version": "2.2.21",
+    "minimum_chrome_version": "18"
 }

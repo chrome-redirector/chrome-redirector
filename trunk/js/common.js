@@ -39,14 +39,6 @@ $c = function (element) {
     return document.createElement(element);
 };
 
-if ($c('a').click === undefined) { // Backward compatible with Cr 17/18
-    Element.prototype.click = function () {
-        var e = document.createEvent('MouseEvents');
-        e.initEvent('click', true, true);
-        this.dispatchEvent(e);
-    };
-}
-
 $v = {type: {}};                        // Global values set
 $f = {};                                // Global functions set
 

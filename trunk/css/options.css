@@ -154,8 +154,8 @@ details summary::-webkit-details-marker {
 #main-container {
     margin-start: -20px;
     -webkit-margin-start: -20px;
-    transition: margin 100ms, opacity 100ms;
-    -webkit-transition: margin 100ms, opacity 100ms;
+    transition: margin 5ms, opacity 5ms;
+    -webkit-transition: margin 5ms, opacity 5ms;
     bottom: 0;
     left: 0;
     position: absolute;
@@ -172,8 +172,6 @@ details summary::-webkit-details-marker {
     -webkit-margin-start: 0;
     transition: margin 200ms, opacity 200ms;
     -webkit-transition: margin 200ms, opacity 200ms;
-    transition-delay: 100ms;
-    -webkit-transition-delay: 100ms;
     z-index: 2;
 }
 
@@ -688,7 +686,7 @@ th:first-of-type:hover {
 #dbg_info {
     font-family: "DejaVu Sans Mono",monospace;
     width: 100%;
-    height: 40em;
+    height: 35em;
     margin-top: 1em;
     overflow: auto;
     border: 1px solid lightgray;
