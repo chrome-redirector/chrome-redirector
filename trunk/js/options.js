@@ -106,27 +106,23 @@ window.onload = function () {         // Option page init
         }, false);
 
     // Rules editor animation
-    $('overlay').addEventListener('click',  function (e) {
+    $e($('overlay'),  function (e) {
         if (e.srcElement.id === 'overlay') {
             e.target.classList.add('shake');
         }
-    }, false);
+    });
     var animationEndEvent = window.AnimationEnd ?
         'animationEnd' : 'webkitAnimationEnd'
     $('overlay').addEventListener(animationEndEvent, function (e) {
         e.target.classList.remove('shake');
-    }, false);
+    });
 
     // Rules list click event
-    $('ruleListTable').addEventListener(
-        "click", $v.ruleList.onSel.bind($v.ruleList), false);
+    $e($('ruleListTable'), $v.ruleList.onSel.bind($v.ruleList));
     // Rule changed event
-    $('ruleEdit').addEventListener(
-        "change",
-        function (e) {
-            $v.ruleList.chg = true;
-        },
-        false);
+    $e($('ruleEdit'), function (e) {
+        $v.ruleList.chg = true;
+    }, 'change');
 
     switch (location.search) {
     case '?1':
@@ -156,143 +152,121 @@ document.addEventListener('DOMContentLoaded', function () {
 
     // Navigation bar
     [].forEach.call($$('#navTags a'), function (link) {
-        link.addEventListener('click', switchNav);
+        $e(link, switchNav);
     });
 
-    // Toggle protocols
-    $('pref_proto_all').addEventListener('click', function () {
-        $v.pref.onChgProto("all").bind($v.pref);
-    });
-    $('pref_proto_http').addEventListener('click', function () {
-        $v.pref.onChgProto("http").bind($v.pref);
-    });
-    $('pref_proto_https').addEventListener('click', function () {
-        $v.pref.onChgProto("https").bind($v.pref);
-    });
-    $('pref_proto_ftp').addEventListener('click', function () {
-        $v.pref.onChgProto("ftp").bind($v.pref);
-    });
-    $('pref_proto_file').addEventListener('click', function () {
-        $v.pref.onChgProto("file").bind($v.pref);
+    // Toggle protocols, id fmt: pref_proto_<proto>
+    [].forEach.call($$('.pref-protos'), function (proto) {
+        $e(proto, function () {
+            $v.pref.onChgProto(proto.id.split('_')[2]).bind($v.pref);
+        });
     });
 
-    $('pref_context_link').addEventListener(
-        'click', $v.pref.onChgContext.bind($v.pref)
-    );
-    $('pref_context_page').addEventListener(
-        'click', $v.pref.onChgContext.bind($v.pref)
-    );
-    $('pref_prompt').addEventListener(
-        'click', $v.pref.onChgPrompt.bind($v.pref)
-    );
-    $('pref_pageAction').addEventListener(
-        'click', $v.pref.onChgPageAction.bind($v.pref)
-    );
-    $('ruleContextMenu').addEventListener('mouseover', function () {
+    [$('pref_context_link'), $('pref_context_page')].forEach(function (elem) {
+        $e(elem, $v.pref.onChgContext.bind($v.pref));
+    });
+    $e($('pref_prompt'), $v.pref.onChgPrompt.bind($v.pref));
+    $e($('pref_pageAction'), $v.pref.onChgPageAction.bind($v.pref));
+    $e($('ruleContextMenu'), function () {
         clearTimeout(this.timeOut)
-    });
-    $('ruleContextMenu').addEventListener('mouseout', function () {
+    }, 'mouseover');
+    $e($('ruleContextMenu'), function () {
         this.timeOut = setTimeout(
             function () {
                 $('ruleContextMenu').className = '';
             }, 1000
         );
-    });
+    }, 'mouseout');
 
-    $('ruleMgr-add').addEventListener('click', $v.ruleList.add);
-    $('ruleMgr-edit').addEventListener('click', $v.ruleList.edit);
-    $('ruleMgr-del').addEventListener('click', $v.ruleList.del);
-    $('ruleMgr-move_up').addEventListener('click', function () {
+    $e($('ruleMgr-add'), $v.ruleList.add);
+    $e($('ruleMgr-edit'), $v.ruleList.edit);
+    $e($('ruleMgr-del'), $v.ruleList.del);
+    $e($('ruleMgr-move_up'), function () {
         $v.ruleList.move(-1);
     });
-    $('ruleMgr-move_down').addEventListener('click', function () {
+    $e($('ruleMgr-move_down'), function () {
         $v.ruleList.move(1);
     });
 
     [].forEach.call($$('#scroll-area'), function (area) {
-        area.addEventListener('click', function () {
+        $e(area, function () {
             scroll(0, 0);
         });
     });
 
-    $('ruleList-bak').addEventListener('click', $v.ruleList.bak);
-    $('ruleList-restore').addEventListener('click', $v.ruleList.restore);
-    $('ruleList-export').addEventListener('click', function () {
+    $e($('ruleList-bak'), $v.ruleList.bak);
+    $e($('ruleList-restore'), $v.ruleList.restore);
+    $e($('ruleList-export'), function () {
         $v.ruleList.bak(true);
     });
-    $('ruleList-import').addEventListener('click', function () {
+    $e($('ruleList-import'), function () {
         $v.ruleList.restore(true);
     });
 
-    $('ruleList-remote-update').addEventListener('click', function () {
+    $e($('ruleList-remote-update'), function () {
         $v.ruleList.updateRemoteRule(true);
     });
-    $('ruleList-remote-del').addEventListener(
-        'click',
-        $v.ruleList.removeRemoteRule
-    );
+    $e($('ruleList-remote-del'), $v.ruleList.removeRemoteRule);
 
-    $('ruleListTable-new').addEventListener('click', function () {
+    $e($('ruleListTable-new'), function () {
         event.preventDefault();
         $v.ruleList.add();
         return false;
     });
 
-    $('dbg-form').addEventListener('submit', function () {
-        return false;
+    [].forEach.call($$('.form-nosubmit'), function (form) {
+        $e(form, function (e) {
+            e.preventDefault();
+        }, 'submit');
     });
 
-    $('dbg-chkbox-1').addEventListener('change', function () {
+    $e($('dbg-chkbox-1'), function () {
         $v.debugger.quiet = this.checked;
-    });
-    $('dbg-chkbox-2').addEventListener('change', function () {
+    }, 'change');
+    $e($('dbg-chkbox-2'), function () {
         $v.debugger.trackRedir = this.checked;
-    });
-    $('dbg-chkbox-3').addEventListener('change', function () {
+    }, 'change');
+    $e($('dbg-chkbox-3'), function () {
         $v.debugger.trackReqHdr = this.checked;
-    });
-    $('dbg-chkbox-4').addEventListener('change', function () {
+    }, 'change');
+    $e($('dbg-chkbox-4'), function () {
         $v.debugger.trackRespHdr = this.checked;
-    });
-    $('dbg-chkbox-5').addEventListener('change', function () {
+    }, 'change');
+    $e($('dbg-chkbox-5'), function () {
         $v.debugger.testSpeed = this.checked;
-    });
+    }, 'change');
 
-    $('dbg_start').addEventListener('click', function () {
+    $e($('dbg_start'), function () {
         $('dbg_start').hidden = true;
         $('dbg_stop').hidden = false;
         $v.debugger.start();
     });
-    $('dbg_stop').addEventListener('click', function () {
+    $e($('dbg_stop'), function () {
         $('dbg_stop').hidden = true;
         $('dbg_start').hidden = false;
         $v.debugger.stop();
     });
-    $('dbg_unfold').addEventListener('click', function () {
+    $e($('dbg_unfold'), function () {
         this.hidden = true;
         $('dbg_fold').hidden = false;
         $v.debugger.openDetails(true);
     });
-    $('dbg_fold').addEventListener('click', function () {
+    $e($('dbg_fold'), function () {
         this.hidden = true;
         $('dbg_unfold').hidden = false;
         $v.debugger.openDetails(false);
     });
-    $('dbg_clear').addEventListener('click', function () {
+    $e($('dbg_clear'), function () {
         $('dbg_unfold').hidden = true;
         $('dbg_fold').hidden = true;
         $('dbg_info').innerHTML = '';
     });
 
-    $('dbg-export').addEventListener('click', $v.debugger.export);
-    $('dbg-import').addEventListener('click', $v.debugger.import);
+    $e($('dbg-export'), $v.debugger.export);
+    $e($('dbg-import'), $v.debugger.import);
 
-    $('ruleEdit').addEventListener('click', function () {
-        return false;
-    });
-
-    $('ruleEdit_matchtype').addEventListener('click', $v.ruleList.onChgMatchType.bind($v.ruleList));
-    $('ruleEdit_matchContent').addEventListener('click', function () {
+    $e($('ruleEdit_matchtype'), $v.ruleList.onChgMatchType.bind($v.ruleList));
+    $e($('ruleEdit_matchContent'), function () {
         t = $('ruleEdit_matchContentType');
         if (t.style.display !== 'block') {
             t.style.display = 'block';
@@ -302,8 +276,9 @@ document.addEventListener('DOMContentLoaded', function () {
         }
     });
 
-    $('rmct1').addEventListener('click', function () {
-        that = this;[].forEach.call(
+    $e($('rmct1'), function () {
+        that = this;
+        [].forEach.call(
             $$('#ruleEdit_matchContentType input'),
             function (i){
                 i.checked = that.checked;
@@ -311,17 +286,17 @@ document.addEventListener('DOMContentLoaded', function () {
         );
     });
     [].forEach.call($$('#rmcts'), function (rmct) {
-        rmct.addEventListener('click', function () {
+        $e(rmct, function () {
             $$('#ruleEdit_matchContentType' + ' input')[0].checked = false;
         });
     });
 
-    $('ruleEdit_subtype').addEventListener('change', $v.ruleList.onChgSubType.bind($v.ruleList));
-    $('ruleEdit-save').addEventListener('click', $v.ruleList.save.bind($v.ruleList));
-    $('ruleEdit-discard').addEventListener('click', $v.ruleList.discard.bind($v.ruleList));
-
-    $('ruleEdit-test').addEventListener('click', $v.ruleList.test.bind($v.ruleList));
-    $('layerNotif').addEventListener('click', function () {
+    $e($('ruleEdit_subtype'), $v.ruleList.onChgSubType.bind($v.ruleList),
+       'change');
+    $e($('ruleEdit-save'), $v.ruleList.save.bind($v.ruleList));
+    $e($('ruleEdit-discard'), $v.ruleList.discard.bind($v.ruleList));
+    $e($('ruleEdit-test'), $v.ruleList.test.bind($v.ruleList));
+    $e($('layerNotif'), function () {
         this.className = '';
     });
 });

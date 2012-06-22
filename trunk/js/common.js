@@ -39,6 +39,13 @@ $c = function (element) {
     return document.createElement(element);
 };
 
+$e = function (target, listener, type) {
+    target.addEventListener(
+        type === undefined ? 'click' : type,
+        listener
+    );
+};
+
 $v = {type: {}};                        // Global values set
 $f = {};                                // Global functions set
 

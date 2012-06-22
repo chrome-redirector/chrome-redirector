@@ -67,19 +67,19 @@
           <section>
             <details>
               <summary>
-                <input type="checkbox" id="pref_proto_all" />
+                <input type="checkbox" id="pref_proto_all" class="pref-protos" />
                 <label i18n="PROTO_ALL" for="pref_proto_all">
                 </label><br />
               </summary>
 
               <section>
-                <input type="checkbox" id="pref_proto_http" />
+                <input type="checkbox" id="pref_proto_http" class="pref-protos" />
                 <label for="pref_proto_http">HTTP://</label><br />
-                <input type="checkbox" id="pref_proto_https" />
+                <input type="checkbox" id="pref_proto_https" class="pref-protos" />
                 <label for="pref_proto_https">HTTPS://</label><br />
-                <input type="checkbox" id="pref_proto_ftp" />
+                <input type="checkbox" id="pref_proto_ftp" class="pref-protos" />
                 <label for="pref_proto_ftp">FTP://</label><br />
-                <input type="checkbox" id="pref_proto_file" />
+                <input type="checkbox" id="pref_proto_file" class="pref-protos" />
                 <label for="pref_proto_file">FILE://</label><br />
               </section>
             </details>
@@ -189,7 +189,7 @@
         <div id="dbg" class="mainview">
           <h1 i18n="DBG_TITLE"></h1>
 
-          <form id="dbg-form">
+          <form class="form-nosubmit">
             <input type="url" id="dbg_url"
                    class="input-text"
                    i18n="placeholder:PH_DEBUG_URL" required />
@@ -268,7 +268,7 @@
               <h1 i18n="RULE_EDITOR"></h1>
             </section>
             <!-- Main form -->
-            <form id="ruleEdit" autocomplete="off">
+            <form id="ruleEdit" class="form-nosubmit" autocomplete="off">
               <section id="ruleEdit_name">
                 <!-- Rule name -->
                 <h3 i18n="LBL_NAME"></h3>
@@ -366,7 +366,7 @@
               <!-- Save/Cancel buttons -->
               <section>
                 <div class="action-area">
-                  <input type="button" id="ruleEdit-save" i18n="value:BTN_SAVE" />
+                  <input type="submit" id="ruleEdit-save" i18n="value:BTN_SAVE" />
                   <input type="button" id="ruleEdit-discard" i18n="value:BTN_CANCEL" />
                 </div>
               </section>
@@ -375,7 +375,7 @@
             <hr />
 
             <!-- Test form -->
-            <form class="scroll-area" autocomplete="off">
+            <form class="scroll-area form-nosubmit" autocomplete="off">
               <section>
                 <details id="ruleEdit_test">
                   <summary i18n="LBL_TEST"></summary>
