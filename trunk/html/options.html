@@ -140,16 +140,14 @@
               </p><p>
                 <input type="button" id="ruleList-restore"
                        i18n="value:BTN_RESTORE;title:BTN_RESTORE_TITLE" />
-                <input type="file" id="ruleEdit_restoreFile"
-                       accept="text/plain" />
+                <input type="file" id="ruleEdit_restoreFile" accept="text/*" />
               </p><p>
                 <input type="button" id="ruleList-export"
                        i18n="value:BTN_EXPORT;title:BTN_EXPORT_TITLE" />
               </p><p>
                 <input type="button" id="ruleList-import"
                        i18n="value:BTN_IMPORT;title:BTN_IMPORT_TITLE" />
-                <input type="file" id="ruleEdit_appendFile"
-                       accept="text/plain" />
+                <input type="file" id="ruleEdit_appendFile" accept="text/*" />
               </p>
               <!-- Remote rules -->
               <details class="scroll-area">
@@ -205,8 +203,7 @@
             <label i18n="DBG_TEST_SPEED" for="dbg-chkbox-5"></label>
 
             <div class="action-area">
-              <input type="button" id="dbg_start"
-                     i18n="value:BTN_DBG_START" />
+              <input type="submit" id="dbg_start" i18n="value:BTN_DBG_START" />
               <input type="button" id="dbg_stop" hidden="true"
                      i18n="value:BTN_DBG_STOP" />
               <input type="button" id="dbg_unfold" hidden="true"

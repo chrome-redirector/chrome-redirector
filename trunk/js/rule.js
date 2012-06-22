@@ -56,8 +56,9 @@ RuleList.prototype.attachEventListener = function () {
             $('ruleContextMenu').style.marginTop = e.pageY + 'px';
             $('ruleContextMenu').className = 'show';
             clearTimeout($('ruleContextMenu').timeOut);
-            $('ruleContextMenu').timeOut =
-                setTimeout("$('ruleContextMenu').className = null", 1000);
+            $('ruleContextMenu').timeOut = setTimeout(function () {
+                $('ruleContextMenu').className = null;
+            }, 1000);
 
             e.preventDefault();
             return false;

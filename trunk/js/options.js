@@ -67,7 +67,7 @@ window.onload = function () {         // Option page init
     $f.applyI18n();             // Apply i18n messages
 
     // Rulelist navigation
-    $$('body')[0].addEventListener('keydown', function (e) {
+    $e($$('body')[0], function (e) {
         if ($$('#ruleMgr:target').length === 0 ||
             $$('#overlay:hover').length > 0 ||
             $$('#navBar:hover').length > 0) {
@@ -92,18 +92,16 @@ window.onload = function () {         // Option page init
 
         e.preventDefault();
         return false;
-    });
+    }, 'keydown');
 
     // Navigation bar (work with switchNav)
     var transitionEndEvent = window.TransitionEvent ?
         'transitionEnd' : 'webkitTransitionEnd';
-    $('main-container').addEventListener(
-        transitionEndEvent,
-        function (e) {           // Fade in
-            $('main-container').className = '';
-            $('main-container').style.margin = '0 0';
-            $('main-container').style.opacity = 1;
-        }, false);
+    $e($('main-container'), function (e) { // Fade in
+        $('main-container').className = '';
+        $('main-container').style.margin = '0 0';
+        $('main-container').style.opacity = 1;
+    }, transitionEndEvent);
 
     // Rules editor animation
     $e($('overlay'),  function (e) {
@@ -113,9 +111,9 @@ window.onload = function () {         // Option page init
     });
     var animationEndEvent = window.AnimationEnd ?
         'animationEnd' : 'webkitAnimationEnd'
-    $('overlay').addEventListener(animationEndEvent, function (e) {
+    $e($('overlay'), function (e) {
         e.target.classList.remove('shake');
-    });
+    }, animationEndEvent);
 
     // Rules list click event
     $e($('ruleListTable'), $v.ruleList.onSel.bind($v.ruleList));
@@ -148,7 +146,7 @@ document.addEventListener('DOMContentLoaded', function () {
     $v.pref = new Pref();         // Preferences obj
     $v.ruleList = new RuleList(); // Rules list obj
     $v.debugger = new Debugger(); // Debugger obj
-    $v.pref.onChgPrompt();      // Will create prompts objs
+    $v.pref.onChgPrompt();        // Will create prompts objs
 
     // Navigation bar
     [].forEach.call($$('#navTags a'), function (link) {
@@ -158,7 +156,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Toggle protocols, id fmt: pref_proto_<proto>
     [].forEach.call($$('.pref-protos'), function (proto) {
         $e(proto, function () {
-            $v.pref.onChgProto(proto.id.split('_')[2]).bind($v.pref);
+            $v.pref.onChgProto(proto.id.split('_')[2]);
         });
     });
 
@@ -168,19 +166,17 @@ document.addEventListener('DOMContentLoaded', function () {
     $e($('pref_prompt'), $v.pref.onChgPrompt.bind($v.pref));
     $e($('pref_pageAction'), $v.pref.onChgPageAction.bind($v.pref));
     $e($('ruleContextMenu'), function () {
-        clearTimeout(this.timeOut)
+        clearTimeout(this.timeOut);
     }, 'mouseover');
     $e($('ruleContextMenu'), function () {
-        this.timeOut = setTimeout(
-            function () {
-                $('ruleContextMenu').className = '';
-            }, 1000
-        );
+        this.timeOut = setTimeout(function () {
+            $('ruleContextMenu').className = '';
+        }, 1000);
     }, 'mouseout');
 
-    $e($('ruleMgr-add'), $v.ruleList.add);
-    $e($('ruleMgr-edit'), $v.ruleList.edit);
-    $e($('ruleMgr-del'), $v.ruleList.del);
+    $e($('ruleMgr-add'), $v.ruleList.add.bind($v.ruleList));
+    $e($('ruleMgr-edit'), $v.ruleList.edit.bind($v.ruleList));
+    $e($('ruleMgr-del'), $v.ruleList.del.bind($v.ruleList));
     $e($('ruleMgr-move_up'), function () {
         $v.ruleList.move(-1);
     });
@@ -194,8 +190,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    $e($('ruleList-bak'), $v.ruleList.bak);
-    $e($('ruleList-restore'), $v.ruleList.restore);
+    $e($('ruleList-bak'), function () {$v.ruleList.bak();});
+    $e($('ruleList-restore'), function () {$v.ruleList.restore();});
     $e($('ruleList-export'), function () {
         $v.ruleList.bak(true);
     });
@@ -206,7 +202,8 @@ document.addEventListener('DOMContentLoaded', function () {
     $e($('ruleList-remote-update'), function () {
         $v.ruleList.updateRemoteRule(true);
     });
-    $e($('ruleList-remote-del'), $v.ruleList.removeRemoteRule);
+    $e($('ruleList-remote-del'),
+       $v.ruleList.removeRemoteRule.bind($v.ruleList));
 
     $e($('ruleListTable-new'), function () {
         event.preventDefault();

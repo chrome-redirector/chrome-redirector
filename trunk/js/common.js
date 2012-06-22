@@ -49,6 +49,15 @@ $e = function (target, listener, type) {
 $v = {type: {}};                        // Global values set
 $f = {};                                // Global functions set
 
+// For Cr18 backward compatibility
+if ($c('a').click === undefined) {
+    Element.prototype.click = function () {
+        var e = document.createEvent('MouseEvents');
+        e.initEvent('click', true, true);
+        this.dispatchEvent(e);
+    };
+}
+
 $v.type.regexp = 0;
 $v.type.glob = 1;
 $v.type.manual = $v.type.block = 2;
@@ -290,7 +299,15 @@ $f.writeFile = function (file, content) {
     var link = $c('a'); // Tmp link
     link.href = URL.createObjectURL(
         blob.getBlob('application/force-download'));
-
     link.download = file;
     link.click();               // Simulate mouse click to download
+
+    /* BlobBuilder() is deprecated!
+     * Switch to Blob() when Cr21 is widely used
+     */
+    // var blob = new Blob([content], {type: 'application/force-download'});
+    // var link = $c('a'); // Tmp link
+    // link.href = URL.createObjectURL(blob);
+    // link.download = file;
+    // link.click();               // Simulate mouse click to download
 };
