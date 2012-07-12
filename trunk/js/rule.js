@@ -141,7 +141,7 @@ RuleList.prototype.add = function () { // Add a rule
 };
 
 RuleList.prototype.del = function () { // Delete a rule
-    if (this.sel === undefined) {
+    if (this.sel === undefined || !confirm($i18n('RULELIST_DEL_RULE'))) {
         return;
     }
 

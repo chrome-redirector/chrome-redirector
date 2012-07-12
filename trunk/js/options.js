@@ -71,7 +71,7 @@ window.onload = function () {         // Option page init
         if ($$('#ruleMgr:target').length === 0 ||
             $$('#overlay:hover').length > 0 ||
             $$('#navBar:hover').length > 0) {
-            return;
+            return true;
         }
 
         switch (e.keyCode) {
@@ -87,7 +87,7 @@ window.onload = function () {         // Option page init
         case 13:                // Enter
             $v.ruleList.edit();
         default:
-            return;
+            return true;
         }
 
         e.preventDefault();
@@ -110,7 +110,7 @@ window.onload = function () {         // Option page init
         }
     });
     var animationEndEvent = window.AnimationEnd ?
-        'animationEnd' : 'webkitAnimationEnd'
+        'animationEnd' : 'webkitAnimationEnd';
     $e($('overlay'), function (e) {
         e.target.classList.remove('shake');
     }, animationEndEvent);
@@ -264,7 +264,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     $e($('ruleEdit_matchtype'), $v.ruleList.onChgMatchType.bind($v.ruleList));
     $e($('ruleEdit_matchContent'), function () {
-        t = $('ruleEdit_matchContentType');
+        var t = $('ruleEdit_matchContentType');
         if (t.style.display !== 'block') {
             t.style.display = 'block';
             t.style.left = this.offsetLeft + 'px';
@@ -274,7 +274,7 @@ document.addEventListener('DOMContentLoaded', function () {
     });
 
     $e($('rmct1'), function () {
-        that = this;
+        var that = this;
         [].forEach.call(
             $$('#ruleEdit_matchContentType input'),
             function (i){
