@@ -29,7 +29,7 @@ Pref = function () {            // Obj holds preferences data/method
     } catch (e) {
         this.data = {           // Default settings
             proto: {all: true},
-            context: {link: true, page: true},
+            context: {disabled: false, link: true, page: true},
             prompt: true
         };
     }
@@ -57,6 +57,7 @@ Pref = function () {            // Obj holds preferences data/method
     } catch (e) {}
 
     try {                       // Load manual redirection pref to UI
+        $('pref_context_all').checked = this.data.context.disabled;
         $('pref_context_link').checked = this.data.context.link;
         $('pref_context_page').checked = this.data.context.page;
     } catch (e) {}
@@ -95,6 +96,10 @@ Pref.prototype.onChgProto = function (proto) { // On protocols changed
 Pref.prototype.onChgContext = function () { // On manual setting chged
     this.data.context.link = $('pref_context_link').checked;
     this.data.context.page = $('pref_context_page').checked;
+
+    this.data.context.disabled =
+        $('pref_context_link').disabled = $('pref_context_page').disabled
+        = $('pref_context_all').checked;
 
     this.refresh();
     $v.ext_bg.updateContext();

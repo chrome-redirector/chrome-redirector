@@ -11,6 +11,7 @@
     "PROTO_TITLE": {"message": "允许的协议"},
     "PROTO_ALL": {"message": "所有支持的协议"},
     "CONTEXT_TITLE": {"message": "手动重定向"},
+    "CONTEXT_ALL": {"message": "禁用右键菜单"},
     "CONTEXT_LINK": {"message": "链接／图片右键菜单"},
     "CONTEXT_PAGE": {"message": "页面右键菜单"},
     "PROMPT": {"message": "输入提示(Beta)"},

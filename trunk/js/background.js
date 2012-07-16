@@ -141,10 +141,6 @@ var loadPref = function () {         // Load preferences data
 
 var updateContext = function () { // Update the context menu
     var onClick = function (info, tab, rule) {
-        // var rule = $v.ruleManual[
-        //     info.menuItemId - info.parentMenuItemId
-        // ];
-
         var func = function (tab) {
             $v.treated[tab.id] = true;
             updatePageAction({tabId: tab.id, manual: true});
@@ -166,6 +162,10 @@ var updateContext = function () { // Update the context menu
     };
 
     chrome.contextMenus.removeAll(); // Remove previous menus
+    // Return if context menu is totally disabled
+    if ($v.prefData.context.disabled === true) {
+        return;
+    }
 
     if ($v.status === true && $v.ruleManual.length > 0) {
         if ($v.prefData.context.link) { // Links' context menu enabled

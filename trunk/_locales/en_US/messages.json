@@ -11,6 +11,7 @@
     "PROTO_TITLE": {"message": "Enabled Protocols"},
     "PROTO_ALL": {"message": "All supported protocols"},
     "CONTEXT_TITLE": {"message": "Manual Redirection"},
+    "CONTEXT_ALL": {"message": "Disable context menu"},
     "CONTEXT_LINK": {"message": "Enable context menu for Links/images"},
     "CONTEXT_PAGE": {"message": "Enable context menu for Pages"},
     "PROMPT": {"message": "Input Prompts (Beta)"},

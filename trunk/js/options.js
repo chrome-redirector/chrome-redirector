@@ -160,7 +160,8 @@ document.addEventListener('DOMContentLoaded', function () {
         });
     });
 
-    [$('pref_context_link'), $('pref_context_page')].forEach(function (elem) {
+    [$('pref_context_all'), $('pref_context_link'), $('pref_context_page')
+    ].forEach(function (elem) {
         $e(elem, $v.pref.onChgContext.bind($v.pref));
     });
     $e($('pref_prompt'), $v.pref.onChgPrompt.bind($v.pref));

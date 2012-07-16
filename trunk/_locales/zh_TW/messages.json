@@ -11,6 +11,7 @@
     "PROTO_TITLE": {"message": "允許的協定"},
     "PROTO_ALL": {"message": "所有支援的協定"},
     "CONTEXT_TITLE": {"message": "手動重定向"},
+    "CONTEXT_ALL": {"message": "禁用右鍵選單"},
     "CONTEXT_LINK": {"message": "連結／圖片右鍵選單"},
     "CONTEXT_PAGE": {"message": "頁面右鍵選單"},
     "PROMPT": {"message": "輸入提示(Beta)"},
