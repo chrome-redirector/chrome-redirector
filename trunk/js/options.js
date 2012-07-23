@@ -81,7 +81,7 @@ window.onload = function () {         // Option page init
         case 40: case 74:       // Down/j
             $v.ruleList.move(1);
             break;
-        case 46:                // Delete
+        case 46: case 88:       // Delete/x
             $v.ruleList.del();
             break;
         case 13:                // Enter

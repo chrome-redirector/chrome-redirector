@@ -85,7 +85,7 @@
     "BTN_UPDATE": {"message": "更新"},
     "RULELIST_REMOTE": {"message": "远程规则"},
 
-    "RULELIST_USAGE": {"message": "用法:\n编辑：<ENTER>或双击\n删除：<DEL>\n调整优先级：j/k或方向键或拖拽\n取消选择：点击标题栏\n杂项：右键菜单"},
+    "RULELIST_USAGE": {"message": "用法:\n编辑：<ENTER>或双击\n删除：x或<DEL>（PC）\n调整优先级：j/k或方向键或拖拽\n取消选择：点击标题栏\n杂项：右键菜单"},
     "RULELIST_REMOTE_WARN": {"message": "不建议使用！仅添加信任的源！\n远程规则将自动更新。"},
     "RULELIST_REMOTE_FAIL": {"message": "无法获取远程规则!"},
     "RULELIST_DEL_RULE": {"message": "确定删除此规则？"},

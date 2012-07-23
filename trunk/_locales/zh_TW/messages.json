@@ -85,7 +85,7 @@
     "BTN_UPDATE": {"message": "更新"},
     "RULELIST_REMOTE": {"message": "遠程規則"},
 
-    "RULELIST_USAGE": {"message": "用法:\n編輯：<ENTER>或雙擊\n刪除：<DEL>\n調整優先級：j/k或方向鍵或拖拉\n取消選擇：點擊標題欄\n雜項：右鍵選單"},
+    "RULELIST_USAGE": {"message": "用法:\n編輯：<ENTER>或雙擊\n刪除：x或<DEL>（PC）\n調整優先級：j/k或方向鍵或拖拉\n取消選擇：點擊標題欄\n雜項：右鍵選單"},
     "RULELIST_REMOTE_WARN": {"message": "不建議使用！僅添加信任的源！\n遠程規則將自動更新。"},
     "RULELIST_REMOTE_FAIL": {"message": "無法獲取遠程規則!"},
     "RULELIST_DEL_RULE": {"message": "確定刪除此規則？"},

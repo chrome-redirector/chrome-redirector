@@ -85,7 +85,7 @@
     "BTN_UPDATE": {"message": "Update"},
     "RULELIST_REMOTE": {"message": "Remote Rules"},
 
-    "RULELIST_USAGE": {"message": "Usage:\nEdit: <ENTER> OR double click\nDelete: <DEL>\nAdjust Priority: j/k, arrow keys OR drag\nDeselect: click on the tittle bar\nMisc: context menu"},
+    "RULELIST_USAGE": {"message": "Usage:\nEdit: <ENTER> OR double click\nDelete: x OR <DEL>(PC)\nAdjust Priority: j/k, arrow keys OR drag\nDeselect: click on the tittle bar\nMisc: context menu"},
     "RULELIST_REMOTE_WARN": {"message": "Deprecated! Only add a source you trust!\nRemote rules are to be updated automatically."},
     "RULELIST_REMOTE_FAIL": {"message": "Failed to retrieve remote rules!"},
     "RULELIST_DEL_RULE": {"message": "Are you sure to delete this rule?"},
