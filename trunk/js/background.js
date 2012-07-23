@@ -394,7 +394,7 @@ var loadRule = function (info, dryRun) { // Called when rule list needs update
             if (! tmp.match.hasOwnProperty('global')) {
                 return tmp.match.toString();
             }
-            if (! tmp.sub.hasOwnProperty('global')) {
+            if (tmp.sub !== null && ! tmp.sub.hasOwnProperty('global')) {
                 return tmp.sub.toString();
             }
         } catch (e) {

@@ -130,7 +130,7 @@ $f.str2re = function (proto) {  // Construct compiled regexp from str
     if (proto.hasOwnProperty('type')) {
         switch (proto.type) {
         case $v.type.block:
-            return;
+            return null;
         case $v.type.glob:
             str = $f.glob2re(str);
             break;
