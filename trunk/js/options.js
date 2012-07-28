@@ -260,8 +260,8 @@ document.addEventListener('DOMContentLoaded', function () {
         $('dbg_info').innerHTML = '';
     });
 
-    $e($('dbg-export'), $v.debugger.export);
-    $e($('dbg-import'), $v.debugger.import);
+    $e($('dbg-export'), $v.debugger.export.bind($v.debugger));
+    $e($('dbg-import'), $v.debugger.import.bind($v.debugger));
 
     $e($('ruleEdit_matchtype'), $v.ruleList.onChgMatchType.bind($v.ruleList));
     $e($('ruleEdit_matchContent'), function () {

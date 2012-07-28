@@ -144,7 +144,14 @@ Debugger.prototype.trimHdr = function (Hdr) {
 
         tmp += '<details style="margin-left:1em;">' +
             '<summary>' + hdr.name + '</summary>' +
-            hdr.value + '</details>';
+            hdr.value.replace(
+                    /&/g, "&amp;"
+            ).replace(
+                    />/g, "&gt;"
+            ).replace(
+                    /</g, "&lt;"
+            ).replace(/"/g, "&quot;")
+            + '</details>';
     }
 
     return '<details><summary>HDR:</summary>' +
@@ -497,7 +504,7 @@ Debugger.prototype.import = function () {
 
         try {
             $('dbg_info').innerHTML = data;
-            $('dbg_fold').onclick();
+            $('dbg_fold').click();
         } catch (e) {
             $f.err($i18n('DBG_IMPORT_ERR'));
         }
