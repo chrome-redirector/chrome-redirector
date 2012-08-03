@@ -487,7 +487,7 @@ var onInit = function (debug) {
 };
 
 var getSyncData = function () {
-    chrome.storage.sync.get(null, function (items) {
+    chrome.storage && chrome.storage.sync.get(null, function (items) {
         if (Object.keys(items).length === 0) {
             return;
         }

@@ -588,8 +588,10 @@ RuleList.prototype.refresh = function (force) { // Refresh the list
         }
     }
 
-    chrome.storage.sync.set({RULELIST: this.data,
-                             REMOTE: this.data.remoteRuleUrl});
+    chrome.storage && chrome.storage.sync.set({
+        RULELIST: this.data,
+        REMOTE: this.data.remoteRuleUrl
+    });
     localStorage.RULELIST = JSON.stringify(this.data);
     localStorage.REMOTE = JSON.stringify(this.data.remoteRuleUrl);
     if (typeof $v.ext_bg !== 'undefined') {
