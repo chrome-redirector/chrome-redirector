@@ -486,12 +486,27 @@ var onInit = function (debug) {
     }
 };
 
+var getSyncData = function () {
+    chrome.storage.sync.get(null, function (items) {
+        if (Object.keys(items).length === 0) {
+            return;
+        }
+        ['REMOTE', 'RULELIST'].forEach(function (key) {
+             if (items.hasOwnProperty(key)) {
+                 localStorage[key] = JSON.stringify(items[key]);
+             }
+         });
+        onInit();
+    });
+};
+
+getSyncData();                  // Get synchronized data
 onInit();                       // Initialize
 
 try {                           // First installation
     JSON.parse(localStorage.VERSION);
 } catch (e) {
-    localStorage.VERSION =
-        JSON.stringify(chrome.app.getDetails().version);
+    var version = chrome.app.getDetails().version;
+    localStorage.VERSION = JSON.stringify(version);
     $f.openOptions();
 }

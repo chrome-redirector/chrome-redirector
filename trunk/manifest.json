@@ -19,8 +19,8 @@
     "description": "__MSG_DESCRIPTION__",
     "permissions": ["webRequest", "webRequestBlocking",
                     "tabs", "contextMenus", "<all_urls>",
-                    "notifications"],
+                    "notifications", "storage"],
     "default_locale": "en_US",
-    "version": "2.2.21.5",
+    "version": "2.2.22",
     "minimum_chrome_version": "18"
 }
