@@ -1,0 +1,120 @@
+body {
+    background: #000;
+    font-size: small;
+    user-select: none;
+    -webkit-user-select: none;
+}
+h5 {
+    margin-top: 5px;
+    margin-bottom: 1px;
+}
+ul {
+    list-style: none;
+}
+
+/* Form related */
+form {
+    margin-bottom: 1ex;
+}
+input:not([type]), input[type="text"], input[type="url"], textarea, .ui-combobox {
+    font-family: "DejaVu Sans Mono", monospace!important;
+    margin-left: -1px;
+}
+input:not([type]):not(.ui-combobox-input), input[type="text"], input[type="url"] {
+    width: 70%;
+    padding: 0.5em 0;
+}
+textarea {
+    width: 70%;
+    height: 100px;
+    resize: none;
+}
+input[type="url"] {
+    margin-bottom: 40px;  /* Make place for URL validation message */
+}
+.button-test {
+    padding-bottom: 2px;
+    margin-left: -0.4em!important;
+}
+
+/* Scrollbar (temporary design) */
+::scrollbar,::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+::scrollbar-track,::-webkit-scrollbar-track {
+    background-color: #aaa;
+    border-radius: 5px;
+}
+::scrollbar-thumb,::-webkit-scrollbar-thumb {
+    background-color: #444;
+    border-radius: 5px;
+}
+::scrollbar-thumb:hover,::-webkit-scrollbar-thumb:hover {
+    background-color: #17a;
+}
+
+/* Floating toolbar */
+#floating-toolbar {
+    position: fixed!important;
+    background-color: #000;
+    top: 0;
+    left: 50%;
+    margin-left: -150px;
+    padding: 8px;
+    padding-right: 13px;
+    z-index: 11;
+}
+
+/* Selectable & draggable */
+.selectable-draggable-list {
+    padding: 0;
+    color: #000;
+}
+.selectable-draggable-list li {
+    background: #fff;
+    position: relative;
+    margin: 1px 0;
+    padding: 1px;
+    border: 2px solid gray;
+    padding-left: 32px;
+}
+.selectable-draggable-list li .rule-handle {
+    background: #f8f8f8;
+    position: absolute;
+    left: 0;
+    top: 0;
+    bottom: 0;
+    padding: 3px;
+}
+.selectable-draggable-list .ui-selecting {
+    /* background: #ffa; */
+    background: #2bf;
+}
+.selectable-draggable-list .ui-selected {
+    /* background: #ff0; */
+    background: #09d;
+}
+
+/* Combobox */
+.ui-autocomplete {
+    max-height: 30ex;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding-right: 5px;
+}
+.ui-combobox {
+    position: relative;
+    display: inline-block;
+}
+.ui-combobox-toggle {
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    margin-left: -1px;
+    padding: 0;
+}
+.ui-combobox-input {
+    margin: 0;
+    padding: 0.3em;
+}
