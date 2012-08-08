@@ -19,6 +19,7 @@
                   "webRequest",
                   "webRequestBlocking",
                   "storage",
+                  "contextMenus",
                   "<all_urls>"],
   "version": "2.9.0.0"
 }

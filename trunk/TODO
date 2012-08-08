@@ -1,0 +1,9 @@
+Aug 8, 2012 by Cyril Feng:
+* Actions collision detection
+   Classifid in types:
+   - redirect
+   1. Only actions of type regexp or wildcard may coexist.
+   2. Make sure actions of manual redirection rules are of type regexp or wildcard
+   - request_header & response_header
+      More complex here, some headers are not available to Redirector,
+      where others may collide.
