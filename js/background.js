@@ -16,7 +16,7 @@ window.redirector_background_js = {
 (function () {
   var namespace = window.redirector_background_js;
   chrome.storage.local.get(null, function (items) {
-    /* Settings data */
+    /* Settings */
     namespace.urls_filter = fallback(items.urls_filter, ['<all_urls>']);
     /* Rules */
     initFastMatchingRules(items.fast_matching);
@@ -24,6 +24,8 @@ window.redirector_background_js = {
     initRequestHeaderRules(items.request_header);
     initResponseHeaderRules(items.response_header);
     initOnlineRules(items.online);
+    /* Other */
+    initContextMenus();
   });
 })();
 
@@ -35,7 +37,7 @@ chrome.runtime.onInstalled.addListener(function() {
 });
 
 /**
- * Reload rules when storage changed
+ * Reinitialize the related part when storage changed
  */
 chrome.storage.onChanged.addListener(function (changes, namespace) {
   if (namespace !== 'local') {
@@ -54,6 +56,8 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
       break;
     case 'redirect':
       initRedirectRules(value);
+      // Manual rules may change
+      initContextMenus();
       break;
     case 'request_header':
       initRequestHeaderRules(value);
@@ -66,6 +70,12 @@ chrome.storage.onChanged.addListener(function (changes, namespace) {
       break;
     case 'enabled_protocols':
       window.redirector_background_js.urls_filter = value;
+      break;
+    case 'context_enabled':
+      chrome.contextMenus.removeAll();
+      if (fallback(value, true) === true) {
+        initContextMenus();
+      }
       break;
     default:
       console.log('Not implemented: ' + key);
@@ -229,7 +239,6 @@ function initRedirectRules(rules) {
     }
     var auto_rule = {conditions: [], actions: []};
     var manual_rule = {actions: []};
-    var is_manual_rule = false;
     rule.conditions.forEach(function (condition) {
       var resource_type = condition.resource_type;
       var obj;
@@ -249,14 +258,15 @@ function initRedirectRules(rules) {
         auto_rule.conditions.push(obj);
         break;
       case 'manual':
-        is_manual_rule = true;
+        manual_rule.name = rule.name; // Name defined => is a manual rule
         break;
       default:
         assertError(false, new Error());
       }
     });
     rule.actions.forEach(function (action) {
-      var rule_actions = (is_manual_rule ? manual_rule : auto_rule).actions;
+      var rule_actions = (manual_rule.name !== undefined ?
+                          manual_rule : auto_rule).actions;
       switch (action.type) {
       case 'redirect_regexp':
         rule_actions.push({
@@ -277,16 +287,20 @@ function initRedirectRules(rules) {
         rule_actions.push({to: action.to});
         break;
       case 'redirect_to_transparent':
-        // TODO
+        // Redirect to png (1x1)
+        rule_actions.push({
+          to: 'data:image/png;base64,\
+iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg=='
+        });
         break;
       case 'redirect_to_empty':
-        // TODO
+        rule_actions.push({to: 'data:text/html,'});
         break;
       default:
         assertError(false, new Error());
       }
     });
-    if (is_manual_rule) {
+    if (manual_rule.name !== undefined) {
       manual.push(manual_rule);
     } else {
       redirect.push(auto_rule);
@@ -418,6 +432,74 @@ function initResponseHeaderRules(rules) {
  */
 function initOnlineRules(rules) {
   // TODO
+}
+
+/**
+ * Initialize context menu functionality (manual redirection, etc)
+ */
+function initContextMenus() {
+  var manual = window.redirector_background_js.rule_lists.manual;
+  if (manual.length > 0) {
+    /* Menu entries for manual redirection */
+    chrome.storage.local.get('manual_methods', function (items) {
+      /* Link manual redirection */
+      if (items.manual_methods.indexOf('link') !== -1) {
+        var parent_entry = chrome.contextMenus.create({
+          title: 'Open link in new tab with this rule...',
+          contexts: ['link', 'image']
+        });
+        /* Create sub-entries */
+        manual.forEach(function (rule) {
+          chrome.contextMenus.create({
+            title: rule.name,
+            contexts: ['link', 'image'],
+            parentId: parent_entry,
+            onclick: function (info, tab) {
+              var url;
+              if (info.srcUrl !== undefined) {
+                url = info.srcUrl;
+              } else if (info.linkUrl !== undefined) {
+                url = info.linkUrl;
+              } else {
+                assertError(false, new Error());
+              }
+              rule.actions.forEach(function (action) {
+                url = url.replace(action.from, action.to);
+              });
+              chrome.tabs.create({url: url});
+            }
+          });
+        });
+      }
+      /* Page manual redirection */
+      if (items.manual_methods.indexOf('page') !== -1) {
+        var parent_entry = chrome.contextMenus.create({
+          title: 'Reload page with this rule...',
+          contexts: ['page', 'frame']
+        });
+        /* Create sub-entries */
+        manual.forEach(function (rule) {
+          chrome.contextMenus.create({
+            title: rule.name,
+            contexts: ['page', 'frame'],
+            parentId: parent_entry,
+            onclick: function (info, tab) {
+              var url;
+              if (info.pageUrl !== undefined) {
+                url = info.pageUrl;
+              } else {
+                assertError(false, new Error());
+              }
+              rule.actions.forEach(function (action) {
+                url = url.replace(action.from, action.to);
+              });
+              chrome.tabs.update(tab.id, {url: url});
+            }
+          });
+        });
+      }
+    });
+  }
 }
 
 /**

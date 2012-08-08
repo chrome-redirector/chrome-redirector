@@ -437,32 +437,48 @@ function initButtons() {
       $selected.remove();
     }
   });
-  /* Redirect action type */
-  $('#action-editor-redirect [name="type"]').click(function () {
-    var from = $('#action-editor-redirect [name="from"]');
-    var to = $('#action-editor-redirect [name="to"]');
+  /* Condition type selection */
+  $('#condition-editor-normal [name="type"]').click(function () {
+    var $value = $('#condition-editor-normal [name="value"]');
     switch ($(this).data('type')) {
-    case 'redirect_regexp':
-    case 'redirect_wildcard':
-      from.prop('disabled', false);
-      to.prop('disabled', false);
+    case 'regexp':
+    case 'wildcard':
+      $value.prop('disabled', false);
       break;
-    case 'redirect_cancel':
-    case 'redirect_to_transparent':
-    case 'redirect_to_empty':
-      from.prop('disabled', true);
-      to.prop('disabled', true);
-      break;
-    case 'redirect_to':
-      from.prop('disabled', true);
-      to.prop('disabled', false);
+    case 'manual':
+      $value.prop('disabled', true);
       break;
     default:
       assertError(false, new Error());
     }
   });
+  /* Redirect action type selection */
+  $('#action-editor-redirect [name="type"]').click(function () {
+    var $form = $('#action-editor-redirect [name="from"]');
+    var $to = $('#action-editor-redirect [name="to"]');
+    switch ($(this).data('type')) {
+    case 'redirect_regexp':
+    case 'redirect_wildcard':
+      $form.prop('disabled', false);
+      $to.prop('disabled', false);
+      break;
+    case 'redirect_cancel':
+    case 'redirect_to_transparent':
+    case 'redirect_to_empty':
+      $form.prop('disabled', true);
+      $to.prop('disabled', true);
+      break;
+    case 'redirect_to':
+      $form.prop('disabled', true);
+      $to.prop('disabled', false);
+      break;
+    default:
+      assertError(false, new Error());
+    }
+  });
+  /* Request header type selection */
   $('#action-editor-request_header [name="type"]').click(function () {
-    var value = $('#action-editor-request_header [name="value"]');
+    var $value = $('#action-editor-request_header [name="value"]');
     switch ($(this).data('type')) {
     case 'request_header_set':
       $value.prop('disabled', false);
