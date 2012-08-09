@@ -107,7 +107,12 @@ function initDialogs() {
         click: function () {
           switch ($(this).prop('id')) {
           case 'rule-editor':
-            saveRule($(this));
+            try {
+              saveRule($(this));
+            } catch (x) {
+              alertDialog(x.message);
+              return;
+            }
             break;
           case 'condition-editor-fast_matching':
           case 'condition-editor-normal':
@@ -121,7 +126,12 @@ function initDialogs() {
           case 'action-editor-redirect':
           case 'action-editor-request_header':
           case 'action-editor-response_header':
-            saveAction($(this));
+            try {
+              saveAction($(this));
+            } catch (x) {
+              alertDialog(x.message);
+              return;
+            }
             break;
           default:
             assertError(false, new Error());
@@ -196,7 +206,7 @@ function initDialogs() {
     }
     $('[type="checkbox"][name="resource"]', $(this)).each(function () {
       var checked = resource_type_all ||
-        resource_type.indexOf($(this).data('type'));
+        resource_type.indexOf($(this).data('type')) !== -1;
       $(this).prop('checked', checked).button('refresh');
     });
   });

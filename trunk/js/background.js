@@ -8,7 +8,9 @@ window.redirector_background_js = {
     response_header: []
   },
   urls_filter: ['<all_urls>'],
-  redirected_requests: {}       // For recording redirected request ID
+  redirected_requests: {},      // For recording redirected request ID
+  header_modified_requests: {}, // For recording header modified request ID
+  info: {}                      // Web request log info for page action
 };
 
 /* Initialize
@@ -16,94 +18,91 @@ window.redirector_background_js = {
 (function () {
   var namespace = window.redirector_background_js;
   chrome.storage.local.get(null, function (items) {
-    /* Settings */
+    /* Settings
+     */
     namespace.urls_filter = fallback(items.urls_filter, ['<all_urls>']);
-    /* Rules */
+    /* Rules
+     */
     initFastMatchingRules(items.fast_matching);
     initRedirectRules(items.redirect);
     initRequestHeaderRules(items.request_header);
     initResponseHeaderRules(items.response_header);
     initOnlineRules(items.online);
-    /* Other */
+    /* Other
+     */
     initContextMenus();
+    initPageAction();
+    /* Event listeners
+     */
+    /* Fresh install */
+    chrome.runtime.onInstalled.addListener(function() {
+      // Open option pages, ...
+    });
+    /* Reinitialize the related part when storage changed */
+    chrome.storage.onChanged.addListener(function (changes, namespace) {
+      if (namespace !== 'local') {
+        return;
+      }
+      for (var key in changes) {
+        if (changes.hasOwnProperty(key) === false) {
+          return;
+        }
+        var value = changes[key].newValue;
+        switch (key) {
+        case 'fast_matching':
+          chrome.declarativeWebRequest.onRequest.removeRules(undefined, function () {
+            initFastMatchingRules(value);
+          });
+          break;
+        case 'redirect':
+          initRedirectRules(value);
+          // Manual rules may change
+          initContextMenus();
+          break;
+        case 'request_header':
+          initRequestHeaderRules(value);
+          break;
+        case 'response_header':
+          initResponseHeaderRules(value);
+          break;
+        case 'online':
+          initOnlineRules(value);
+          break;
+        case 'enabled_protocols':
+          window.redirector_background_js.urls_filter = value;
+          break;
+        case 'context_enabled':
+          chrome.contextMenus.removeAll();
+          if (fallback(value, true) === true) {
+            initContextMenus();
+          }
+          break;
+        default:
+          console.log('Not implemented: ' + key);
+          return;
+        }
+      }
+    });
+    /* Register redirect rules */
+    chrome.webRequest.onBeforeRequest.addListener(
+      processRedirectRules,
+      {urls: window.redirector_background_js.urls_filter},
+      ['blocking']
+    );
+    /* Register request header rules */
+    chrome.webRequest.onBeforeSendHeaders.addListener(
+      processRequestHeaderRules,
+      {urls: window.redirector_background_js.urls_filter},
+      ['blocking', 'requestHeaders']
+    );
+    /* Register response header rules */
+    chrome.webRequest.onHeadersReceived.addListener(
+      processResponseHeaderRules,
+      {urls: window.redirector_background_js.urls_filter},
+      ['blocking', 'responseHeaders']
+    );
   });
 })();
-
-/**
- * Fresh install
- */
-chrome.runtime.onInstalled.addListener(function() {
-  // Open option pages, ...
-});
-
-/**
- * Reinitialize the related part when storage changed
- */
-chrome.storage.onChanged.addListener(function (changes, namespace) {
-  if (namespace !== 'local') {
-    return;
-  }
-  for (var key in changes) {
-    if (changes.hasOwnProperty(key) === false) {
-      return;
-    }
-    var value = changes[key].newValue;
-    switch (key) {
-    case 'fast_matching':
-      chrome.declarativeWebRequest.onRequest.removeRules(undefined, function () {
-        initFastMatchingRules(value);
-      });
-      break;
-    case 'redirect':
-      initRedirectRules(value);
-      // Manual rules may change
-      initContextMenus();
-      break;
-    case 'request_header':
-      initRequestHeaderRules(value);
-      break;
-    case 'response_header':
-      initResponseHeaderRules(value);
-      break;
-    case 'online':
-      initOnlineRules(value);
-      break;
-    case 'enabled_protocols':
-      window.redirector_background_js.urls_filter = value;
-      break;
-    case 'context_enabled':
-      chrome.contextMenus.removeAll();
-      if (fallback(value, true) === true) {
-        initContextMenus();
-      }
-      break;
-    default:
-      console.log('Not implemented: ' + key);
-      return;
-    }
-  }
-});
-
-/* Register redirect rules */
-chrome.webRequest.onBeforeRequest.addListener(
-  processRedirectRules,
-  {urls: window.redirector_background_js.urls_filter},
-  ['blocking']
-);
-
-/* Register request header rules */
-chrome.webRequest.onBeforeSendHeaders.addListener(
-  processRequestHeaderRules,
-  {urls: window.redirector_background_js.urls_filter},
-  ['blocking', 'requestHeaders']
-);
-
-/* Register response header rules */
-chrome.webRequest.onHeadersReceived.addListener(
-  processResponseHeaderRules,
-  {urls: window.redirector_background_js.urls_filter},
-  ['blocking', 'responseHeaders']
-);
 
 /**
  * Initialize fast matching rules
@@ -288,6 +287,9 @@ function initRedirectRules(rules) {
         break;
       case 'redirect_to_transparent':
         // Redirect to png (1x1)
+        // var canvas = document.createElement('canvas');
+        // canvas.width = canvas.height = 1;
+        // var url = canvas.toDataURL('image/png');
         rule_actions.push({
           to: 'data:image/png;base64,\
 iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJRU5ErkJggg=='
@@ -503,6 +505,56 @@ function initContextMenus() {
 }
 
 /**
+ * Initialize page action
+ */
+function initPageAction() {
+  var namespace = window.redirector_background_js;
+  var info = namespace.info;
+  chrome.webRequest.onBeforeRedirect.addListener(function (details) {
+    if (info[details.tabId] === undefined) {
+      info[details.tabId] = [];
+    }
+    if (namespace.redirected_requests[details.requestId] !== undefined) {
+      info[details.tabId].push(
+        '#' + details.requestId + ' ' + details.url + '<br />' +
+          Array(Math.ceil(Math.log(details.requestId) / Math.LN10)).join(' ') +
+          '-&gt; ' + details.redirectUrl
+      );
+    }
+  }, {urls: window.redirector_background_js.urls_filter});
+  chrome.webRequest.onErrorOccurred.addListener(function (details) {
+    if (namespace.redirected_requests[details.requestId] === undefined &&
+        namespace.header_modified_requests[details.requestId] === undefined) {
+      return;
+    }
+    if (info[details.tabId] === undefined) {
+      info[details.tabId] = [];
+    }
+    info[details.tabId].push(
+      '#' + details.requestId + ' ' + details.error
+    );
+  }, {urls: window.redirector_background_js.urls_filter});
+  /* Set page action when tab is updated */
+  chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
+    if (// changeInfo.status === 'complete' ||
+        info[tabId] === undefined) {
+      return;
+    }
+    chrome.pageAction.setTitle({
+      tabId: tabId,
+      title: 'Click for web request logs'
+    });
+    chrome.pageAction.show(tabId);
+  });
+  /* Clean up the corresponding logs when a tab is removed */
+  chrome.tabs.onRemoved.addListener(function(tabId) {
+    if (info[tabId] !== undefined) {
+      delete info[tabId];
+    }
+  });
+}
+
+/**
  * Redirect rules listener
  * Redirect the request if any conditions meets.
  * Multiple actions are allowed in case they're of type
@@ -554,7 +606,6 @@ function processRedirectRules(details) {
  */
 function processRequestHeaderRules(details) {
   var list = window.redirector_background_js.rule_lists.request_header;
-  outmost:
   for (var i = 0; i < list.length; i++) {
     var rule = list[i];
     for (var j = 0; j < rule.conditions.length; j++) {
@@ -591,6 +642,8 @@ function processRequestHeaderRules(details) {
           assertError(false, new Error());
         }
       }
+      window.redirector_background_js
+        .header_modified_requests[details.requestId] = true;
       return {requestHeaders: details.requestHeaders};
     }
   }
@@ -601,7 +654,6 @@ function processRequestHeaderRules(details) {
  */
 function processResponseHeaderRules(details) {
   var list = window.redirector_background_js.rule_lists.response_header;
-  outmost:
   for (var i = 0; i < list.length; i++) {
     var rule = list[i];
     for (var j = 0; j < rule.conditions.length; j++) {
@@ -634,6 +686,8 @@ function processResponseHeaderRules(details) {
           assertError(false, new Error());
         }
       }
+      window.redirector_background_js
+        .header_modified_requests[details.requestId] = true;
       return {responseHeaders: details.responseHeaders};
     }
   }

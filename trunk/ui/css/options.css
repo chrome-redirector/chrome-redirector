@@ -32,6 +32,9 @@ textarea {
 input[type="url"] {
     margin-bottom: 40px;  /* Make place for URL validation message */
 }
+.ui-buttonset {
+    margin-right: 0;
+}
 .button-test {
     padding-bottom: 2px;
     margin-left: -0.4em!important;

@@ -63,3 +63,32 @@ function regexpStringToRegexp(regexp_string, modifiers) {
   }
   return new XRegExp(regexp_string, modifiers.join('') + 'x');
 }
+
+/**
+ * Read text from file (file is a window.File)
+ * text is set as the parameter of the callback function
+ */
+function readTextFromFile(file, callback) {
+  var reader = new FileReader();
+  reader.onload = function (event) {
+    callback(event.target.result);
+  };
+  reader.readAsText(file);
+}
+
+/**
+ * Save text to local file
+ * keys:
+ *   text - the content to save
+ *   filename (optional) - default filename
+ */
+function saveTextToFile(properties) {
+  var options = {
+    url: 'data:text/plain;charset=utf-8,' + properties.text,
+    saveAs: true
+  };
+  if (properties.filename !== undefined) {
+    options.filename = properties.filename;
+  }
+  chrome.downloads.download(options);
+}
