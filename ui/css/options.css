@@ -1,6 +1,8 @@
 body {
     font-size: small;
     user-select: none;
+    margin: 0;
+    padding: 0;
     -webkit-user-select: none;
 }
 h5 {
@@ -9,6 +11,44 @@ h5 {
 }
 ul {
     list-style: none;
+}
+
+.header {
+    margin-bottom: 20px;
+    background-image: -webkit-gradient(linear,0% 0,0% 100%,from(#F2F2F2),to(#DDDDDD));
+    padding: 20px 0;
+    border-bottom: 1px solid #DDD;
+}
+
+.header h1 {
+    font-family: Ubuntu, Arial, sans-serif;
+    width: 960px;
+    height: 30px;
+    margin: 0px auto;
+    color: #5C6166;
+    text-shadow: #888 2px 2px 5px;
+}
+
+.header-shadow {
+    width: 100%;
+    margin-right: 0;
+    height: 8px;
+    position: absolute;
+    top: 70px;
+    left: 0;
+    border-top: 1px solid rgba(0, 0, 0, 0.4);
+    background: -webkit-gradient(linear, left top, left bottom, from(rgba(0, 0, 0, .3)), to(transparent));
+        -webkit-mask-box-image: -webkit-gradient(linear, left top, right top, 
+        color-stop(0.0, rgba(0,0,0,0)), color-stop(0.5, rgba(0,0,0,.8)), color-stop(1.0, rgba(0,0,0,0)));
+}
+
+.container {
+    width: 960px;
+    margin: 0 auto; 
+}
+
+.content {
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.3), 0 3px 20px rgba(0, 0, 0, 0.3);
 }
 
 /* Form related */
@@ -61,12 +101,9 @@ input[type="file"] {
 
 /* Floating toolbar */
 #floating-toolbar {
-    position: fixed!important;
+    float: right;
     background-color: #000;
-    top: 0;
-    left: 50%;
-    padding: 8px;
-    padding-right: 13px;
+    padding: 3px 10px;;
     z-index: 11;
 }
 
