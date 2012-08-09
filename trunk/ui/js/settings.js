@@ -68,11 +68,41 @@ function initSettings() {
   $('[name="manual-sync"]', $settings).click(function () {
     // TODO
   });
-  // Backup & Restore/Import
+  // Backup
   $('[name="backup"]', $settings).click(function () {
-    // TODO
+    backupToFile();
   });
-  $('[name="restore"]', $settings).click(function () {
-    // TODO
+  // Restore/Import
+  $('input[type="file"][name="restore"]', $settings).change(function () {
+    restoreFromFile($(this).prop('files'));
+  });
+}
+
+/**
+ * Backup data (rules, settings, ...) to file
+ */
+function backupToFile() {
+  chrome.storage.local.get(null, function (items) {
+    saveTextToFile({
+      text: JSON.stringify(items),
+      filename: '[Redirector_backup]' + (new Date()).toISOString() + '.json'
+    });
+  });
+}
+
+/**
+ * Restore data from file
+ */
+function restoreFromFile(files) {
+  files.forEach(function (i, file) {
+    readTextFromFile(file, function (text) {
+      try {
+        var data = JSON.parse(text);
+        // TODO: Judge file type, be able to read in Redirector-2.2 format
+        chrome.storage.set(data);
+      } catch (x) {
+        return;
+      }
+    });
   });
 }
