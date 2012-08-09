@@ -13,13 +13,17 @@
   },
   "options_page": "ui/options.html",
   "page_action": {
-    "default_icon": "icons/icon_19.png"
+    "default_icon": "icons/icon_19.png",
+    "default_title": "Redirector",
+    "default_popup": "ui/popup.html"
   },
   "permissions": ["declarativeWebRequest",
                   "webRequest",
                   "webRequestBlocking",
                   "storage",
+                  "tabs",
                   "contextMenus",
+                  "downloads",
                   "<all_urls>"],
   "version": "2.9.0.0"
 }

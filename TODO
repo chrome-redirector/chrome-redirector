@@ -3,7 +3,21 @@ Aug 8, 2012 by Cyril Feng:
    Classifid in types:
    - redirect
    1. Only actions of type regexp or wildcard may coexist.
-   2. Make sure actions of manual redirection rules are of type regexp or wildcard
+   2. Make sure actions of manual redirection rules are of type regexp
+   or wildcard
    - request_header & response_header
       More complex here, some headers are not available to Redirector,
       where others may collide.
+* Data validate on saving
+* Fast matching rule
+   event.addRules error handling
+* Redirect loop in RE2
+* URL info in header
+   Expose URL info to header settings, e.g. define special expression
+   to represent the host part of that URL.
+* Auto sync
+   Trigger scheduled update with chrome.alarms
+* Debugger
+   chrome.devtools.network is suitable for recording network logs,
+   while chrome.devtools.panels suitable to show the result.
+* Reuse URL from rule editor to verify expressions in action editor

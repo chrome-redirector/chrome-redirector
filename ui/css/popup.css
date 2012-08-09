@@ -1,0 +1,25 @@
+body {
+    font-size: small;
+    background-color: #000;
+    margin: 0;
+    width: 600px;
+    min-width: 600px;
+    min-height: 300px;
+}
+
+::scrollbar,::-webkit-scrollbar {
+    width: 0;
+    height: 0;
+}
+
+.ui-accordion-header, .ui-accordion-content {
+    border-radius: 0;
+}
+
+.ui-buttonset {
+    margin-right: 0;
+}
+
+#info {
+    padding: 0 0.5em;
+}
