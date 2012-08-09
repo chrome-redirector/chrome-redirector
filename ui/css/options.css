@@ -39,6 +39,9 @@ input[type="url"] {
     padding-bottom: 2px;
     margin-left: -0.4em!important;
 }
+input[type="file"] {
+    display: none;
+}
 
 /* Scrollbar (temporary design) */
 ::scrollbar,::-webkit-scrollbar {
@@ -63,7 +66,6 @@ input[type="url"] {
     background-color: #000;
     top: 0;
     left: 50%;
-    margin-left: -150px;
     padding: 8px;
     padding-right: 13px;
     z-index: 11;

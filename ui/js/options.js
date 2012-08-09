@@ -275,7 +275,13 @@ function initButtons() {
    */
   $('#floating-toolbar').css({opacity: 0.5}).draggable()
     .mouseenter(function () {$(this).fadeTo('normal', 1);})
-    .mouseleave(function () {$(this).fadeTo('normal', 0.5);});
+    .mouseleave(function () {$(this).fadeTo('normal', 0.5);})
+    .hide();
+  /* Center floating toolbar */
+  $(window).load(function () {
+    $('#floating-toolbar')
+      .css({'margin-left': $('#floating-toolbar').width() / -2}).show();
+  });
   /* New rule */
   $('#floating-toolbar button[name="new"]').button().click(function () {
     $('#rule-creator').dialog('open');
@@ -319,10 +325,34 @@ function initButtons() {
       chrome.storage.local.set(obj);
     });
   });
-  /* Export rule */
-  $('#floating-toolbar button[name="export"]').button().click(function () {
+  /* Import rule */
+  $('#floating-toolbar button[name="import"]').button();
+  $('#floating-toolbar input[type="file"][name="import"]').change(function () {
     // TODO
   });
+  /* Export rule */
+  $('#floating-toolbar button[name="export"]').button().click(function () {
+    var type_index = $('#rule-lists').accordion('option', 'active');
+    var type = ['fast_matching', 'redirect', 'request_header',
+                'response_header', 'online'][type_index];
+    var $list = $('#rule-list-' + type);
+    var $rule = $('.ui-selected', $list);
+    var index = $('li', $list).index($rule);
+    if (index === -1) {
+      return;
+    }
+    chrome.storage.local.get(type, function (items) {
+      var rule = items[type][index];
+      var data = {};
+      data[type] = rule;
+      saveTextToFile({
+        text: JSON.stringify(data),
+        filename: '[' + rule.name + ']' + (new Date()).toISOString() + '.json'
+      });
+    });
+  });
+  /* Floating-toolbar end
+   */
   /* New condition */
   $('#rule-editor [name="new-condition"]').button().click(function () {
     var $rule_editor = $('#rule-editor');
@@ -500,6 +530,13 @@ function initButtons() {
       assertError(false, new Error());
     }
   });
+  /* File choosers */
+  $('input[type="file"]').each(function () {
+    var $input = $(this);
+    $input.next().click(function () {
+      $input.click();
+    });
+  });
 }
 
 /**
@@ -554,7 +591,7 @@ function initMisc() {
   $('.accordion').accordion({autoHeight: false});
   /* Selectabla & draggable lists */
   $('.selectable-draggable-list')
-    .sortable({handle: '.rule-handle'})
+    .sortable({handle: '.rule-handle', axis: 'y'})
     .selectable({
       stop: function (e){
         $(e.target).children('.ui-selected').not(':first')

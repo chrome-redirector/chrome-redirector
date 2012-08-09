@@ -25,5 +25,6 @@
                   "contextMenus",
                   "downloads",
                   "<all_urls>"],
+  "minimum_chrome_version": "22",
   "version": "2.9.0.0"
 }
