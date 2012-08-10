@@ -47,30 +47,43 @@
         <div id="nav-tab-settings">
           <form class="button-set">
             <h5>Context menu</h5>
-            <input type="radio" name="context" id="settings_js-1" data-enabled="true" checked /><label for="settings_js-1">Enabled</label>
-            <input type="radio" name="context" id="settings_js-2" data-enabled="false" /><label for="settings_js-2">Disabled</label>
+            <input type="radio" name="context" id="settings-1" data-enabled="true" checked /><label for="settings-1">Enable</label>
+            <input type="radio" name="context" id="settings-2" data-enabled="false" /><label for="settings-2">Disable</label>
           </form>
           <form class="button-set">
             <h5>Icon notification</h5>
-            <input type="radio" name="icon" id="settings_js-3" data-enabled="true" checked /><label for="settings_js-3">Enabled</label>
-            <input type="radio" name="icon" id="settings_js-4" data-enabled="false" /><label for="settings_js-4">Disabled</label>
+            <input type="radio" name="icon" id="settings-3" data-enabled="true" checked /><label for="settings-3">Enable</label>
+            <input type="radio" name="icon" id="settings-4" data-enabled="false" /><label for="settings-4">Disable</label>
+          </form>
+          <form class="button-set">
+            <h5>Enabled rule types</h5>
+            <input type="checkbox" name="rule_type" id="settings-5" data-type="fast_matching" />
+            <label for="settings-5">Fast matching</label>
+            <input type="checkbox" name="rule_type" id="settings-6" data-type="redirect" />
+            <label for="settings-6">Redirect</label>
+            <input type="checkbox" name="rule_type" id="settings-7" data-type="request_header" />
+            <label for="settings-7">Request header</label>
+            <input type="checkbox" name="rule_type" id="settings-8" data-type="response_header" />
+            <label for="settings-8">Response header</label>
+            <input type="checkbox" name="rule_type" id="settings-9" data-type="online" />
+            <label for="settings-9">Online</label>
           </form>
           <form class="button-set">
             <h5>Enabled protocols</h5>
-            <input type="checkbox" name="protocol" id="settings_js-6" data-type="http" /><label for="settings_js-6">HTTP</label>
-            <input type="checkbox" name="protocol" id="settings_js-7" data-type="https" /><label for="settings_js-7">HTTPS</label>
-            <input type="checkbox" name="protocol" id="settings_js-8" data-type="ftp" /><label for="settings_js-8">FTP</label>
-            <input type="checkbox" name="protocol" id="settings_js-9" data-type="file" /><label for="settings_js-9">FILE</label>
+            <input type="checkbox" name="protocol" id="settings-10" data-type="http://*/*" /><label for="settings-10">HTTP</label>
+            <input type="checkbox" name="protocol" id="settings-11" data-type="https://*/*" /><label for="settings-11">HTTPS</label>
+            <input type="checkbox" name="protocol" id="settings-12" data-type="ftp://*/*" /><label for="settings-12">FTP</label>
+            <input type="checkbox" name="protocol" id="settings-13" data-type="file://*/*" /><label for="settings-13">FILE</label>
           </form>
           <form class="button-set">
-            <h5>Manual redirection</h5>
-            <input type="checkbox" name="manual" id="settings_js-10" data-type="page" /><label for="settings_js-10">Page</label>
-            <input type="checkbox" name="manual" id="settings_js-11" data-type="link" /><label for="settings_js-11">Link</label>
+            <h5>Manual redirection methods</h5>
+            <input type="checkbox" name="manual" id="settings-14" data-type="page" /><label for="settings-14">Page</label>
+            <input type="checkbox" name="manual" id="settings-15" data-type="link" /><label for="settings-15">Link</label>
           </form>
           <form class="button-set">
             <h5>Auto sync</h5>
-            <input type="radio" name="sync" id="settings_js-12" data-enabled="true" checked /><label for="settings_js-12">Enabled</label>
-            <input type="radio" name="sync" id="settings_js-13" data-enabled="false" /><label for="settings_js-13">Disabled</label>
+            <input type="radio" name="sync" id="settings-16" data-enabled="true" checked /><label for="settings-16">Enable</label>
+            <input type="radio" name="sync" id="settings-17" data-enabled="false" /><label for="settings-17">Disable</label>
             <button name="manual-sync"><span>Sync now</span></button>
           </form>
           <form class="button-set">
@@ -101,8 +114,8 @@
       -->
     <div id="rule-editor" class="editor-dialog" title="Rule Editor">
       <form class="button-set">
-        <input type="radio" name="rule-enabled" id="r-e-1" data-enabled="true" checked /><label for="r-e-1">Enabled</label>
-        <input type="radio" name="rule-enabled" id="r-e-2" data-enabled="false" /><label for="r-e-2">Disabled</label>
+        <input type="radio" name="rule-enabled" id="r-e-1" data-enabled="true" checked /><label for="r-e-1">Enable</label>
+        <input type="radio" name="rule-enabled" id="r-e-2" data-enabled="false" /><label for="r-e-2">Disable</label>
       </form>
       <h5>Name</h5><input name="name" />
       <form class="online-rule button-set">
@@ -265,25 +278,25 @@
         <option value="Accept-Encoding">Accept-Encoding</option>
         <option value="Accept-Language">Accept-Language</option>
         <option value="Accept-Datetime">Accept-Datetime</option>
-        <option value="Authorization">Authorization</option>
-        <option value="Cache-Control">Cache-Control</option>
-        <option value="Connection">Connection</option>
+        <!-- <option value="Authorization"></option> -->
+        <!-- <option value="Cache-Control">Cache-Control</option> -->
+        <!-- <option value="Connection">Connection</option> -->
         <option value="Cookie">Cookie</option>
-        <option value="Content-Length">Content-Length</option>
+        <!-- <option value="Content-Length">Content-Length</option> -->
         <option value="Content-MD">Content-MD</option>
         <option value="Content-Type">Content-Type</option>
         <option value="Date">Date</option>
         <option value="Expect">Expect</option>
         <option value="From">From</option>
-        <option value="Host">Host</option>
+        <!-- <option value="Host">Host</option> -->
         <option value="If-Match">If-Match</option>
-        <option value="If-Modified-Since">If-Modified-Since</option>
-        <option value="If-None-Match">If-None-Match</option>
-        <option value="If-Range">If-Range</option>
+        <!-- <option value="If-Modified-Since">If-Modified-Since</option> -->
+        <!-- <option value="If-None-Match">If-None-Match</option> -->
+        <!-- <option value="If-Range">If-Range</option> -->
         <option value="If-Unmodified-Since">If-Unmodified-Since</option>
         <option value="Max-Forwards">Max-Forwards</option>
-        <option value="Pragma">Pragma</option>
-        <option value="Proxy-Authorization">Proxy-Authorization</option>
+        <!-- <option value="Pragma">Pragma</option> -->
+        <!-- <option value="Proxy-Authorization">Proxy-Authorization</option> -->
         <option value="Range">Range</option>
         <option value="Referer">Referer</option>
         <option value="TE">TE</option>
@@ -298,7 +311,7 @@
         <option value="X-Forwarded-For">X-Forwarded-For</option>
         <option value="X-ATT-DeviceId">X-ATT-DeviceId</option>
         <option value="X-Wap-Profile">X-Wap-Profile</option>
-        <option value="Proxy-Connection">Proxy-Connection</option>
+        <!-- <option value="Proxy-Connection">Proxy-Connection</option> -->
       </select>
       <h5>Value</h5><input name="value" />
     </div>

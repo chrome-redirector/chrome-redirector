@@ -17,6 +17,7 @@
     "default_title": "Redirector",
     "default_popup": "pages/popup.html"
   },
+  "default_locale": "en",
   "permissions": ["declarativeWebRequest",
                   "webRequest",
                   "webRequestBlocking",

@@ -92,3 +92,58 @@ function saveTextToFile(properties) {
   }
   chrome.downloads.download(options);
 }
+
+/**
+ * Get internationalization text
+ */
+function _(messagename) {
+  return chrome.i18n.getMessage(messagename.replace(/^\s*|\s*$/g, ''));
+}
+
+/**
+ * Open options page
+ */
+function openOptionsPage (query) {
+  var background_page = chrome.extension.getBackgroundPage();
+  chrome.extension.getViews().forEach(function (view) {
+    if (view !== background_page) {
+      view.close();
+    }
+  });
+  chrome.tabs.create({
+    url: chrome.extension.getURL('pages/options.html' + fallback(query, ''))
+  });
+};
+
+/**
+ * Sync data to remote server
+ */
+function syncData(alarm) {
+  if (alarm !== undefined && alarm.name !== 'auto_sync') {
+    return;
+  }
+  chrome.storage.sync.get('sync_timestamp', function (items) {
+    var timestamp = items.sync_timestamp;
+    var now = (new Date()).getTime();
+    if (timestamp === undefined || timestamp < now) {
+      chrome.storage.local.get(null, function (items) {
+        items.sync_timestamp = now;
+        chrome.storage.sync.set(items, function () {
+          if (chrome.extension.lastError !== undefined) {
+            console.log('Sync data to remote server failed: ' +
+                  chrome.extension.lastError);
+          }
+        });
+      });
+    } else {
+      chrome.storage.sync.get(null, function (items) {
+        chrome.storage.local.set(items, function () {
+          if (chrome.extension.lastError !== undefined) {
+            console.log('Sync data from remote server failed: ' +
+                  chrome.extension.lastError);
+          }
+        });
+      });
+    }
+  });
+}

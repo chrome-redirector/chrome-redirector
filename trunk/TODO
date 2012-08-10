@@ -21,3 +21,5 @@ Aug 8, 2012 by Cyril Feng:
    chrome.devtools.network is suitable for recording network logs,
    while chrome.devtools.panels suitable to show the result.
 * Reuse URL from rule editor to verify expressions in action editor
+* URL parser
+   Implement a URL parser: validate, split
