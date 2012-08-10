@@ -7,10 +7,20 @@ window.redirector_background_js = {
     request_header: [],
     response_header: []
   },
-  urls_filter: ['<all_urls>'],
   redirected_requests: {},      // For recording redirected request ID
   header_modified_requests: {}, // For recording header modified request ID
-  info: {}                      // Web request log info for page action
+  info: {},                    // Web request log info for page action
+  storage_states: {
+    context_enabled: true,
+    icon_enabled: true,
+    enabled_protocols: ['<all_urls>'],
+    enabled_rule_types: [
+      'fast_matching', 'redirect', 'request_header',
+      'response_header', 'online'
+    ],
+    manual_methods: ['link', 'page'],
+    auto_sync_enabled: true
+  }
 };
 
 /* Initialize
@@ -18,29 +28,32 @@ window.redirector_background_js = {
 (function () {
   var namespace = window.redirector_background_js;
   chrome.storage.local.get(null, function (items) {
-    /* Settings
-     */
-    namespace.urls_filter = fallback(items.urls_filter, ['<all_urls>']);
+    // Get storage state, preserving default value if it's not set
+    for (var key in items) {
+      namespace.storage_states[key] = items[key];
+    }
     /* Rules
      */
-    initFastMatchingRules(items.fast_matching);
-    initRedirectRules(items.redirect);
-    initRequestHeaderRules(items.request_header);
-    initResponseHeaderRules(items.response_header);
-    initOnlineRules(items.online);
+    ['fast_matching', 'redirect', 'request_header',
+     'response_header', 'online'
+    ].forEach(function (type) {
+      initRules(type, items[type]);
+    });
     /* Other
      */
-    initContextMenus();
+    // // Already called in initRules();
+    // initContextMenus();
     initPageAction();
+    initAutoSync();
     /* Event listeners
      */
-    /* Fresh install */
+    /* Fresh install (not work for 150558) */
     chrome.runtime.onInstalled.addListener(function() {
-      // Open option pages, ...
+      openOptionsPage();
     });
     /* Reinitialize the related part when storage changed */
-    chrome.storage.onChanged.addListener(function (changes, namespace) {
-      if (namespace !== 'local') {
+    chrome.storage.onChanged.addListener(function (changes, storage_name) {
+      if (storage_name !== 'local') {
         return;
       }
       for (var key in changes) {
@@ -48,34 +61,41 @@ window.redirector_background_js = {
           return;
         }
         var value = changes[key].newValue;
+        var old_value = changes[key].oldValue;
+        namespace.storage_states[key] = value;
         switch (key) {
-        case 'fast_matching':
-          chrome.declarativeWebRequest.onRequest.removeRules(undefined, function () {
-            initFastMatchingRules(value);
-          });
-          break;
-        case 'redirect':
-          initRedirectRules(value);
-          // Manual rules may change
-          initContextMenus();
-          break;
-        case 'request_header':
-          initRequestHeaderRules(value);
-          break;
-        case 'response_header':
-          initResponseHeaderRules(value);
-          break;
-        case 'online':
-          initOnlineRules(value);
+        case 'fast_matching': case 'redirect': case 'request_header':
+        case 'response_header': case 'online':
+          initRules(key, value);
           break;
         case 'enabled_protocols':
-          window.redirector_background_js.urls_filter = value;
+          registerWebRequestListeners();
           break;
-        case 'context_enabled':
-          chrome.contextMenus.removeAll();
-          if (fallback(value, true) === true) {
-            initContextMenus();
+        case 'context_enabled': case 'manual_methods':
+          initContextMenus();
+          break;
+        case 'icon_enabled':
+          initPageAction();
+          break;
+        case 'enabled_rule_types':
+          if (old_value === undefined) {
+            old_value = [];
           }
+          var removed_types = old_value.filter(function (type) {
+            return value.indexOf(type) < 0;
+          });
+          var added_types = value.filter(function (type) {
+            return old_value.indexOf(type) < 0;
+          });
+          if (removed_types.indexOf('fast_matching') >= 0) {
+            chrome.declarativeWebRequest.onRequest.removeRules();
+          } else if (added_types.indexOf('fast_matching') >= 0) {
+            initRules('fast_matching');
+          }
+          registerWebRequestListeners(value);
+          break;
+        case 'auto_sync_enabled':
+          initAutoSync();
           break;
         default:
           console.log('Not implemented: ' + key);
@@ -83,31 +103,69 @@ window.redirector_background_js = {
         }
       }
     });
-    /* Register redirect rules */
-    chrome.webRequest.onBeforeRequest.addListener(
-      processRedirectRules,
-      {urls: window.redirector_background_js.urls_filter},
-      ['blocking']
-    );
-    /* Register request header rules */
-    chrome.webRequest.onBeforeSendHeaders.addListener(
-      processRequestHeaderRules,
-      {urls: window.redirector_background_js.urls_filter},
-      ['blocking', 'requestHeaders']
-    );
-    /* Register response header rules */
-    chrome.webRequest.onHeadersReceived.addListener(
-      processResponseHeaderRules,
-      {urls: window.redirector_background_js.urls_filter},
-      ['blocking', 'responseHeaders']
-    );
+    registerWebRequestListeners();
   });
 })();
 
 /**
+ * Initialize rules (wrapper for following rules initializers)
+ */
+function initRules(type, rules) {
+  if (type === 'all') {
+    ['fast_matching', 'redirect', 'request_header',
+     'response_header', 'online'
+    ].forEach(function (type) {
+      initRules(type);
+    });
+    return;
+  }
+  if (rules === undefined) {
+    chrome.storage.local.get(type, function (items) {
+      for (var type in items) {
+        if (items[type] !== undefined) {
+          initRules(type, items[type]);
+        }
+      }
+    });
+    return;
+  }
+  switch (type) {
+  case 'fast_matching':
+    initFastMatchingRules(rules);
+    break;
+  case 'redirect':
+    initRedirectRules(rules);
+    // Manual rules may change
+    initContextMenus();
+    break;
+  case 'request_header':
+    initRequestHeaderRules(rules);
+    break;
+  case 'response_header':
+    initResponseHeaderRules(rules);
+    break;
+  case 'online':
+    initOnlineRules(rules);
+    break;
+  default:
+    assertError(false, new Error());
+  }
+}
+
+/**
  * Initialize fast matching rules
  */
-function initFastMatchingRules(rules) {
+function initFastMatchingRules(rules, append) {
+  var namespace = window.redirector_background_js;
+  if (append === undefined) {
+    // Build from scratch
+    chrome.declarativeWebRequest.onRequest.removeRules(undefined, function () {
+      if (namespace.storage_states.enabled_rule_types.indexOf('fast') >= 0) {
+        initFastMatchingRules(rules, true);
+      }
+    });
+    return;
+  }
   if (rules === undefined || rules.length === 0) {
     return;
   }
@@ -196,7 +254,7 @@ function initFastMatchingRules(rules) {
           })
         );
       case 'response_header_remove':
-        if (action.value) {     // Can value be empty?
+        if (action.value) {   // Can value be empty?
           declarative_rule.actions.push(
             new chrome.declarativeWebRequest.RemoveResponseHeader({
               name: action.name,
@@ -226,12 +284,19 @@ function initFastMatchingRules(rules) {
 /**
  * Initialize redirect rules
  */
-function initRedirectRules(rules) {
-  if (rules === undefined || rules.length === 0) {
+function initRedirectRules(rules, append) {
+  var namespace = window.redirector_background_js;
+  namespace.rule_lists.redirect = [];
+  if (namespace.storage_states.enabled_rule_types.indexOf('redirect') < 0 ||
+      rules === undefined || rules.length === 0) {
     return;
   }
   var redirect = [];
   var manual = [];
+  if (append === true) {
+    redirect = namespace.rule_lists.redirect;
+    manual = namespace.rule_lists.manual;
+  }
   rules.forEach(function (rule) {
     if (rule.enabled !== true) {
       return;
@@ -308,18 +373,26 @@ iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJ
       redirect.push(auto_rule);
     }
   });
-  window.redirector_background_js.rule_lists.redirect = redirect;
-  window.redirector_background_js.rule_lists.manual = manual;
+  namespace.rule_lists.redirect = redirect;
+  namespace.rule_lists.manual = manual;
 }
 
 /**
  * Initialize request header rules
  */
-function initRequestHeaderRules(rules) {
+function initRequestHeaderRules(rules, append) {
+  var namespace = window.redirector_background_js;
+  namespace.rule_lists.request_header = [];
+  if (namespace.storage_states.enabled_rule_types.indexOf('request') < 0) {
+    return;
+  }
   if (rules === undefined || rules.length === 0) {
     return;
   }
-  var request_header = [];
+  var request_header;
+  if (append === true) {
+    request_header = namespace.rule_lists.request_header;
+  }
   rules.forEach(function (rule) {
     if (rule.enabled !== true) {
       return;
@@ -368,17 +441,25 @@ function initRequestHeaderRules(rules) {
     });
     request_header.push(auto_rule);
   });
-  window.redirector_background_js.rule_lists.request_header = request_header;
+  namespace.rule_lists.request_header = request_header;
 }
 
 /**
  * Initialize response header rules
  */
 function initResponseHeaderRules(rules) {
+  var namespace = window.redirector_background_js;
+  namespace.rule_lists.response_header = [];
+  if (namespace.storage_states.enabled_rule_types.indexOf('response') < 0) {
+    return;
+  }
   if (rules === undefined || rules.length === 0) {
     return;
   }
   var response_header = [];
+  if (append === true) {
+    response_header = namespace.rule_lists.response_header;
+  }
   rules.forEach(function (rule) {
     if (rule.enabled !== true) {
       return;
@@ -425,14 +506,17 @@ function initResponseHeaderRules(rules) {
     });
     response_header.push(auto_rule);
   });
-  window.redirector_background_js.rule_lists.response_header =
-    response_header;
+  namespace.rule_lists.response_header = response_header;
 }
 
 /**
  * Initialize online rules
  */
 function initOnlineRules(rules) {
+  if (window.redirector_background_js.storage_states
+      .enabled_rule_types.indexOf('online') < 0) {
+    return;
+  }
   // TODO
 }
 
@@ -440,68 +524,79 @@ function initOnlineRules(rules) {
  * Initialize context menu functionality (manual redirection, etc)
  */
 function initContextMenus() {
-  var manual = window.redirector_background_js.rule_lists.manual;
+  chrome.contextMenus.removeAll();
+  var namespace = window.redirector_background_js;
+  if (namespace.storage_states.context_enabled === false) {
+    return;
+  }
+  var manual = namespace.rule_lists.manual;
   if (manual.length > 0) {
     /* Menu entries for manual redirection */
-    chrome.storage.local.get('manual_methods', function (items) {
-      /* Link manual redirection */
-      if (items.manual_methods.indexOf('link') !== -1) {
-        var parent_entry = chrome.contextMenus.create({
-          title: 'Open link in new tab with this rule...',
-          contexts: ['link', 'image']
-        });
-        /* Create sub-entries */
-        manual.forEach(function (rule) {
-          chrome.contextMenus.create({
-            title: rule.name,
-            contexts: ['link', 'image'],
-            parentId: parent_entry,
-            onclick: function (info, tab) {
-              var url;
-              if (info.srcUrl !== undefined) {
-                url = info.srcUrl;
-              } else if (info.linkUrl !== undefined) {
-                url = info.linkUrl;
-              } else {
-                assertError(false, new Error());
-              }
-              rule.actions.forEach(function (action) {
-                url = url.replace(action.from, action.to);
-              });
-              chrome.tabs.create({url: url});
+    /* Link manual redirection */
+    if (namespace.storage_states.manual_methods.indexOf('link') >= 0) {
+      var parent_entry = chrome.contextMenus.create({
+        title: 'Open link in new tab with this rule...',
+        contexts: ['link', 'image']
+      });
+      /* Create sub-entries */
+      manual.forEach(function (rule) {
+        chrome.contextMenus.create({
+          title: rule.name,
+          contexts: ['link', 'image'],
+          parentId: parent_entry,
+          onclick: function (info, tab) {
+            var url;
+            if (info.srcUrl !== undefined) {
+              url = info.srcUrl;
+            } else if (info.linkUrl !== undefined) {
+              url = info.linkUrl;
+            } else {
+              assertError(false, new Error());
             }
-          });
+            rule.actions.forEach(function (action) {
+              url = url.replace(action.from, action.to);
+            });
+            chrome.tabs.create({url: url});
+          }
         });
-      }
-      /* Page manual redirection */
-      if (items.manual_methods.indexOf('page') !== -1) {
-        var parent_entry = chrome.contextMenus.create({
-          title: 'Reload page with this rule...',
-          contexts: ['page', 'frame']
-        });
-        /* Create sub-entries */
-        manual.forEach(function (rule) {
-          chrome.contextMenus.create({
-            title: rule.name,
-            contexts: ['page', 'frame'],
-            parentId: parent_entry,
-            onclick: function (info, tab) {
-              var url;
-              if (info.pageUrl !== undefined) {
-                url = info.pageUrl;
-              } else {
-                assertError(false, new Error());
-              }
-              rule.actions.forEach(function (action) {
-                url = url.replace(action.from, action.to);
-              });
-              chrome.tabs.update(tab.id, {url: url});
+      });
+    }
+    /* Page manual redirection */
+    if (namespace.storage_states.manual_methods.indexOf('page') >= 0) {
+      var parent_entry = chrome.contextMenus.create({
+        title: 'Reload page with this rule...',
+        contexts: ['page', 'frame']
+      });
+      /* Create sub-entries */
+      manual.forEach(function (rule) {
+        chrome.contextMenus.create({
+          title: rule.name,
+          contexts: ['page', 'frame'],
+          parentId: parent_entry,
+          onclick: function (info, tab) {
+            var url;
+            if (info.pageUrl !== undefined) {
+              url = info.pageUrl;
+            } else {
+              assertError(false, new Error());
             }
-          });
+            rule.actions.forEach(function (action) {
+              url = url.replace(action.from, action.to);
+            });
+            chrome.tabs.update(tab.id, {url: url});
+          }
         });
-      }
-    });
+      });
+    }
   }
+  /* Entry: open options page */
+  chrome.contextMenus.create({
+    title: 'Open options page',
+    contexts: ['all'],
+    onclick: function () {
+      openOptionsPage();
+    }
+  });
 }
 
 /**
@@ -509,6 +604,15 @@ function initContextMenus() {
  */
 function initPageAction() {
   var namespace = window.redirector_background_js;
+  if (namespace.storage_states.icon_enabled === false) {
+    // Disable page action on all tabs
+    chrome.tabs.query({}, function (tabs) {
+      tabs.forEach(function (tab) {
+        chrome.pageAction.hide(tab.id);
+      });
+    });
+    return;
+  }
   var info = namespace.info;
   chrome.webRequest.onBeforeRedirect.addListener(function (details) {
     if (info[details.tabId] === undefined) {
@@ -521,7 +625,7 @@ function initPageAction() {
           '-&gt; ' + details.redirectUrl
       );
     }
-  }, {urls: window.redirector_background_js.urls_filter});
+  }, {urls: namespace.storage_states.enabled_protocols});
   chrome.webRequest.onErrorOccurred.addListener(function (details) {
     if (namespace.redirected_requests[details.requestId] === undefined &&
         namespace.header_modified_requests[details.requestId] === undefined) {
@@ -533,10 +637,11 @@ function initPageAction() {
     info[details.tabId].push(
       '#' + details.requestId + ' ' + details.error
     );
-  }, {urls: window.redirector_background_js.urls_filter});
+  }, {urls: namespace.storage_states.enabled_protocols});
   /* Set page action when tab is updated */
   chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
-    if (// changeInfo.status === 'complete' ||
+    if (window.redirector_background_js
+        .storage_states.icon_enabled === false ||
         info[tabId] === undefined) {
       return;
     }
@@ -552,6 +657,60 @@ function initPageAction() {
       delete info[tabId];
     }
   });
+}
+
+/**
+ * Initialize auto sync (not work for 150558)
+ */
+function initAutoSync() {
+  // chrome.alarms.clear('auto_sync');
+  // chrome.alarms.onAlarm.removeListener(syncData);
+  // if (window.redirector_background_js
+  //     .storage_states.auto_sync_enabled === true) {
+  //   chrome.alarms.create('auto_sync', {periodInMinutes: 60});
+  //   chrome.alarms.onAlarm.addListener(syncData);
+  // }
+}
+
+/**
+ * Register webRequest listeners
+ */
+function registerWebRequestListeners(types) {
+  var webRequest = chrome.webRequest;
+  // Remove event listeners
+  [['onBeforeRequest', processRedirectRules],
+   ['onBeforeSendHeaders', processRequestHeaderRules],
+   ['onHeadersReceived', processResponseHeaderRules]
+  ].forEach(function (t) {
+    if (webRequest[t[0]].hasListener(t[1])) {
+      webRequest[t[0]].removeListener(t[1]);
+    }
+  });
+  var namespace = window.redirector_background_js.storage_states;
+  /* redirect rules */
+  if (types instanceof Array && types.indexOf('redirect') >= 0) {
+    webRequest.onBeforeRequest.addListener(
+      processRedirectRules,
+      {urls: namespace.enabled_protocols},
+      ['blocking']
+    );
+  }
+  /* request header rules */
+  if (types instanceof Array && types.indexOf('request_header') >= 0) {
+    webRequest.onBeforeSendHeaders.addListener(
+      processRequestHeaderRules,
+      {urls: namespace.enabled_protocols},
+      ['blocking', 'requestHeaders']
+    );
+  }
+  /* response header rules */
+  if (types instanceof Array && types.indexOf('response_header') >= 0) {
+    webRequest.onHeadersReceived.addListener(
+      processResponseHeaderRules,
+      {urls: namespace.enabled_protocols},
+      ['blocking', 'responseHeaders']
+    );
+  }
 }
 
 /**
@@ -574,7 +733,7 @@ function processRedirectRules(details) {
       var condition = rule.conditions[j];
       /* Not in the resource type list OR not matches */
       if (condition.resource_type !== undefined &&
-          condition.indexOf(details.type) === -1 ||
+          condition.indexOf(details.type) < 0 ||
           !condition.regexp.test(details.url)) {
         continue;
       }
@@ -612,7 +771,7 @@ function processRequestHeaderRules(details) {
       var condition = rule.conditions[j];
       /* Not in the resource type list OR not matches */
       if (condition.resource_type !== undefined &&
-          condition.indexOf(details.type) === -1 ||
+          condition.indexOf(details.type) < 0 ||
           !condition.regexp.test(details.url)) {
         continue;
       }
@@ -625,7 +784,7 @@ function processRequestHeaderRules(details) {
         var index = header_names.indexOf(action.name);
         switch (action.type) {
         case 'set':
-          if (index === -1) {
+          if (index < 0) {
             details.requestHeaders.push({
               name: action.name, value: action.value
             });
@@ -660,7 +819,7 @@ function processResponseHeaderRules(details) {
       var condition = rule.conditions[j];
       /* Not in the resource type list OR not matches */
       if (condition.resource_type !== undefined &&
-          condition.indexOf(details.type) === -1 ||
+          condition.indexOf(details.type) < 0 ||
           !condition.regexp.test(details.url)) {
         continue;
       }

@@ -314,20 +314,42 @@ function initButtons() {
     });
   });
   /* Import rule */
-  $('#floating-toolbar button[name="import"]');
   $('#floating-toolbar input[type="file"][name="import"]').change(function () {
-    $(this).prop('file').forEach(function (i, file) {
+    var type;
+    $.each($(this).prop('files'), function (i, file) {
       readTextFromFile(file, function (text) {
+        var data;
         try {
-          var data = JSON.parse(text);
+          data = JSON.parse(text);
           // TODO: Judge file type, be able to read in Redirector-2.2 format
-          chrome.storage.set(data);
         } catch (x) {
-          alertDialog('Failed to import rule(s): ' + x.message);
+          alertDialog('Failed to import rule: ' + x.message);
           return;
+        }
+        for (type in data) {
+          var rule = data[type];
+          var $list = $('#rule-list-' + type);
+          var opt = {};
+          opt[type] = [];
+          chrome.storage.local.get(opt, function (items) {
+            var value = items[type];
+            value.push(rule);
+            var result = {};
+            result[type] = value;
+            chrome.storage.local.set(result);
+          });
+          $list.append(wrapListItem(rule.name));
+          $('#nav-tab-rules>.accordion').accordion('resize');
         }
       });
     });
+    // Open the list contains the last imported rule
+    $('#rule-lists').accordion('activate', [
+      'fast_matching', 'redirect', 'request_header',
+      'response_header', 'online'
+    ].indexOf(type));
+    // Clear the file input
+    $(this).prop('value', '');
   });
   /* Export rule */
   $('#floating-toolbar button[name="export"]').click(function () {
@@ -587,7 +609,12 @@ function initMisc() {
   $('input, input[type="text"], input[type="url"], textarea')
     .addClass('ui-widget ui-state-default ui-corner-all');
   /* Accordions */
-  $('.accordion').accordion({autoHeight: false});
+  $('.accordion').accordion({
+    autoHeight: false,
+    change: function () {
+      $(this).accordion('resize');
+    }
+  });
   /* Selectabla & draggable lists */
   $('.selectable-draggable-list')
     .sortable({handle: '.rule-handle', axis: 'y'})
@@ -640,6 +667,21 @@ function initMisc() {
       var tmp = array[start];
       array[start] = array[stop];
       array[stop] = tmp;
+    });
+  });
+  /* I18n */
+  $('[data-i18n]').each(function () {
+    var i18ns = $(this).data('i18n');
+    if (i18ns === '') {
+      return;
+    }
+    i18ns.split(/\s*;\s/).forEach(function (i18n) {
+      if (i18n.indexOf(':') === -1) {
+        var pair = i18n.split(':');
+        $(this).prop(pair[0].replace(/^\s*|\s*$/), _(pair[1]));
+      } else {
+        $(this).text(_(i18n));
+      }
     });
   });
 }
@@ -890,7 +932,7 @@ $( "#dialog:ui-dialog" ).dialog( "destroy" );
  * Initialize the Settings tab
  */
 function initSettings() {
-  var $settings = $('#settings');
+  var $settings = $('#nav-tab-settings');
   var local = chrome.storage.local;
   /* Enable context menu */
   local.get({context_enabled: true}, function (items) {
@@ -912,14 +954,32 @@ function initSettings() {
       icon_enabled: $(this).is(':checked') && $(this).data('enabled')
     });
   });
-  /* Enabled protocols */
+  /* Enabled rule type */
   local.get(
-    {enabled_protocols: ['http', 'https', 'ftp', 'file']}, function (items) {
-      $.each(items.enabled_protocols, function (i, protocol) {
-        $('[data-type="' + protocol + '"]', $settings)
+    {enabled_rule_types: ['fast_matching', 'redirect', 'request_header',
+                         'response_header', 'online']},
+    function (items) {
+      $.each(items.enabled_rule_types, function (i, type) {
+        $('[name="rule_type"][data-type="' + type + '"]', $settings)
           .prop('checked', true).button('refresh');
       });
     });
+  $('[name="rule_type"]', $settings).click(function () {
+    var types = [];
+    $('[name="rule_type"]:checked', $settings).each(function () {
+      types.push($(this).data('type'));
+    });
+    local.set({enabled_rule_types: types});
+  });
+  /* Enabled protocols */
+  local.get({enabled_protocols: [
+    'http://*/*', 'https://*/*', 'ftp://*/*', 'file://*/*'
+  ]}, function (items) {
+    $.each(items.enabled_protocols, function (i, protocol) {
+      $('[name="protocol"][data-type="' + protocol + '"]', $settings)
+        .prop('checked', true).button('refresh');
+    });
+  });
   $('[name="protocol"]', $settings).click(function () {
     var protocols = [];
     $('[name="protocol"]:checked', $settings).each(function () {
@@ -942,23 +1002,24 @@ function initSettings() {
     local.set({manual_methods: manual});
   });
   /* Enable sync */
-  local.get({sync_enabled: true}, function (items) {
-    $('[name="sync"][data-enabled="' + items.sync_enabled + '"]', $settings)
+  local.get({auto_sync_enabled: true}, function (items) {
+    $('[name="sync"][data-enabled="' + items.auto_sync_enabled + '"]',
+      $settings)
       .prop('checked', true).button('refresh');
   });
   $('[name="sync"]', $settings).click(function () {
     local.set({
-      sync_enabled: $(this).is(':checked') && $(this).data('enabled')
+      auto_sync_enabled: $(this).is(':checked') && $(this).data('enabled')
     });
   });
   $('[name="manual-sync"]', $settings).click(function () {
-    // TODO
+    syncData();
   });
   // Backup
   $('[name="backup"]', $settings).click(function () {
     backupToFile();
   });
-  // Restore/Import
+  // Restore
   $('input[type="file"][name="restore"]', $settings).change(function () {
     restoreFromFile($(this).prop('files'));
   });
@@ -980,14 +1041,21 @@ function backupToFile() {
  * Restore data from file
  */
 function restoreFromFile(files) {
-  files.forEach(function (i, file) {
-    readTextFromFile(file, function (text) {
-      try {
-        var data = JSON.parse(text);
-        // TODO: Judge file type, be able to read in Redirector-2.2 format
-        chrome.storage.set(data);
-      } catch (x) {
-        return;
+  var file = files[0];
+  readTextFromFile(file, function (text) {
+    var data;
+    try {
+      data = JSON.parse(text);
+      // TODO: Judge file type, be able to read in Redirector-2.2 format
+    } catch (x) {
+      alertDialog('Restore data failed: ' + x.message);
+      return;
+    }
+    chrome.storage.local.set(data, function () {
+      if (chrome.extension.lastError !== undefined) {
+        alertDialog('Restore data failed: ' + chrome.extension.lastError);
+      } else {
+        location.reload();
       }
     });
   });
