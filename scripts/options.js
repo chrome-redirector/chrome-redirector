@@ -23,9 +23,9 @@ $(document).ready(function(){
 /* Create selectable & sortable list string (helper)
  */
 function wrapListItem(item) {
-  var pattern = "<li class=\"ui-corner-all\"><div class=\"rule-handle\">\
-<span class=\"ui-icon ui-icon-carat-2-n-s\"></span></div>\v</li>";
-  return pattern.replace("\v", item);
+  var pattern = '<li class="ui-corner-all"><div class="rule-handle">\
+<span class="ui-icon ui-icon-carat-2-n-s"></span></div>\0x0</li>';
+  return pattern.replace('\0x0', item);
 }
 
 /**
@@ -88,6 +88,178 @@ function initDialogs() {
     }
   ]});
   /* Editor dialogs */
+  /**
+   * Save the editing rule
+   */
+  function saveRule($dialog) {
+    var rule = $dialog.data('rule');
+    var type = rule.type;
+    delete rule.type;
+    rule.enabled = $('#rule-editor [name="rule-enabled"]:checked')
+      .data('enabled');
+    rule.name = $('[name="name"]', $dialog).prop('value');
+    if (type === 'online') {
+      rule.url = $('[name="online"]', $dialog).prop('value');
+    }
+    var $list = $('#rule-list-' + type);
+    var index = $dialog.data('rule_index');
+    var opt = {};
+    opt[type] = [];
+    chrome.storage.local.get(opt, function (items) {
+      var value = items[type];
+      if (index < 0) {
+        value.push(rule);
+      } else {
+        value[index] = rule;
+      }
+      var result = {};
+      result[type] = value;
+      chrome.storage.local.set(result);
+    });
+    if (index < 0) {
+      $list.append(wrapListItem(rule.name));
+      $('#nav-tab-rules>.accordion').accordion('resize');
+    } else {
+      $('li:eq(' + index + ')', $list).replaceWith(wrapListItem(rule.name));
+    }
+    $('#rule-lists').accordion('activate', [
+      'fast_matching', 'redirect', 'request_header',
+      'response_header', 'online'
+    ].indexOf(type));
+  }
+  /**
+   * Save the editing condition
+   */
+  function saveCondition($dialog) {
+    var $rule_editor = $('#rule-editor');
+    var condition = {};
+    var resource_type = [];
+    switch ($rule_editor.data('rule').type) {
+    case 'fast_matching':
+      $.each([
+        'hostContains', 'hostEquals', 'hostPrefix', 'hostSuffix',
+        'pathContains', 'pathEquals', 'pathPrefix', 'pathSuffix',
+        'queryContains', 'queryEquals', 'queryPrefix', 'querySuffix',
+        'urlContains', 'urlEquals', 'urlPrefix', 'urlSuffix',
+        'schemes', 'ports'
+      ], function (i, name) {
+        var value = $('[name="' + name + '"]', $dialog).prop('value');
+        if (!value) {
+          return;
+        }
+        switch (name) {
+        case 'schemes':
+          var schemes = value.split(/,\s*/);
+          var tmp = {};
+          schemes.forEach(function (scheme) {
+            tmp[scheme] = true;
+          });
+          delete tmp[''];
+          schemes = Object.keys(tmp);
+          if (schemes.length === 0) {
+            throw new Error('No valid input!');
+          }
+          condition.schemes = schemes;
+          break;
+        case 'ports':
+          var ports;
+          try {
+            ports = JSON.parse('[' + value + ']');
+            ports.forEach(function (port) {
+              if ($.isNumeric(port) === true) {
+                return;
+              }
+              if (port.length !== 2 ||
+                  !$.isNumeric(port[0]) || !$.isNumeric(port[1]) ||
+                  port[0] >= port[1]) {
+                throw new Error('Ranges are of format [x, y] where x < y');
+              }
+            });
+          } catch (x) {
+            throw x;
+          }
+          condition.ports = ports;
+          break;
+        default:
+          condition[name] = value;
+        }
+      });
+      $('#condition-editor-fast_matching [type="checkbox"]:not(:first):checked')
+        .each(function () {
+          resource_type.push($(this).data('type'));
+        });
+      if (resource_type.length > 0 && resource_type.length < 8) {
+        condition.resource_type = resource_type;
+      }
+      break;
+    case 'redirect':
+    case 'request_header':
+    case 'response_header':
+      condition.type = $('[type="radio"][name="type"]:checked', $dialog).data('type');
+      condition.value = $('[name="value"]', $dialog).prop('value');
+      $('#condition-editor-normal [type="checkbox"][name="resource"]:not(:first):checked')
+        .each(function () {
+          resource_type.push($(this).data('type'));
+        });
+      if (resource_type.length > 0 && resource_type.length < 8) {
+        condition.resource_type = resource_type;
+      }
+      break;
+    default:
+      assertError(false, new Error());
+    }
+    if (Object.keys(condition).length === 0) {
+      throw new Error('No input!');
+    }
+    var index = $rule_editor.data('condition_index');
+    var $list = $('#rule-editor-conditions');
+    if (index < 0) {
+      $rule_editor.data('rule').conditions.push(condition);
+      $list.append(wrapListItem(JSON.stringify(condition)));
+    } else {
+      $rule_editor.data('rule').conditions[index] = condition;
+      $('li:eq(' + index + ')', $list)
+        .replaceWith(wrapListItem(JSON.stringify(condition)));
+    }
+    $rule_editor.data({condition_index: null});
+  }
+  /**
+   * Save the editing action
+   */
+  function saveAction ($dialog) {
+    var $rule_editor = $('#rule-editor');
+    var action = {
+      type: $('[type="radio"][name="type"]:checked', $dialog).data('type')
+    };
+    switch ($dialog.prop('id')) {
+    case 'action-editor-redirect':
+      action.from = $('[name="from"]', $dialog).prop('value');
+      action.to = $('[name="to"]', $dialog).prop('value');
+      action.modifiers = [];
+      $('[type="checkbox"][name="modifier"]:checked', $dialog).each(function () {
+        action.modifiers.push($(this).data('type'));
+      });
+      break;
+    case 'action-editor-request_header':
+    case 'action-editor-response_header':
+      action.name = $('[name="name"]', $dialog).prop('value');
+      action.value = $('[name="value"]', $dialog).prop('value');
+      break;
+    default:
+      assertError(false, new Error());
+    }
+    var index = $rule_editor.data('action_index');
+    var $list = $('#rule-editor-actions');
+    if (index < 0) {
+      $rule_editor.data('rule').actions.push(action);
+      $list.append(wrapListItem(JSON.stringify(action)));
+    } else {
+      $rule_editor.data('rule').actions[index] = action;
+      $('li:eq(' + index + ')', $list)
+        .replaceWith(wrapListItem(JSON.stringify(action)));
+    }
+    $rule_editor.data({action_index: null});
+  }
   $('.editor-dialog').dialog({
     autoOpen: false, modal: true, width: 1000, height: 650, buttons: [
       {
@@ -144,7 +316,9 @@ function initDialogs() {
   /* Rule editor open binding */
   $('#rule-editor').bind('dialogopen', function () {
     var rule = $(this).data('rule');
-    $('[data-enabled="' + rule.enabled + '"]', $(this)).prop({checked: true});
+    $('[data-enabled="' + rule.enabled + '"]', $(this))
+      .prop({checked: true})
+      .button('refresh');
     $('[name="name"]', $(this)).prop('value', rule.name);
     if (rule.type === 'online') {
       $('#rule-editor>.local-rule').hide();
@@ -169,7 +343,7 @@ function initDialogs() {
   $('#condition-editor-fast_matching').bind('dialogopen', function () {
     var $rule_editor = $('#rule-editor');
     var index = $rule_editor.data('condition_index');
-    var condition = index === -1 ? [] :
+    var condition = index < 0 ? [] :
       $rule_editor.data('rule').conditions[index];
     var $dialog = $(this);
     $.each([
@@ -202,7 +376,7 @@ function initDialogs() {
   $('#condition-editor-normal').bind('dialogopen', function () {
     var $rule_editor = $('#rule-editor');
     var index = $rule_editor.data('condition_index');
-    var condition = index === -1 ? [] :
+    var condition = index < 0 ? [] :
       $rule_editor.data('rule').conditions[index];
     $('[data-type="' + condition.type + '"]', $(this))
       .prop('checked', true).button('refresh');
@@ -228,7 +402,7 @@ function initDialogs() {
       $('[name="modifier"]', $(this)).button('enable');
     }
     var index = $rule_editor.data('action_index');
-    var action = index === -1 ? {type: 'regexp'} :
+    var action = index < 0 ? {type: 'regexp'} :
     rule.actions[
       $rule_editor.data('action_index')];
     $('[data-type="' + action.type + '"]', $(this))
@@ -243,7 +417,7 @@ function initDialogs() {
       var type = $(this).prop('id') === 'action-editor-request_header' ?
         'request_header' : 'response_header';
       var index = $rule_editor.data('action_index');
-      var action = index === -1 ? {type: type} :
+      var action = index < 0 ? {type: type} :
       $rule_editor.data('rule').actions[
         $rule_editor.data('action_index')];
       $('[data-type="' + action.type + '"]', $(this))
@@ -275,14 +449,14 @@ function initButtons() {
     $('#rule-creator').dialog('open');
   });
   /* Edit rule */
-  $('#floating-toolbar button[name="edit"]').click(function () {
+  function editRule () {
     var type_index = $('#rule-lists').accordion('option', 'active');
     var type = ['fast_matching', 'redirect', 'request_header',
                 'response_header', 'online'][type_index];
     var $list = $('#rule-list-' + type);
     var $rule = $('.ui-selected', $list);
     var index = $('li', $list).index($rule);
-    if (index === -1) {
+    if (index < 0) {
       return;
     }
     chrome.storage.local.get(type, function (items) {
@@ -292,26 +466,108 @@ function initButtons() {
       $dialog.data({rule: rule, rule_index: index});
       $dialog.dialog('open');
     });
+  }
+  $('#floating-toolbar button[name="edit"]').click(editRule);
+  $('#rule-lists').on('dblclick', 'li', function () {
+    $(this).addClass('ui-selected');
+    editRule();
+  });
+  // <Enter> => edit
+  $(document).bind('keydown', 'return i', function () {
+    if ($('.ui-dialog:visible').length <= 0 &&
+        $('#nav-tab-rules').is(':visible')) {
+      editRule();
+      return false;
+    }
+    return true;
   });
   /* Remove rule */
-  $('#floating-toolbar button[name="remove"]').click(function () {
+  function removeRule () {
     var type_index = $('#rule-lists').accordion('option', 'active');
     var type = ['fast_matching', 'redirect', 'request_header',
                 'response_header', 'online'][type_index];
     var $list = $('#rule-list-' + type);
     var $rule = $('.ui-selected', $list);
     var index = $('li', $list).index($rule);
-    if (index === -1) {
+    if (index < 0) {
       return;
     }
-    $rule.remove();
     chrome.storage.local.get(type, function (items) {
       var rules = items[type];
-      rules.splice(index, 1);
-      var obj = {};
-      obj[type] = rules;
-      chrome.storage.local.set(obj);
+      confirmDialog(
+        'Do you really want to remove: ' + rules[index].name + '?',
+        function (confirmed) {
+          if (confirmed !== true) {
+            return;
+          }
+          rules.splice(index, 1);
+          var obj = {};
+          obj[type] = rules;
+          chrome.storage.local.set(obj);
+          $rule.remove();
+        });
     });
+  }
+  $('#floating-toolbar button[name="remove"]').click(removeRule);
+  // x => remove
+  $(document).bind('keydown', 'ctrl+d x del backspace', function () {
+    if ($('.ui-dialog:visible').length <= 0 &&
+        $('#nav-tab-rules').is(':visible')) {
+      removeRule();
+      return false;
+    }
+    return true;
+  });
+  /* Relative key-bindings */
+  // j => move down
+  $(document).bind('keydown', 'ctrl+n j', function () {
+    if ($('.ui-dialog:visible').length <= 0 &&
+        $('#nav-tab-rules').is(':visible')) {
+      var $rule = $('.ui-selected', $('#rule-lists'));
+      if ($rule.next().length > 0) {
+        $rule.insertAfter($rule.next());
+      }
+      return false;
+    }
+    return true;
+  });
+  // k => move up
+  $(document).bind('keydown', 'ctrl+p k', function () {
+    if ($('.ui-dialog:visible').length <= 0 &&
+        $('#nav-tab-rules').is(':visible')) {
+      var $rule = $('.ui-selected', $('#rule-lists'));
+      if ($rule.prev().length > 0) {
+        $rule.insertBefore($rule.prev());
+      }
+      return false;
+    }
+    return true;
+  });
+  // tab => select next rule
+  $(document).bind('keydown', 'tab', function () {
+    if ($('.ui-dialog:visible').length <= 0 &&
+        $('#nav-tab-rules').is(':visible')) {
+      var $rule = $('.ui-selected', $('#rule-lists'));
+      if ($rule.next().length > 0) {
+        $rule.removeClass('ui-selected');
+        $rule.next().addClass('ui-selected');
+      }
+      return false;
+    }
+    return true;
+  });
+  // shift-tab => select prev rule
+  $(document).bind('keydown', 'shift+tab', function () {
+    if ($('.ui-dialog:visible').length <= 0 &&
+        $('#nav-tab-rules').is(':visible')) {
+      var $rule = $('.ui-selected', $('#rule-lists'));
+      if ($rule.prev().length > 0) {
+        $rule.removeClass('ui-selected');
+        $rule.prev().addClass('ui-selected');
+      }
+      return false;
+    }
+    return true;
   });
   /* Import rule */
   $('#floating-toolbar input[type="file"][name="import"]').change(function () {
@@ -359,7 +615,7 @@ function initButtons() {
     var $list = $('#rule-list-' + type);
     var $rule = $('.ui-selected', $list);
     var index = $('li', $list).index($rule);
-    if (index === -1) {
+    if (index < 0) {
       return;
     }
     chrome.storage.local.get(type, function (items) {
@@ -391,7 +647,7 @@ function initButtons() {
     }
   });
   /* Edit condition */
-  $('#rule-editor [name="edit-condition"]').click(function () {
+  function editCondition() {
     var $rule_editor = $('#rule-editor');
     var index = $('#rule-editor-conditions li')
       .index($('#rule-editor-conditions .ui-selected'));
@@ -410,15 +666,89 @@ function initButtons() {
       $rule_editor.data({condition_index: null});
       assertError(false, new Error());
     }
+  }
+  $('#rule-editor [name="edit-condition"]').click(editCondition);
+  $('#rule-editor').on('dblclick', 'li', function () {
+    $(this).addClass('ui-selected');
+    // Try edit condition
+    editCondition();
+  });
+  $(document).bind('keydown', 'return i', function () {
+    if ($('#rule-editor').is(':visible') === true &&
+        $('.ui-dialog:visible').length === 1) {
+      editCondition();
+      return false;
+    }
+    return true;
   });
   /* Remove condition */
-  $('#rule-editor [name="remove-condition"]').click(function () {
+  function removeCondition () {
     var $selected = $('#rule-editor-conditions .ui-selected');
     var index = $('#rule-editor-conditions li').index($selected);
     if (index >= 0) {
       $('#rule-editor').data('rule').conditions.splice(index, 1);
       $selected.remove();
     }
+  }
+  $('#rule-editor [name="remove-condition"]').click(removeCondition);
+  $(document).bind('keydown', 'ctrl+d x del backspace', function () {
+    if ($('#rule-editor').is(':visible') === true &&
+        $('.ui-dialog:visible').length === 1) {
+      removeCondition();
+      return false;
+    }
+    return true;
+  });
+  /* Relative key-bindings (also works for actions) */
+  // j => move down
+  $(document).bind('keydown', 'ctrl+n j', function () {
+    if ($('#rule-editor').is(':visible') === true &&
+        $('.ui-dialog:visible').length === 1) {
+      var $elem = $('#rule-editor .ui-selected');
+      if ($elem.next().length > 0) {
+        $elem.insertAfter($elem.next());
+      }
+      return false;
+    }
+    return true;
+  });
+  // k => move up
+  $(document).bind('keydown', 'ctrl+p k', function () {
+    if ($('#rule-editor').is(':visible') === true &&
+        $('.ui-dialog:visible').length === 1) {
+      var $elem = $('#rule-editor .ui-selected');
+      if ($elem.prev().length > 0) {
+        $elem.insertBefore($elem.prev());
+      }
+      return false;
+    }
+    return true;
+  });
+  // tab => select next condition/action
+  $(document).bind('keydown', 'tab', function () {
+    if ($('#rule-editor').is(':visible') === true &&
+        $('.ui-dialog:visible').length === 1) {
+      var $elem = $('#rule-editor .ui-selected');
+      if ($elem.next().length > 0) {
+        $elem.removeClass('ui-selected');
+        $elem.next().addClass('ui-selected');
+      }
+      return false;
+    }
+    return true;
+  });
+  // shift-tab => select next condition/action
+  $(document).bind('keydown', 'shift+tab', function () {
+    if ($('#rule-editor').is(':visible') === true &&
+        $('.ui-dialog:visible').length === 1) {
+      var $elem = $('#rule-editor .ui-selected');
+      if ($elem.prev().length > 0) {
+        $elem.removeClass('ui-selected');
+        $elem.prev().addClass('ui-selected');
+      }
+      return false;
+    }
+    return true;
   });
   /* Resource type chooser */
   $('#condition-editor-fast_matching, #condition-editor-normal')
@@ -460,7 +790,7 @@ function initButtons() {
     }
   });
   /* Edit action */
-  $('#rule-editor [name="edit-action"]').click(function () {
+  function editAction () {
     var index = $('#rule-editor-actions li')
       .index($('#rule-editor-actions .ui-selected'));
     if (index < 0) {
@@ -487,15 +817,32 @@ function initButtons() {
       assertError(false, new Error());
     }
     $rule_editor.data({action_index: index});
+  }
+  $('#rule-editor [name="edit-action"]').click(editAction);
+  $('#rule-editor').on('dblclick', 'li', function () {
+    $(this).addClass('ui-selected');
+    // Try edit action
+    editAction();
+  });
+  $(document).bind('keydown', 'return', function () {
+    if ($('#rule-editor').is(':visible') === true) {
+      editAction();
+    }
   });
   /* Remove action */
-  $('#rule-editor [name="remove-action"]').click(function () {
+  function removeAction () {
     var $selected = $('#rule-editor-actions .ui-selected');
     var index = $('#rule-editor-actions li')
       .index($selected);
     if (index >= 0) {
       $('#rule-editor').data('rule').actions.splice(index, 1);
       $selected.remove();
+    }
+  }
+  $('#rule-editor [name="remove-action"]').click(removeAction);
+  $(document).bind('keydown', 'x', function () {
+    if ($('#rule-editor').is(':visible') === true) {
+      removeAction();
     }
   });
   /* Condition type selection */
@@ -615,18 +962,38 @@ function initMisc() {
       $(this).accordion('resize');
     }
   });
+  /* Style url input and its following button */
+  $('input[type="url"]').each(function () {
+    if ($(this).next().is('button')) {
+      $(this)
+        .removeClass('ui-corner-all')
+        .removeClass('ui-corner-right')
+        .addClass('ui-corner-left');
+      $(this).next()
+        .removeClass('ui-corner-all')
+        .removeClass('ui-corner-left')
+        .addClass('ui-corner-right');
+    }
+  });
   /* Selectabla & draggable lists */
   $('.selectable-draggable-list')
     .sortable({handle: '.rule-handle', axis: 'y'})
     .selectable({
-      stop: function (e){
-        $(e.target).children('.ui-selected').not(':first')
-          .removeClass('ui-selected');
-      }
+      distance: 1               // Allow double click
+    })
+    .on('click', 'li', function (e) { // Enable selection (better solution?)
+      var $this = $(this);
+      setTimeout(function () {
+        $this.addClass('ui-selected');
+      }, 1);
     });
   /* Deselect when place elsewhere than a rule is clicked */
   $('#nav-tab-rules').click(function () {
     $('[id^="rule-list-"] .ui-selected').removeClass('ui-selected');
+  });
+  /* Same for rule editor */
+  $('#rule-editor').click(function () {
+    $('.ui-selected', $(this)).removeClass('ui-selected');
   });
   /* Rule lists sort binding */
   $.each([
@@ -676,7 +1043,7 @@ function initMisc() {
       return;
     }
     i18ns.split(/\s*;\s/).forEach(function (i18n) {
-      if (i18n.indexOf(':') === -1) {
+      if (i18n.indexOf(':') < 0) {
         var pair = i18n.split(':');
         $(this).prop(pair[0].replace(/^\s*|\s*$/), _(pair[1]));
       } else {
@@ -700,187 +1067,10 @@ function loadRules() {
       }
       var $list = $('#rule-list-' + type);
       $.each(rules, function (i, rule) {
-        $list.append(
-          '<li class="ui-corner-all"><div class="rule-handle">\
-<span class="ui-icon ui-icon-carat-2-n-s"></span></div>' + rule.name + '</li>');
+        $list.append(wrapListItem(rule.name));
       });
     });
   });
-}
-
-/**
- * Save the editing rule
- */
-function saveRule($dialog) {
-  var rule = $dialog.data('rule');
-  var type = rule.type;
-  delete rule.type;
-  rule.enabled = $('#rule-editor [name="rule-enabled"]:checked')
-    .data('enabled');
-  rule.name = $('[name="name"]', $dialog).prop('value');
-  if (type === 'online') {
-    rule.url = $('[name="online"]', $dialog).prop('value');
-  }
-  var $list = $('#rule-list-' + type);
-  var index = $dialog.data('rule_index');
-  var opt = {};
-  opt[type] = [];
-  chrome.storage.local.get(opt, function (items) {
-    var value = items[type];
-    if (index === -1) {
-      value.push(rule);
-    } else {
-      value[index] = rule;
-    }
-    var result = {};
-    result[type] = value;
-    chrome.storage.local.set(result);
-  });
-  if (index === -1) {
-    $list.append(wrapListItem(rule.name));
-    $('#nav-tab-rules>.accordion').accordion('resize');
-  } else {
-    $('li:eq(' + index + ')', $list).replaceWith(wrapListItem(rule.name));
-  }
-  $('#rule-lists').accordion('activate', [
-    'fast_matching', 'redirect', 'request_header',
-    'response_header', 'online'
-  ].indexOf(type));
-}
-
-/**
- * Save the editing condition
- */
-function saveCondition($dialog) {
-  var $rule_editor = $('#rule-editor');
-  var condition = {};
-  var resource_type = [];
-  switch ($rule_editor.data('rule').type) {
-  case 'fast_matching':
-    $.each([
-      'hostContains', 'hostEquals', 'hostPrefix', 'hostSuffix',
-      'pathContains', 'pathEquals', 'pathPrefix', 'pathSuffix',
-      'queryContains', 'queryEquals', 'queryPrefix', 'querySuffix',
-      'urlContains', 'urlEquals', 'urlPrefix', 'urlSuffix',
-      'schemes', 'ports'
-    ], function (i, name) {
-      var value = $('[name="' + name + '"]', $dialog).prop('value');
-      if (!value) {
-        return;
-      }
-      switch (name) {
-      case 'schemes':
-        var schemes = value.split(/,\s*/);
-        var tmp = {};
-        schemes.forEach(function (scheme) {
-          tmp[scheme] = true;
-        });
-        delete tmp[''];
-        schemes = Object.keys(tmp);
-        if (schemes.length === 0) {
-          throw new Error('No valid input!');
-        }
-        condition.schemes = schemes;
-        break;
-      case 'ports':
-        var ports;
-        try {
-          ports = JSON.parse('[' + value + ']');
-          ports.forEach(function (port) {
-            if ($.isNumeric(port) === true) {
-              return;
-            }
-            if (port.length !== 2 ||
-                !$.isNumeric(port[0]) || !$.isNumeric(port[1]) ||
-                port[0] >= port[1]) {
-              throw new Error('Ranges are of format [x, y] where x < y');
-            }
-          });
-        } catch (x) {
-          throw x;
-        }
-        condition.ports = ports;
-        break;
-      default:
-        condition[name] = value;
-      }
-    });
-    $('#condition-editor-fast_matching [type="checkbox"]:not(:first):checked')
-      .each(function () {
-        resource_type.push($(this).data('type'));
-      });
-    if (resource_type.length > 0 && resource_type.length < 8) {
-      condition.resource_type = resource_type;
-    }
-    break;
-  case 'redirect':
-  case 'request_header':
-  case 'response_header':
-    condition.type = $('[type="radio"][name="type"]:checked', $dialog).data('type');
-    condition.value = $('[name="value"]', $dialog).prop('value');
-    $('#condition-editor-normal [type="checkbox"][name="resource"]:not(:first):checked')
-      .each(function () {
-        resource_type.push($(this).data('type'));
-      });
-    if (resource_type.length > 0 && resource_type.length < 8) {
-      condition.resource_type = resource_type;
-    }
-    break;
-  default:
-    assertError(false, new Error());
-  }
-  if (Object.keys(condition).length === 0) {
-    throw new Error('No input!');
-  }
-  var index = $rule_editor.data('condition_index');
-  var $list = $('#rule-editor-conditions');
-  if (index === -1) {
-    $rule_editor.data('rule').conditions.push(condition);
-    $list.append(wrapListItem(JSON.stringify(condition)));
-  } else {
-    $rule_editor.data('rule').conditions[index] = condition;
-    $('li:eq(' + index + ')', $list)
-      .replaceWith(wrapListItem(JSON.stringify(condition)));
-  }
-  $rule_editor.data({condition_index: null});
-}
-
-/**
- * Save the editing action
- */
-function saveAction ($dialog) {
-  var $rule_editor = $('#rule-editor');
-  var action = {
-    type: $('[type="radio"][name="type"]:checked', $dialog).data('type')
-  };
-  switch ($dialog.prop('id')) {
-  case 'action-editor-redirect':
-    action.from = $('[name="from"]', $dialog).prop('value');
-    action.to = $('[name="to"]', $dialog).prop('value');
-    action.modifiers = [];
-    $('[type="checkbox"][name="modifier"]:checked', $dialog).each(function () {
-      action.modifiers.push($(this).data('type'));
-    });
-    break;
-  case 'action-editor-request_header':
-  case 'action-editor-response_header':
-    action.name = $('[name="name"]', $dialog).prop('value');
-    action.value = $('[name="value"]', $dialog).prop('value');
-    break;
-  default:
-    assertError(false, new Error());
-  }
-  var index = $rule_editor.data('action_index');
-  var $list = $('#rule-editor-actions');
-  if (index === -1) {
-    $rule_editor.data('rule').actions.push(action);
-    $list.append(wrapListItem(JSON.stringify(action)));
-  } else {
-    $rule_editor.data('rule').actions[index] = action;
-    $('li:eq(' + index + ')', $list)
-      .replaceWith(wrapListItem(JSON.stringify(action)));
-  }
-  $rule_editor.data({action_index: null});
 }
 
 /**
@@ -1017,50 +1207,35 @@ function initSettings() {
   });
   // Backup
   $('[name="backup"]', $settings).click(function () {
-    backupToFile();
+    chrome.storage.local.get(null, function (items) {
+      saveTextToFile({
+        text: JSON.stringify(items),
+        filename: '[Redirector_backup]' + (new Date()).toISOString() + '.json'
+      });
+    });
   });
   // Restore
   $('input[type="file"][name="restore"]', $settings).change(function () {
-    restoreFromFile($(this).prop('files'));
-  });
-}
-
-/**
- * Backup data (rules, settings, ...) to file
- */
-function backupToFile() {
-  chrome.storage.local.get(null, function (items) {
-    saveTextToFile({
-      text: JSON.stringify(items),
-      filename: '[Redirector_backup]' + (new Date()).toISOString() + '.json'
-    });
-  });
-}
-
-/**
- * Restore data from file
- */
-function restoreFromFile(files) {
-  var file = files[0];
-  readTextFromFile(file, function (text) {
-    var data;
-    try {
-      data = JSON.parse(text);
-      // TODO: Judge file type, be able to read in Redirector-2.2 format
-    } catch (x) {
-      alertDialog('Restore data failed: ' + x.message);
-      return;
-    }
-    chrome.storage.local.set(data, function () {
-      if (chrome.extension.lastError !== undefined) {
-        alertDialog('Restore data failed: ' + chrome.extension.lastError);
-      } else {
-        location.reload();
+    var file = $(this).prop('files')[0];
+    readTextFromFile(file, function (text) {
+      var data;
+      try {
+        data = JSON.parse(text);
+        // TODO: Judge file type, be able to read in Redirector-2.2 format
+      } catch (x) {
+        alertDialog('Restore data failed: ' + x.message);
+        return;
       }
+      chrome.storage.local.set(data, function () {
+        if (chrome.extension.lastError !== undefined) {
+          alertDialog('Restore data failed: ' + chrome.extension.lastError);
+        } else {
+          location.reload();
+        }
+      });
     });
   });
 }
-/* Settings end */
 
 /* Help */
 /**
@@ -1068,4 +1243,3 @@ function restoreFromFile(files) {
  */
 function initHelp() {
 }
-/* Help end */

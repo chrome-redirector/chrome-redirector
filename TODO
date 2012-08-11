@@ -15,11 +15,13 @@ Aug 8, 2012 by Cyril Feng:
 * URL info in header
    Expose URL info to header settings, e.g. define special expression
    to represent the host part of that URL.
-* Auto sync
-   Trigger scheduled update with chrome.alarms
 * Debugger
    chrome.devtools.network is suitable for recording network logs,
    while chrome.devtools.panels suitable to show the result.
 * Reuse URL from rule editor to verify expressions in action editor
 * URL parser
    Implement a URL parser: validate, split
+
+Aug 11, 2012 by Cyril Feng
+* Accordion style
+   The accrodion in #rule-editor is not styled properly
