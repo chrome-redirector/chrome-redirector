@@ -61,7 +61,7 @@ input:not([type]), input[type="text"], input[type="url"], textarea, .ui-combobox
 }
 input:not([type]):not(.ui-combobox-input), input[type="text"], input[type="url"] {
     width: 70%;
-    padding: 0.5em 0;
+    padding: 0.51em 0;
 }
 textarea {
     width: 70%;
@@ -113,18 +113,21 @@ input[type="file"] {
 /* Selectable & draggable */
 .selectable-draggable-list {
     padding: 0;
-    color: #000;
 }
 .selectable-draggable-list li {
-    background: #fff;
+    background: #e6e6e6;
+    color: #555;
+    border: 1px solid #d3d3d3;
     position: relative;
     margin: 1px 0;
     padding: 1px;
-    border: 2px solid gray;
     padding-left: 32px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: default;
 }
 .selectable-draggable-list li .rule-handle {
-    background: #f8f8f8;
     position: absolute;
     left: 0;
     top: 0;
@@ -132,12 +135,24 @@ input[type="file"] {
     padding: 3px;
 }
 .selectable-draggable-list .ui-selecting {
-    /* background: #ffa; */
-    background: #2bf;
+    background: #eae8ff;
+    color: #363636;
+    border-color: #fcefa1;
+}
+.selectable-draggable-list .ui-selecting~.ui-selecting {
+    background: #eee;
+    color: #212121;
+    border-color: #aaa;
 }
 .selectable-draggable-list .ui-selected {
-    /* background: #ff0; */
-    background: #09d;
+    background: #fbf9ee;
+    color: #363636;
+    border-color: #fcefa1;
+}
+.selectable-draggable-list .ui-selected~.ui-selected {
+    background: #fff;
+    color: #212121;
+    border-color: #aaa;
 }
 
 /* Combobox */

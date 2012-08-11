@@ -10,7 +10,16 @@ window.redirector_background_js = {
   redirected_requests: {},      // For recording redirected request ID
   header_modified_requests: {}, // For recording header modified request ID
   info: {},                    // Web request log info for page action
+  // Values stored in local storage and their default values
   storage_states: {
+    // Rule lists (raw)
+    fast_matching: [],
+    redirect: [],
+    manual: [],
+    request_header: [],
+    response_header: [],
+    online: [],
+    // Settings
     context_enabled: true,
     icon_enabled: true,
     enabled_protocols: ['<all_urls>'],
@@ -69,7 +78,7 @@ window.redirector_background_js = {
           initRules(key, value);
           break;
         case 'enabled_protocols':
-          registerWebRequestListeners();
+          registerRequestListeners();
           break;
         case 'context_enabled': case 'manual_methods':
           initContextMenus();
@@ -78,32 +87,20 @@ window.redirector_background_js = {
           initPageAction();
           break;
         case 'enabled_rule_types':
-          if (old_value === undefined) {
-            old_value = [];
-          }
-          var removed_types = old_value.filter(function (type) {
-            return value.indexOf(type) < 0;
-          });
-          var added_types = value.filter(function (type) {
-            return old_value.indexOf(type) < 0;
-          });
-          if (removed_types.indexOf('fast_matching') >= 0) {
-            chrome.declarativeWebRequest.onRequest.removeRules();
-          } else if (added_types.indexOf('fast_matching') >= 0) {
-            initRules('fast_matching');
-          }
-          registerWebRequestListeners(value);
+          registerRequestListeners(value);
           break;
         case 'auto_sync_enabled':
           initAutoSync();
           break;
+        case 'sync_timestamp':
+          break;
         default:
-          console.log('Not implemented: ' + key);
+          assertError(false, new Error('Not implemented: ' + key));
           return;
         }
       }
     });
-    registerWebRequestListeners();
+    registerRequestListeners();
   });
 })();
 
@@ -111,7 +108,8 @@ window.redirector_background_js = {
  * Initialize rules (wrapper for following rules initializers)
  */
 function initRules(type, rules) {
-  if (type === 'all') {
+  var namespace = window.redirector_background_js;
+  if (type === undefined) {
     ['fast_matching', 'redirect', 'request_header',
      'response_header', 'online'
     ].forEach(function (type) {
@@ -120,13 +118,7 @@ function initRules(type, rules) {
     return;
   }
   if (rules === undefined) {
-    chrome.storage.local.get(type, function (items) {
-      for (var type in items) {
-        if (items[type] !== undefined) {
-          initRules(type, items[type]);
-        }
-      }
-    });
+    initRules(type, namespace.storage_states[type]);
     return;
   }
   switch (type) {
@@ -150,6 +142,7 @@ function initRules(type, rules) {
   default:
     assertError(false, new Error());
   }
+  registerRequestListeners(namespace.storage_states.enabled_rule_types);
 }
 
 /**
@@ -157,19 +150,15 @@ function initRules(type, rules) {
  */
 function initFastMatchingRules(rules, append) {
   var namespace = window.redirector_background_js;
-  if (append === undefined) {
-    // Build from scratch
-    chrome.declarativeWebRequest.onRequest.removeRules(undefined, function () {
-      if (namespace.storage_states.enabled_rule_types.indexOf('fast') >= 0) {
-        initFastMatchingRules(rules, true);
-      }
-    });
-    return;
-  }
-  if (rules === undefined || rules.length === 0) {
-    return;
-  }
   var declarative_rules = [];
+  if (append === true) {
+    declarative_rules = namespace.rule_lists.fast_matching;
+  }
+  namespace.rule_lists.fast_matching = [];
+  if (namespace.storage_states.enabled_rule_types.indexOf('redirect') < 0 ||
+      rules === undefined || rules.length === 0) {
+    return;
+  }
   var priority = 101;         // Priority starts from 101
   rules.forEach(function (rule) {
     if (rule.enabled !== true) {
@@ -254,7 +243,7 @@ function initFastMatchingRules(rules, append) {
           })
         );
       case 'response_header_remove':
-        if (action.value) {   // Can value be empty?
+        if (action.value) {
           declarative_rule.actions.push(
             new chrome.declarativeWebRequest.RemoveResponseHeader({
               name: action.name,
@@ -276,9 +265,7 @@ function initFastMatchingRules(rules, append) {
     declarative_rule.priority = priority++; // MAX?
     declarative_rules.push(declarative_rule);
   });
-  if (declarative_rules.length > 0) {
-    chrome.declarativeWebRequest.onRequest.addRules(declarative_rules);
-  }
+  namespace.rule_lists.fast_matching = declarative_rules;
 }
 
 /**
@@ -286,16 +273,17 @@ function initFastMatchingRules(rules, append) {
  */
 function initRedirectRules(rules, append) {
   var namespace = window.redirector_background_js;
-  namespace.rule_lists.redirect = [];
-  if (namespace.storage_states.enabled_rule_types.indexOf('redirect') < 0 ||
-      rules === undefined || rules.length === 0) {
-    return;
-  }
   var redirect = [];
   var manual = [];
   if (append === true) {
     redirect = namespace.rule_lists.redirect;
     manual = namespace.rule_lists.manual;
+  }
+  namespace.rule_lists.redirect = [];
+  namespace.rule_lists.manual = [];
+  if (namespace.storage_states.enabled_rule_types.indexOf('redirect') < 0 ||
+      rules === undefined || rules.length === 0) {
+    return;
   }
   rules.forEach(function (rule) {
     if (rule.enabled !== true) {
@@ -382,16 +370,14 @@ iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAACklEQVR4nGMAAQAABQABDQottAAAAABJ
  */
 function initRequestHeaderRules(rules, append) {
   var namespace = window.redirector_background_js;
-  namespace.rule_lists.request_header = [];
-  if (namespace.storage_states.enabled_rule_types.indexOf('request') < 0) {
-    return;
-  }
-  if (rules === undefined || rules.length === 0) {
-    return;
-  }
-  var request_header;
+  var request_header = [];
   if (append === true) {
     request_header = namespace.rule_lists.request_header;
+  }
+  namespace.rule_lists.request_header = [];
+  if (namespace.storage_states.enabled_rule_types.indexOf('request') < 0 ||
+      rules === undefined || rules.length === 0) {
+    return;
   }
   rules.forEach(function (rule) {
     if (rule.enabled !== true) {
@@ -447,18 +433,16 @@ function initRequestHeaderRules(rules, append) {
 /**
  * Initialize response header rules
  */
-function initResponseHeaderRules(rules) {
+function initResponseHeaderRules(rules, append) {
   var namespace = window.redirector_background_js;
-  namespace.rule_lists.response_header = [];
-  if (namespace.storage_states.enabled_rule_types.indexOf('response') < 0) {
-    return;
-  }
-  if (rules === undefined || rules.length === 0) {
-    return;
-  }
   var response_header = [];
   if (append === true) {
     response_header = namespace.rule_lists.response_header;
+  }
+  namespace.rule_lists.response_header = [];
+  if (namespace.storage_states.enabled_rule_types.indexOf('response') < 0 ||
+      rules === undefined || rules.length === 0) {
+    return;
   }
   rules.forEach(function (rule) {
     if (rule.enabled !== true) {
@@ -673,9 +657,9 @@ function initAutoSync() {
 }
 
 /**
- * Register webRequest listeners
+ * Register request listeners
  */
-function registerWebRequestListeners(types) {
+function registerRequestListeners(types) {
   var webRequest = chrome.webRequest;
   // Remove event listeners
   [['onBeforeRequest', processRedirectRules],
@@ -686,9 +670,16 @@ function registerWebRequestListeners(types) {
       webRequest[t[0]].removeListener(t[1]);
     }
   });
+  // Remove all declarativeWebRequest rules
+  chrome.declarativeWebRequest.onRequest.removeRules();
   var namespace = window.redirector_background_js.storage_states;
+  /* fast matching rules */
+  if (!(types instanceof Array) || types.indexOf('fast_matching') >= 0) {
+    chrome.declarativeWebRequest.onRequest.addRules(
+      window.redirector_background_js.rule_lists.fast_matching);
+  }
   /* redirect rules */
-  if (types instanceof Array && types.indexOf('redirect') >= 0) {
+  if (!(types instanceof Array) || types.indexOf('redirect') >= 0) {
     webRequest.onBeforeRequest.addListener(
       processRedirectRules,
       {urls: namespace.enabled_protocols},
@@ -696,7 +687,7 @@ function registerWebRequestListeners(types) {
     );
   }
   /* request header rules */
-  if (types instanceof Array && types.indexOf('request_header') >= 0) {
+  if (!(types instanceof Array) || types.indexOf('request_header') >= 0) {
     webRequest.onBeforeSendHeaders.addListener(
       processRequestHeaderRules,
       {urls: namespace.enabled_protocols},
@@ -704,7 +695,7 @@ function registerWebRequestListeners(types) {
     );
   }
   /* response header rules */
-  if (types instanceof Array && types.indexOf('response_header') >= 0) {
+  if (!(types instanceof Array) || types.indexOf('response_header') >= 0) {
     webRequest.onHeadersReceived.addListener(
       processResponseHeaderRules,
       {urls: namespace.enabled_protocols},

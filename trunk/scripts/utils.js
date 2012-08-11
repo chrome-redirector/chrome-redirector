@@ -7,10 +7,15 @@ window.redirector_helper_js = {
 /**
  * Assertion
  */
-function assertError(expression, error) {
-  if (window.redirector_helper_js.debug && !expression) {
-    throw 'REDIRECTOR_ASSERTION_FAILED:\n' + error.stack;
-  }
+var assertError;
+if (window.redirector_helper_js.debug === true) {
+  assertError = function (expression, error) {
+    if (!expression) {
+      throw 'REDIRECTOR_ASSERTION_FAILED:\n' + error.stack;
+    }
+  };
+} else {
+  assertError = function () {};
 }
 
 /**
@@ -105,7 +110,7 @@ function _(messagename) {
  */
 function openOptionsPage (query) {
   var background_page = chrome.extension.getBackgroundPage();
-  chrome.extension.getViews().forEach(function (view) {
+  chrome.extension.getViews({type: 'tab'}).forEach(function (view) {
     if (view !== background_page) {
       view.close();
     }
@@ -123,27 +128,44 @@ function syncData(alarm) {
     return;
   }
   chrome.storage.sync.get('sync_timestamp', function (items) {
-    var timestamp = items.sync_timestamp;
-    var now = (new Date()).getTime();
-    if (timestamp === undefined || timestamp < now) {
-      chrome.storage.local.get(null, function (items) {
-        items.sync_timestamp = now;
-        chrome.storage.sync.set(items, function () {
-          if (chrome.extension.lastError !== undefined) {
-            console.log('Sync data to remote server failed: ' +
-                  chrome.extension.lastError);
-          }
+    var remote_timestamp = fallback(items.sync_timestamp, 0);
+    chrome.storage.local.get('sync_timestamp', function (items) {
+      var local_timestamp = fallback(items.sync_timestamp, 0);
+      var current_timestamp = (new Date()).getTime();
+      if (current_timestamp < local_timestamp) {
+        alert('Something has gone wrong with your clock!');
+        return;
+      }
+      if (local_timestamp >= remote_timestamp) {
+        chrome.storage.local.get(null, function (items) {
+          items.sync_timestamp = current_timestamp;
+          chrome.storage.sync.set(items, function () {
+            if (chrome.extension.lastError !== undefined) {
+              console.log('Sync data to remote server failed: ' +
+                          chrome.extension.lastError);
+            }
+          });
+          chrome.storage.local.set({sync_timestamp: current_timestamp});
         });
-      });
-    } else {
-      chrome.storage.sync.get(null, function (items) {
-        chrome.storage.local.set(items, function () {
+      } else {
+        chrome.storage.sync.set({
+          sync_timestamp: current_timestamp
+        }, function () {
           if (chrome.extension.lastError !== undefined) {
             console.log('Sync data from remote server failed: ' +
-                  chrome.extension.lastError);
+                        chrome.extension.lastError);
+            return;
           }
+          chrome.storage.sync.get(null, function (items) {
+            chrome.storage.local.set(items, function () {
+              if (chrome.extension.lastError !== undefined) {
+                console.log('Sync data from remote server failed: ' +
+                            chrome.extension.lastError);
+              }
+            });
+          });
         });
-      });
-    }
+      }
+    });
   });
 }
