@@ -1,6 +1,11 @@
 'use strict';
 
 $(document).ready(function(){
+  /* Global namespace*/
+  window.redirector_options_js = {
+    urlValidator: new UrlUtil.Validator(),
+    urlParser: new UrlUtil.Parser()
+  };
   /* The navigation tabs */
   var tab_index = $('#nav-tabs>ul>li').length - 1;
   $('#nav-tabs').tabs();
@@ -76,9 +81,26 @@ function initDialogs() {
     {
       text: 'Next',
       click: function () {
+        var type = $('[name="type"]:checked', $(this)).data('type');
+        if (type === 'redirect') {
+          var actions = $(this).data('actions');
+          try {
+            actions.forEach(function (action) {
+              switch (action.type) {
+              case 'redirect_cancel': case 'redirect_to':
+              case 'redirect_to_transparent': case 'redirect_to_empty':
+                throw new Error(action.type +
+                                ' conflicts with existing actions');
+              default:
+                break;
+              }
+            });
+          } catch (x) {
+            alertDialog(x.message);
+            return;
+          }
+        }
         $(this).dialog('close');
-        var type = $('#action-creator [type="radio"][name="type"]:checked')
-          .data('type');
         $('#action-editor-' + type).dialog('open');
       }
     },
@@ -132,8 +154,10 @@ function initDialogs() {
    */
   function saveCondition($dialog) {
     var $rule_editor = $('#rule-editor');
+    var rule = $rule_editor.data('rule');
     var condition = {};
     var resource_type = [];
+    var index = $rule_editor.data('condition_index');
     switch ($rule_editor.data('rule').type) {
     case 'fast_matching':
       $.each([
@@ -147,7 +171,120 @@ function initDialogs() {
         if (!value) {
           return;
         }
+        var my = window.redirector_options_js;
         switch (name) {
+        case 'hostContains':
+          if (my.urlValidator.validateHostContains()) {
+            condition.hostContains = value;
+          } else {
+            throw new Error('Invalid ' + name + ' value');
+          }
+          break;
+        case 'hostEquals':
+          if (my.urlValidator.validateHostEquals(value)) {
+            condition.hostEquals = value;
+          } else {
+            throw new Error('Invalid ' + name + ' value');
+          }
+          break;
+        case 'hostPrefix':
+          if (my.urlValidator.validateHostPrefix(value)) {
+            condition.hostPrefix = value;
+          } else {
+            throw new Error('Invalid ' + name + ' value');
+          }
+          break;
+        case 'hostSuffix':
+          if (my.urlValidator.validateHostSuffix(value)) {
+            condition.hostSuffix = value;
+          } else {
+            throw new Error('Invalid ' + name + ' value');
+          }
+          break;
+        case 'pathContains':
+          if (my.urlValidator.validatePathContains(value)) {
+            condition.pathContains = value;
+          } else {
+            throw new Error('Invalid ' + name + ' value');
+          }
+          break;
+        case 'pathEquals':
+          if (my.urlValidator.validatePathEquals(value)) {
+            condition.pathEquals = value;
+          } else {
+            throw new Error('Invalid ' + name + ' value');
+          }
+          break;
+        case 'pathPrefix':
+          if (my.urlValidator.validatePathPrefix(value)) {
+            condition.pathPrefix = value;
+          } else {
+            throw new Error('Invalid ' + name + ' value');
+          }
+          break;
+        case 'pathSuffix':
+          if (my.urlValidator.validatePathSuffix(value)) {
+            condition.pathSuffix = value;
+          } else {
+            throw new Error('Invalid ' + name + ' value');
+          }
+          break;
+        case 'queryContains':
+          if (my.urlValidator.validateQueryContains(value)) {
+            condition.queryContains = value;
+          } else {
+            throw new Error('Invalid ' + name + ' value');
+          }
+          break;
+        case 'queryEquals':
+          if (my.urlValidator.validateQueryEquals(value)) {
+            condition.queryEquals = value;
+          } else {
+            throw new Error('Invalid ' + name + ' value');
+          }
+          break;
+        case 'queryPrefix':
+          if (my.urlValidator.validateQueryPrefix(value)) {
+            condition.queryPrefix = value;
+          } else {
+            throw new Error('Invalid ' + name + ' value');
+          }
+          break;
+        case 'querySuffix':
+          if (my.urlValidator.validateQuerySuffix(value)) {
+            condition.querySuffix = value;
+          } else {
+            throw new Error('Invalid ' + name + ' value');
+          }
+          break;
+        case 'urlContains':
+          if (my.urlValidator.validateUrlContains(value)) {
+            condition.urlContains = value;
+          } else {
+            throw new Error('Invalid ' + name + ' value');
+          }
+          break;
+        case 'urlEquals':
+          if (my.urlValidator.validateUrlEquals(value)) {
+            condition.urlEquals = value;
+          } else {
+            throw new Error('Invalid ' + name + ' value');
+          }
+          break;
+        case 'urlPrefix':
+          if (my.urlValidator.validateUrlPrefix(value)) {
+            condition.urlPrefix = value;
+          } else {
+            throw new Error('Invalid ' + name + ' value');
+          }
+          break;
+        case 'urlSuffix':
+          if (my.urlValidator.validateUrlSuffix(value)) {
+            condition.urlSuffix = value;
+          } else {
+            throw new Error('Invalid ' + name + ' value');
+          }
+          break;
         case 'schemes':
           var schemes = value.split(/,\s*/);
           var tmp = {};
@@ -159,25 +296,25 @@ function initDialogs() {
           if (schemes.length === 0) {
             throw new Error('No valid input!');
           }
+          schemes.forEach(function (scheme) {
+            if (!my.urlValidator.validateScheme(scheme)) {
+              throw new Error('Invalid ' + name + ' value');
+            }
+          });
           condition.schemes = schemes;
           break;
         case 'ports':
-          var ports;
-          try {
-            ports = JSON.parse('[' + value + ']');
-            ports.forEach(function (port) {
-              if ($.isNumeric(port) === true) {
-                return;
-              }
-              if (port.length !== 2 ||
-                  !$.isNumeric(port[0]) || !$.isNumeric(port[1]) ||
-                  port[0] >= port[1]) {
-                throw new Error('Ranges are of format [x, y] where x < y');
-              }
-            });
-          } catch (x) {
-            throw x;
-          }
+          var ports = JSON.parse('[' + value + ']');
+          ports.forEach(function (port) {
+            if ($.isNumeric(port) === true) {
+              return;
+            }
+            if (port.length !== 2 ||
+                !$.isNumeric(port[0]) || !$.isNumeric(port[1]) ||
+                port[0] >= port[1]) {
+              throw new Error('Ranges are of format [x, y] where x < y');
+            }
+          });
           condition.ports = ports;
           break;
         default:
@@ -195,14 +332,38 @@ function initDialogs() {
     case 'redirect':
     case 'request_header':
     case 'response_header':
-      condition.type = $('[type="radio"][name="type"]:checked', $dialog).data('type');
-      condition.value = $('[name="value"]', $dialog).prop('value');
-      $('#condition-editor-normal [type="checkbox"][name="resource"]:not(:first):checked')
-        .each(function () {
-          resource_type.push($(this).data('type'));
+      condition.type = $('[type="radio"][name="type"]:checked', $dialog)
+        .data('type');
+      if (condition.type === 'manual') {
+        // There exist some other conditions
+        if (rule.conditions.length > 0 && index < 0) {
+          throw new Error(
+            'Manual redirection rule cannot coexist with other condition');
+        }
+        // Check if any inconsistent action type exists
+        rule.actions.forEach(function (action) {
+          var type = action.type;
+          if (type !== 'redirect_regexp' && type !== 'redirect_wildcard' &&
+              type !== 'redirect_to') {
+            throw new Error('Only RegExp or wildcard redirection is \
+allowed in manual redirection');
+          }
         });
-      if (resource_type.length > 0 && resource_type.length < 8) {
-        condition.resource_type = resource_type;
+      } else {
+        condition.value = $('[name="value"]', $dialog).prop('value');
+        // Check for syntax errors
+        if (condition.type === 'regexp') {
+          regexpStringToRegexp(condition.value);
+        } else {
+          wildcardToRegexp(condition.value);
+        }
+        $('#condition-editor-normal [name="resource"]:not(:first):checked')
+          .each(function () {
+            resource_type.push($(this).data('type'));
+          });
+        if (resource_type.length > 0 && resource_type.length < 8) {
+          condition.resource_type = resource_type;
+        }
       }
       break;
     default:
@@ -211,13 +372,12 @@ function initDialogs() {
     if (Object.keys(condition).length === 0) {
       throw new Error('No input!');
     }
-    var index = $rule_editor.data('condition_index');
     var $list = $('#rule-editor-conditions');
     if (index < 0) {
-      $rule_editor.data('rule').conditions.push(condition);
+      rule.conditions.push(condition);
       $list.append(wrapListItem(JSON.stringify(condition)));
     } else {
-      $rule_editor.data('rule').conditions[index] = condition;
+      rule.conditions[index] = condition;
       $('li:eq(' + index + ')', $list)
         .replaceWith(wrapListItem(JSON.stringify(condition)));
     }
@@ -231,24 +391,101 @@ function initDialogs() {
     var action = {
       type: $('[type="radio"][name="type"]:checked', $dialog).data('type')
     };
+    var rule = $rule_editor.data('rule');
+    var index = $rule_editor.data('action_index');
     switch ($dialog.prop('id')) {
     case 'action-editor-redirect':
+      // Check if inconsistent type action is to be saved
+      if (rule.conditions.length > 0 && rule.conditions[0].type === 'manual') {
+        if (action.type !== 'redirect_regexp' &&
+            action.type !== 'redirect_wildcard' &&
+            action.type !== 'redirect_to') {
+          throw new Error(
+            'There is no point for action of type `' + action.type +
+              '\' used in manual redirection');
+        }
+      }
+      if (rule.actions.length > 0 && index < 0) {
+        switch (action.type) {
+        case 'redirect_cancel': case 'redirect_to':
+        case 'redirect_to_transparent': case 'redirect_to_empty':
+          throw new Error('Action type `' + action.type +
+                          '\' is inconsistent with other actions!');
+        default:
+          break;
+        }
+      }
       action.from = $('[name="from"]', $dialog).prop('value');
       action.to = $('[name="to"]', $dialog).prop('value');
-      action.modifiers = [];
-      $('[type="checkbox"][name="modifier"]:checked', $dialog).each(function () {
-        action.modifiers.push($(this).data('type'));
-      });
+      switch (action.type) {
+      case 'redirect_regexp':
+      case 'redirect_wildcard':
+        if (action.from === '') {
+          throw new Error('Incomplete inputs!');
+        }
+        // Check for syntax errors and add possible modifiers
+        if (rule.type !== 'fast_matching') {
+          if (action.type === 'redirect_regexp') {
+            regexpStringToRegexp(action.from);
+            action.modifiers = [];
+            $('[name="modifier"]:checked', $dialog).each(function () {
+              action.modifiers.push($(this).data('type'));
+            });
+          } else {
+            wildcardToRegexp(action.from);
+          }
+        } else {
+          try {
+            if (action.type === 'redirect_regexp') {
+              regexpStringToRegexp(action.from);
+              action.modifiers = [];
+              $('[name="modifier"]:checked', $dialog).each(function () {
+                action.modifiers.push($(this).data('type'));
+              });
+            } else {
+              wildcardToRegexp(action.from);
+            }
+          } catch (x) {
+            alertDialog(
+              'There was an error: ' + x.message + "." +
+                "however, since it was not reported by the RE2 engine, " +
+                "you may choose to ignore this error if nothing was wrong"
+            );
+          }
+        }
+        break;
+      case 'redirect_to':
+        if (action.to === '') {
+          throw new Error('Incomplete inputs!');
+        }
+        delete action.from;
+        break;
+      default:
+        delete action.from;
+        delete action.to;
+        break;
+      }
       break;
     case 'action-editor-request_header':
+      action.name = $('[name="name"]', $dialog).prop('value');
+      if (action.name === '') {
+        throw new Error('Incomplete inputs!');
+      }
+      if (action.type !== 'request_header_remove') {
+        action.value = $('[name="value"]', $dialog).prop('value');
+      }
     case 'action-editor-response_header':
       action.name = $('[name="name"]', $dialog).prop('value');
-      action.value = $('[name="value"]', $dialog).prop('value');
+      if (action.name === '') {
+        throw new Error('Incomplete inputs!');
+      }
+      if ($('[name="match_value"]', $dialog).prop('checked') === true) {
+        action.value = $('[name="value"]', $dialog).prop('value');
+      }
       break;
     default:
       assertError(false, new Error());
     }
-    var index = $rule_editor.data('action_index');
     var $list = $('#rule-editor-actions');
     if (index < 0) {
       $rule_editor.data('rule').actions.push(action);
@@ -368,16 +605,23 @@ function initDialogs() {
     }
     $('[type="checkbox"][name="resource"]', $(this)).each(function () {
       var checked = resource_type_all ||
-        resource_type.indexOf($(this).data('type')) !== -1;
+        resource_type.indexOf($(this).data('type')) >= 0;
       $(this).prop('checked', checked).button('refresh');
     });
   });
   /* Normal condition editor open binding */
   $('#condition-editor-normal').bind('dialogopen', function () {
     var $rule_editor = $('#rule-editor');
+    var rule = $rule_editor.data('rule');
+    // No point for manual redirection rule to change headers
+    $('[data-type="manual"]', $(this))
+      .prop('disabled', rule.type !== 'redirect').button('refresh');
+    // Manual redirection rules cannot select resource
     var index = $rule_editor.data('condition_index');
-    var condition = index < 0 ? [] :
-      $rule_editor.data('rule').conditions[index];
+    var condition = index < 0 ? {type: 'regexp'} : rule.conditions[index];
+    if (condition.type === 'manual') {
+      $('[name="resource"]', $(this)).prop('disabled', true).button('refresh');
+    }
     $('[data-type="' + condition.type + '"]', $(this))
       .prop('checked', true).button('refresh');
     $('[name="value"]', $(this)).prop('value', condition.value);
@@ -388,9 +632,15 @@ function initDialogs() {
     }
     $('[type="checkbox"][name="resource"]', $(this)).each(function () {
       var checked = resource_type_all ||
-        resource_type.indexOf($(this).data('type')) !== -1;
+        resource_type.indexOf($(this).data('type')) >= 0;
       $(this).prop('checked', checked).button('refresh');
     });
+  });
+  // Resource enable/disable switcher
+  $('#condition-editor-normal [data-type]').click(function () {
+    var disabled = $(this).data('type') === 'manual';
+    $('#condition-editor-normal [name="resource"]')
+      .prop('disabled', disabled).button('refresh');
   });
   /* Redirect action editor open binding */
   $('#action-editor-redirect').bind('dialogopen', function () {
@@ -403,8 +653,7 @@ function initDialogs() {
     }
     var index = $rule_editor.data('action_index');
     var action = index < 0 ? {type: 'regexp'} :
-    rule.actions[
-      $rule_editor.data('action_index')];
+    rule.actions[$rule_editor.data('action_index')];
     $('[data-type="' + action.type + '"]', $(this))
       .prop('checked', true).button('refresh');
     $('[name="from"]', $(this)).prop('value', action.from);
@@ -414,17 +663,30 @@ function initDialogs() {
   $('#action-editor-request_header, #action-editor-response_header')
     .bind('dialogopen', function () {
       var $rule_editor = $('#rule-editor');
-      var type = $(this).prop('id') === 'action-editor-request_header' ?
-        'request_header' : 'response_header';
+      var rule = $rule_editor.data('rule');
       var index = $rule_editor.data('action_index');
-      var action = index < 0 ? {type: type} :
-      $rule_editor.data('rule').actions[
-        $rule_editor.data('action_index')];
+      var action = index < 0 ? {} :
+      rule.actions[$rule_editor.data('action_index')];
+      if (action.type === undefined) {
+        action.type = $(this).prop('id') === 'action-editor-request_header' ?
+          'request_header_set' : 'response_header_add';
+      }
       $('[data-type="' + action.type + '"]', $(this))
         .prop('checked', true).button('refresh');
       $('[name="name"]', $(this)).prop('value', action.name);
       $('[name="value"]', $(this)).prop('value', action.value);
+      $('[name="match_value"]', $(this))
+        .prop('disabled', action.type === 'response_header_add')
+        .button('refresh');
+      $('[name="match_value"]', $(this))
+        .prop('checked', action.value !== undefined).button('refresh');
     });
+  // Match value switcher
+  $('#action-editor-response_header [data-type]').click(function () {
+    var disabled = $(this).data('type') === 'response_header_add';
+    $('[name="match_value"]', $('#action-editor-response_header'))
+      .prop('disabled', disabled).button('refresh');
+  });
 }
 
 /**
@@ -634,11 +896,26 @@ function initButtons() {
   $('#rule-editor [name="new-condition"]').click(function () {
     var $rule_editor = $('#rule-editor');
     $rule_editor.data({condition_index: -1});
-    switch ($rule_editor.data('rule').type) {
+    var rule = $rule_editor.data('rule');
+    switch (rule.type) {
     case 'fast_matching':
       $('#condition-editor-fast_matching').dialog('open');
       break;
-    case 'redirect': case 'request_header': case 'response_header':
+    case 'redirect':
+      try {
+        rule.conditions.forEach(function (condition) {
+          if (condition.type === 'manual') {
+            throw new Error(
+              'Manual redirection rule cannot coexist with other condition');
+          }
+        });
+      } catch (x) {
+        alertDialog(x.message);
+        return;
+      }
+      $('#condition-editor-normal').dialog('open');
+      break;
+    case 'request_header': case 'response_header':
       $('#condition-editor-normal').dialog('open');
       break;
     default:
@@ -686,8 +963,15 @@ function initButtons() {
     var $selected = $('#rule-editor-conditions .ui-selected');
     var index = $('#rule-editor-conditions li').index($selected);
     if (index >= 0) {
-      $('#rule-editor').data('rule').conditions.splice(index, 1);
-      $selected.remove();
+      confirmDialog(
+        'Do you really want to remove: ' + $selected.text() + '?',
+        function (confirmed) {
+          if (confirmed !== true) {
+            return;
+          }
+          $('#rule-editor').data('rule').conditions.splice(index, 1);
+          $selected.remove();
+        });
     }
   }
   $('#rule-editor [name="remove-condition"]').click(removeCondition);
@@ -770,12 +1054,24 @@ function initButtons() {
   /* New action */
   $('#rule-editor [name="new-action"]').click(function () {
     var $rule_editor = $('#rule-editor');
+    var rule = $rule_editor.data('rule');
     $rule_editor.data({action_index: -1});
-    switch ($rule_editor.data('rule').type) {
+    switch (rule.type) {
     case 'fast_matching':
-      $('#action-creator').dialog('open');
+      var $dialog = $('#action-creator').data({actions: rule.actions});
+      $dialog.dialog('open');
       break;
     case 'redirect':
+      try {
+        rule.actions.forEach(function (action) {
+          if (action.type === 'manual') {
+            throw new Error(
+              'Manual redirection rule cannot coexist with other condition');
+          }
+        });
+      } catch (x) {
+        alertDialog(x.message);
+      }
       $('#action-editor-redirect').dialog('open');
       break;
     case 'request_header':
@@ -832,11 +1128,17 @@ function initButtons() {
   /* Remove action */
   function removeAction () {
     var $selected = $('#rule-editor-actions .ui-selected');
-    var index = $('#rule-editor-actions li')
-      .index($selected);
+    var index = $('#rule-editor-actions li').index($selected);
     if (index >= 0) {
-      $('#rule-editor').data('rule').actions.splice(index, 1);
-      $selected.remove();
+      confirmDialog(
+        'Do you really want to remove: ' + $selected.text() + '?',
+        function (confirmed) {
+          if (confirmed !== true) {
+            return;
+          }
+          $('#rule-editor').data('rule').actions.splice(index, 1);
+          $selected.remove();
+        });
     }
   }
   $('#rule-editor [name="remove-action"]').click(removeAction);
@@ -928,7 +1230,7 @@ function initDatalist() {
         var last= used.pop();
         used.forEach(function (protocol) {
           var index = protocols.indexOf(protocol);
-          if (index !== -1) {
+          if (index >= 0) {
             protocols.splice(index, 1);
           }
         });
