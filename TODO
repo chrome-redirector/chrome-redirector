@@ -1,13 +1,4 @@
 Aug 8, 2012 by Cyril Feng:
-* Actions collision detection
-   Classifid in types:
-   - redirect
-   1. Only actions of type regexp or wildcard may coexist.
-   2. Make sure actions of manual redirection rules are of type regexp
-   or wildcard
-   - request_header & response_header
-      More complex here, some headers are not available to Redirector,
-      where others may collide.
 * Data validate on saving
 * Fast matching rule
    event.addRules error handling
@@ -19,8 +10,6 @@ Aug 8, 2012 by Cyril Feng:
    chrome.devtools.network is suitable for recording network logs,
    while chrome.devtools.panels suitable to show the result.
 * Reuse URL from rule editor to verify expressions in action editor
-* URL parser
-   Implement a URL parser: validate, split
 
 Aug 11, 2012 by Cyril Feng
 * Accordion style

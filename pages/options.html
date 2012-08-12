@@ -6,6 +6,7 @@
     <link type="text/css" href="/libs/ui/css/smoothness/jquery-ui-1.8.22.custom.css" rel="stylesheet" />
     <script src="/libs/jquery-ui-combobox.js"></script>
     <script src="/libs/jquery.hotkeys.js"></script>
+    <script src="/libs/xregexp-min.js"></script>
     <script src="/scripts/options.js"></script>
     <script src="/scripts/utils.js"></script>
     <link type="text/css" href="/styles/options.css" rel="stylesheet" />
@@ -321,6 +322,9 @@
       <form class="button-set">
         <input type="radio" name="type" id="a-e-s_h-1" data-type="response_header_add" checked /><label for="a-e-s_h-1">Add</label>
         <input type="radio" name="type" id="a-e-s_h-2" data-type="response_header_remove" /><label for="a-e-s_h-2">Remove</label>
+      </form>
+      <form class="button-set">
+        <input type="checkbox" name="match_value" id="a-e-s_h-3" /><label for="a-e-s_h-3">Match value</label>
       </form>
       <h5>Name</h5>
       <select name="name">

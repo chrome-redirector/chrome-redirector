@@ -56,7 +56,7 @@ function wildcardToRegexpString(wildcard) {
  * Construct XRegExp from wildcard
  */
 function wildcardToRegexp(wildcard, modifiers) {
-  return regexpStringToXegexp(wildcardToRegexpString(wildcard), modifiers);
+  return regexpStringToRegexp(wildcardToRegexpString(wildcard), modifiers);
 }
 
 /**
@@ -169,3 +169,162 @@ function syncData(alarm) {
     });
   });
 }
+
+var UrlUtil = (function () {
+  var UrlUtil = {
+    // Object for validating URLs
+    Validator: function () {
+      this.input = document.createElement('input');
+      this.input.type = 'url';
+    },
+    // Object for splitting/assembling URLs
+    Parser: function () {
+      this.a = document.createElement('a');
+    }
+  };
+
+  UrlUtil.Validator.prototype = {
+    /**
+     * Return the validity of a URL
+     */
+    validate: function (url) {
+      if (typeof url !== 'string') {
+        i.setCustomValidity('Not string');
+        return false;
+      } else if (url === '') {
+        i.setCustomValidity('Blank value');
+        return false;
+      }
+      var i = this.input;
+      i.value = url;
+      i.checkValidity();
+      return i.validity.valid;
+    },
+    /* Most of the following validator functions
+       only do basic boundary/character checks
+    */
+    validateHostContains: function (host) {
+      return !/[\/\?#]/.test(host);
+    },
+    validateHostEquals: function (host) {
+      return !/[\/\?#]/.test(host) &&
+        this.validate('http://' + host);
+    },
+    validateHostPrefix: function (host) {
+      return !/[\/\?#]/.test(host);
+    },
+    validateHostSuffix: function (host) {
+      return !/[\/\?#]/.test(host);
+    },
+    validatePathContains: function (path) {
+      return !/[\?#]/.test(path);
+    },
+    validatePathEquals: function (path) {
+      return /^\/[^\?#]*$/.test(path) &&
+        this.validate('http://a.co' + path);
+    },
+    validatePathPrefix: function (path) {
+      return /^\/[^\?#]*$/.test(path);
+    },
+    validatePathSuffix: function (path) {
+      return !/[\?#]/.test(path);
+    },
+    validateQueryContains: function (query) {
+      return !/#/.test(query);
+    },
+    validateQueryEquals: function (query) {
+      return /^\?[^#]*$/.test(query) &&
+        this.validate('http://a.co/c' + query);
+    },
+    validateQueryPrefix: function (query) {
+      return /^\?[^#]*$/.test(query);
+    },
+    validateQuerySuffix: function (query) {
+      return !/#/.test(query);
+    },
+    validateUrlContains: function (url) {
+      return true;
+    },
+    validateUrlEquals: function (url) {
+      return this.validate(url);
+    },
+    validateUrlPrefix: function (url) {
+      return url.indexOf('http://') >= 0 || url.indexOf('https://') >= 0 ||
+        url.indexOf('ftp://') >= 0 || url.indexOf('file://') >= 0 ||
+        'http://'.indexOf(url) >= 0 || 'https://'.indexOf(url) >= 0 ||
+        'ftp://'.indexOf(url) >= 0 || 'file://'.indexOf(url) >= 0;
+    },
+    validateUrlSuffix: function (url) {
+      return true;
+    },
+    validateScheme: function (schemes) {
+      return /^(https?|ftp|file)$/i.text(scheme);
+    },
+    /**
+     * Get descriptive message
+     */
+    getErrorMessage: function () {
+      var i = this.input.validity;
+      var output = [];
+      for (var key in i) {
+        if (!i.hasOwnProperty(key)) {
+          continue;
+        }
+        if (i[key]) {
+          if (key === 'customError') {
+            output.push(this.input.validationMessage);
+          } else if (key !== 'valid') {
+            output.push(key);
+          }
+        }
+      }
+      return output.join(';');
+    }
+  };
+
+  UrlUtil.Parser.prototype = {
+    /**
+     * Parse a URL
+     */
+    /* Validate the URL before parsing! */
+    parse: function (url) {
+      this.a.href = url;
+      this.refresh(force);
+    },
+    refresh: function (force) {
+      var i = this.a;
+      /* Defined according to chrome extension declarative API */
+      this.host = i.hostname;
+      this.path = i.pathname;
+      this.query = i.search;
+      this.url = i.href;
+      this.scheme = i.protocol.replace(/:$/, '');
+      this.port = i.port;
+    },
+    setHost: function (host) {
+      this.a.hostname = host;
+      this.refresh();
+    },
+    setPath: function (path) {
+      this.a.pathname = path;
+      this.refresh();
+    },
+    setQuery: function (query) {
+      this.a.search = query;
+      this.refresh();
+    },
+    setUrl: function (url) {
+      this.parse(url);
+    },
+    setScheme: function (scheme) {
+      this.a.protocol = scheme + ':';
+      this.refresh();
+    },
+    setPort: function (port) {
+      this.port = port;
+      this.refresh();
+    }
+  };
+
+  return UrlUtil;
+})();

@@ -243,7 +243,7 @@ function initFastMatchingRules(rules, append) {
           })
         );
       case 'response_header_remove':
-        if (action.value) {
+        if (action.value !== undefined) {
           declarative_rule.actions.push(
             new chrome.declarativeWebRequest.RemoveResponseHeader({
               name: action.name,
@@ -676,7 +676,12 @@ function registerRequestListeners(types) {
   /* fast matching rules */
   if (!(types instanceof Array) || types.indexOf('fast_matching') >= 0) {
     chrome.declarativeWebRequest.onRequest.addRules(
-      window.redirector_background_js.rule_lists.fast_matching);
+      window.redirector_background_js.rule_lists.fast_matching,
+    function () {
+      if (chrome.extension.lastError !== undefined) {
+        console.log('Error when addRules: ', chrome.extension.lastError);
+      }
+    });
   }
   /* redirect rules */
   if (!(types instanceof Array) || types.indexOf('redirect') >= 0) {
