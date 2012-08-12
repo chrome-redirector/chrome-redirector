@@ -176,6 +176,8 @@ var UrlUtil = (function () {
     Validator: function () {
       this.input = document.createElement('input');
       this.input.type = 'url';
+      // Restrict the pattern for web request
+      this.input.pattern = '^(https?|ftp|file)://.*';
     },
     // Object for splitting/assembling URLs
     Parser: function () {
@@ -188,6 +190,7 @@ var UrlUtil = (function () {
      * Return the validity of a URL
      */
     validate: function (url) {
+      var i = this.input;
       if (typeof url !== 'string') {
         i.setCustomValidity('Not string');
         return false;
@@ -195,7 +198,6 @@ var UrlUtil = (function () {
         i.setCustomValidity('Blank value');
         return false;
       }
-      var i = this.input;
       i.value = url;
       i.checkValidity();
       return i.validity.valid;
@@ -257,8 +259,8 @@ var UrlUtil = (function () {
     validateUrlSuffix: function (url) {
       return true;
     },
-    validateScheme: function (schemes) {
-      return /^(https?|ftp|file)$/i.text(scheme);
+    validateScheme: function (scheme) {
+      return /^(https?|ftp|file)$/i.test(scheme);
     },
     /**
      * Get descriptive message
@@ -278,7 +280,7 @@ var UrlUtil = (function () {
           }
         }
       }
-      return output.join(';');
+      return output.join('\n');
     }
   };
 
@@ -289,7 +291,7 @@ var UrlUtil = (function () {
     /* Validate the URL before parsing! */
     parse: function (url) {
       this.a.href = url;
-      this.refresh(force);
+      this.refresh(true);
     },
     refresh: function (force) {
       var i = this.a;

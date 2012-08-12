@@ -1,5 +1,4 @@
 Aug 8, 2012 by Cyril Feng:
-* Data validate on saving
 * Fast matching rule
    event.addRules error handling
 * Redirect loop in RE2

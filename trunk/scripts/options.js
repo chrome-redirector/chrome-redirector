@@ -455,7 +455,8 @@ allowed in manual redirection');
         }
         break;
       case 'redirect_to':
-        if (action.to === '') {
+        if (action.to === '' ||
+            !window.redirector_options_js.urlValidator.validate(action.to)) {
           throw new Error('Incomplete inputs!');
         }
         delete action.from;
@@ -1147,6 +1148,293 @@ function initButtons() {
       removeAction();
     }
   });
+  /* Test rule */
+  $('#rule-editor [name="test-rule"]').click(function () {
+    var namespace = window.redirector_options_js;
+    var url = $(this).prev().prop('value');
+    if (!namespace.urlValidator.validate(url)) {
+      alertDialog('Please enter a valid URL');
+      return;
+    }
+    var rule = $('#rule-editor').data('rule');
+    var test_log = [];
+    if (rule.type === 'fast_matching') {
+      namespace.urlParser.parse(url);
+      for (var i = 0; i < rule.conditions.length; i++) {
+        var condition = rule.conditions[i];
+        var matched = true;
+        outmost_fast_matching_condition_test:
+        for (var key in condition) {
+          var value = condition[key];
+          switch (key) {
+          case 'hostContains':
+            if (namespace.urlParser.host.indexOf(value) < 0) {
+              matched = false;
+              break outmost_fast_matching_condition_test;
+            }
+            break;
+          case 'hostEquals':
+            if (namespace.urlParser.host !== value) {
+              matched = false;
+              break outmost_fast_matching_condition_test;
+            }
+            break;
+          case 'hostPrefix':
+            if (namespace.urlParser.host.indexOf(value) !== 0) {
+              matched = false;
+              break outmost_fast_matching_condition_test;
+            }
+            break;
+          case 'hostSuffix':
+            if (namespace.urlParser.host.lastIndexOf(value) !==
+                namespace.urlParser.host.length - value.length) {
+              matched = false;
+              break outmost_fast_matching_condition_test;
+            }
+            break;
+          case 'pathContains':
+            if (namespace.urlParser.path.indexOf(value) < 0) {
+              matched = false;
+              break outmost_fast_matching_condition_test;
+            }
+            break;
+          case 'pathEquals':
+            if (namespace.urlParser.path !== value) {
+              matched = false;
+              break outmost_fast_matching_condition_test;
+            }
+            break;
+          case 'pathPrefix':
+            if (namespace.urlParser.path.indexOf(value) !== 0) {
+              matched = false;
+              break outmost_fast_matching_condition_test;
+            }
+            break;
+          case 'pathSuffix':
+            if (namespace.urlParser.path.lastIndexOf(value) !==
+                namespace.urlParser.path.length - value.length) {
+              matched = false;
+              break outmost_fast_matching_condition_test;
+            }
+            break;
+          case 'queryContains':
+            if (namespace.urlParser.query.indexOf(value) < 0) {
+              matched = false;
+              break outmost_fast_matching_condition_test;
+            }
+            break;
+          case 'queryEquals':
+            if (namespace.urlParser.query !== value) {
+              matched = false;
+              break outmost_fast_matching_condition_test;
+            }
+            break;
+          case 'queryPrefix':
+            if (namespace.urlParser.query.indexOf(value) !== 0) {
+              matched = false;
+              break outmost_fast_matching_condition_test;
+            }
+            break;
+          case 'querySuffix':
+            if (namespace.urlParser.query.lastIndexOf(value) !==
+                namespace.urlParser.query.length - value.length) {
+              matched = false;
+              break outmost_fast_matching_condition_test;
+            }
+            break;
+          case 'urlContains':
+            if (namespace.urlParser.url.indexOf(value) < 0) {
+              matched = false;
+              break outmost_fast_matching_condition_test;
+            }
+            break;
+          case 'urlEquals':
+            if (namespace.urlParser.url !== value) {
+              matched = false;
+              break outmost_fast_matching_condition_test;
+            }
+            break;
+          case 'urlPrefix':
+            if (namespace.urlParser.url.indexOf(value) !== 0) {
+              matched = false;
+              break outmost_fast_matching_condition_test;
+            }
+            break;
+          case 'urlSuffix':
+            if (namespace.urlParser.url.lastIndexOf(value) !==
+                namespace.urlParser.url.length - value.length) {
+              matched = false;
+              break outmost_fast_matching_condition_test;
+            }
+            break;
+          case 'schemes':
+            if (value.indexOf(namespace.urlParser.scheme) < 0) {
+              matched = false;
+              break outmost_fast_matching_condition_test;
+            }
+            break;
+          case 'ports':
+            matched = false;
+            for (var j = 0; i < value.length; i++) {
+              var port = value[i];
+              if ($.isNumeric(port) === true) {
+                if (namespace.urlParser.port === port) {
+                  matched = true;
+                  break outmost_fast_matching_condition_test;
+                }
+              } else if (namespace.urlParser.port >= port[0] &&
+                         namespace.urlParser.port <= port[1]) {
+                matched = true;
+                break outmost_fast_matching_condition_test;
+              }
+              break;
+            }
+          }
+        }
+        if (matched === true) {
+          test_log.push('Rule matches');
+          break;
+        }
+      }
+    } else {
+      for (var i = 0; i < rule.conditions.length; i++) {
+        var condition = rule.conditions[i];
+        if (condition.type === 'manual') {
+          test_log.push('This rule will be executed only when ' +
+                        'it\'s selected in manual redirection');
+          break;
+        }
+        if (condition.type === 'regexp') {
+          if (regexpStringToRegexp(condition.value,
+                                   condition.modifiers).test(url)) {
+            test_log.push('Matched condition: ' + JSON.stringify(condition));
+            break;
+          }
+        } else {
+          if (wildcardToRegexp(condition.value,
+                                   condition.modifiers).test(url)) {
+            test_log.push('Matched condition: ' + JSON.stringify(condition));
+            break;
+          }
+        }
+      }
+    }
+    if (test_log.length === 0) {
+      alertDialog('Rule not match');
+      return;
+    }
+    for (var i = 0; i < rule.actions.length; i++) {
+      var action = rule.actions[i];
+      switch (action.type) {
+      case 'redirect_regexp':
+        url = url.replace(
+          regexpStringToRegexp(action.from, action.modifiers),
+          action.to
+        );
+        test_log.push('Redirect to: ' + url);
+        break;
+      case 'redirect_wildcard':
+        url = url.replace(
+          wildcardToRegexp(action.from, action.modifiers),
+          action.to
+        );
+        test_log.push('Redirect to: ' + url);
+        break;
+      case 'redirect_cancel':
+        test_log.push('Cancel request');
+        break;
+      case 'redirect_to':
+        test_log.push('Redirect to: ' + action.to);
+        break;
+      case 'redirect_to_transparent':
+        test_log.push('Redirect to: transparent image');
+        break;
+      case 'redirect_to_empty':
+        test_log.push('Redirect to: empty document');
+        break;
+      case 'request_header_set':
+        test_log.push('Set request header ' + action.name +
+                      ' to ' + action.value);
+        break;
+      case 'request_header_remove':
+        test_log.push('Remove request header ' + action.name);
+        break;
+      case 'response_header_add':
+        test_log.push('Add response header ' + action.name +
+                      ' with value ' + action.value);
+        break;
+      case 'response_header_remove':
+        if (action.value === undefined) {
+          test_log.push('Remove response header ' + action.name);
+        } else {
+          test_log.push('Remove response header ' + action.name +
+                        ' with value ' + action.value);
+        }
+        break;
+      default:
+        assertError(false, new Error());
+      }
+    }
+    alertDialog(test_log.join('\n'));
+  });
+  /* Test condtion */
+  $('#condition-editor-normal [name="test-condition"]').click(function () {
+    var namespace = window.redirector_options_js;
+    var $dialog = $('#condition-editor-normal');
+    var url = $(this).prev().prop('value');
+    if (!namespace.urlValidator.validate(url)) {
+      alertDialog('Please enter a valid URL');
+      return;
+    }
+    var type = $('[type="radio"][name="type"]:checked', $dialog).data('type');
+    if (type === 'manual') {
+      alertDialog('No need to test this kind of condition');
+      return;
+    }
+    var modifiers = [];
+    $('[name="modifier"]:checked', $dialog).each(function () {
+      modifiers.push($(this).data('type'));
+    });
+    var value = $('[name="value"]', $dialog).prop('value');
+    try {
+      var regexp = type === 'regexp' ? regexpStringToRegexp(value, modifiers) :
+        wildcardToRegexp(value, modifiers);
+    } catch (x) {
+      alertDialog(x.message);
+      return;
+    }
+    alertDialog(regexp.test(url) === true ? 'Condition match' : 'Condition not match');
+  });
+  /* Test action */
+  $('#action-editor-redirect [name="test-action"]').click(function () {
+    var namespace = window.redirector_options_js;
+    var $dialog = $('#action-editor-redirect');
+    var url = $(this).prev().prop('value');
+    if (!namespace.urlValidator.validate(url)) {
+      alertDialog('Please enter a valid URL');
+      return;
+    }
+    var type = $('[type="radio"][name="type"]:checked', $dialog).data('type');
+    if (/cancel$|^redirect_to/.test(type)) {
+      alertDialog('No need to test this kind of action');
+      return;
+    }
+    var modifiers = [];
+    $('[name="modifier"]:checked', $dialog).each(function () {
+      modifiers.push($(this).data('type'));
+    });
+    var from = $('[name="from"]', $dialog).prop('value');
+    var to = $('[name="to"]', $dialog).prop('value');
+    try {
+      var regexp = type === 'redirect_regexp' ?
+        regexpStringToRegexp(from, modifiers) :
+        wildcardToRegexp(from, modifiers);
+    } catch (x) {
+      alertDialog(x.message);
+      return;
+    }
+    alertDialog('Redirect to' + url.replace(regexp, to));
+  });
   /* Condition type selection */
   $('#condition-editor-normal [name="type"]').click(function () {
     var $value = $('#condition-editor-normal [name="value"]');
@@ -1379,7 +1667,9 @@ function loadRules() {
  * Alert dialog
  */
 function alertDialog(message) {
-  $('<div><p style="text-align:center">' + message + '</p></div>').dialog({
+  var html = '<div><p style="text-align:center;white-space:pre">\x00</p></div>'
+    .replace('\x00', $('<div />').text(message).html().replace(/\n/g, '<br />'));
+  $(html).dialog({
     modal: true,
     buttons: [{
       text: 'Close',
@@ -1398,7 +1688,9 @@ function alertDialog(message) {
  */
 function confirmDialog(message, callback) {
 $( "#dialog:ui-dialog" ).dialog( "destroy" );
-  $('<div><p style="text-align:center">' + message + '</p></div>').dialog({
+  var html = '<div><p style="text-align:center;white-space:pre">\x00</p></div>'
+    .replace('\x00', $('<div />').text(message).html().replace(/\n/g, '<br />'));
+  $(html).dialog({
     modal: true,
     buttons: [{
       text: 'Yes',
