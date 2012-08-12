@@ -233,7 +233,7 @@
         <h6><a href="#">Test</a></h6>
         <form class="button-set">
           <input type="url" />
-          <button type="submit" class="button-test" name="test-rule"><span>Test</span></button>
+          <button type="submit" class="button-test" name="test-condition"><span>Test</span></button>
         </form>
       </div>
     </div>
@@ -259,12 +259,22 @@
         <input type="radio" name="type" id="a-e-r-5" data-type="redirect_to_transparent" /><label for="a-e-r-5">To transparent image</label>
         <input type="radio" name="type" id="a-e-r-6" data-type="redirect_to_empty" /><label for="a-e-r-6">To empty document</label>
       </form>
-      <form class="button-set">
-        <input type="checkbox" name="modifier" id="a-e-r-7" data-type="i" /><label for="a-e-r-7">Case insensitive</label>
-        <input type="checkbox" name="modifier" id="a-e-r-8" data-type="g" /><label for="a-e-r-8">Global match</label>
-      </form>
-      <form><h5>From</h5><textarea name="from"></textarea></form>
-      <form><h5>To</h5><input name="to" /></form>
+      <div class="accordion">
+        <h6><a href="#">Value</a></h6>
+        <div>
+          <form class="button-set">
+            <input type="checkbox" name="modifier" id="a-e-r-7" data-type="i" /><label for="a-e-r-7">Case insensitive</label>
+            <input type="checkbox" name="modifier" id="a-e-r-8" data-type="g" /><label for="a-e-r-8">Global match</label>
+          </form>
+          <form><h5>From</h5><textarea name="from"></textarea></form>
+          <form><h5>To</h5><input name="to" /></form>
+        </div>
+        <h6><a href="#">Test</a></h6>
+        <form class="button-set">
+          <input type="url" />
+          <button type="submit" class="button-test" name="test-action"><span>Test</span></button>
+        </form>
+      </div>
     </div>
     <!-- Modify request header action -->
     <div id="action-editor-request_header" class="editor-dialog" title="Action::Request Header">

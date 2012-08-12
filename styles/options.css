@@ -5,6 +5,10 @@ body {
     user-select: none;
     -webkit-user-select: none;
 }
+p {
+    user-select: text;
+    -webkit-user-select: text;
+}
 h5 {
     margin-top: 5px;
     margin-bottom: 1px;
