@@ -1,0 +1,32 @@
+body {
+    font-size: 11px;
+}
+
+details {
+    margin-left: 1em;
+}
+
+summary {
+    color: #881280;
+}
+
+#debug-info {
+    font-family: "DejaVu Sans Mono", monospace;
+    white-space: nowrap;
+}
+
+::scrollbar,::-webkit-scrollbar {
+    width: 5px;
+    height: 5px;
+}
+::scrollbar-track,::-webkit-scrollbar-track {
+    background-color: #aaa;
+    border-radius: 5px;
+}
+::scrollbar-thumb,::-webkit-scrollbar-thumb {
+    background-color: #444;
+    border-radius: 5px;
+}
+::scrollbar-thumb:hover,::-webkit-scrollbar-thumb:hover {
+    background-color: #17a;
+}

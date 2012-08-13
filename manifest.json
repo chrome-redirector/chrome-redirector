@@ -9,9 +9,11 @@
   "background": {
     "scripts": ["scripts/background.js",
                 "scripts/utils.js",
+                "scripts/debugger_background.js",
                 "libs/xregexp-min.js"]
   },
   "options_page": "pages/options.html",
+  "devtools_page": "pages/debugger_background.html",
   "page_action": {
     "default_icon": "icons/icon_19.png",
     "default_title": "Redirector",

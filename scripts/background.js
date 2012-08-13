@@ -28,7 +28,8 @@ window.redirector_background_js = {
       'response_header', 'online'
     ],
     manual_methods: ['link', 'page'],
-    auto_sync_enabled: true
+    auto_sync_enabled: true,
+    debugger_enabled: true
   }
 };
 
@@ -93,6 +94,7 @@ window.redirector_background_js = {
           initAutoSync();
           break;
         case 'sync_timestamp':
+        case 'debugger_enabled':
           break;
         default:
           assertError(false, new Error('Not implemented: ' + key));

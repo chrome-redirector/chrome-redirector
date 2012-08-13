@@ -1,14 +1,9 @@
 Aug 8, 2012 by Cyril Feng:
 * Fast matching rule
    event.addRules error handling
-* Redirect loop in RE2
 * URL info in header
    Expose URL info to header settings, e.g. define special expression
    to represent the host part of that URL.
-* Debugger
-   chrome.devtools.network is suitable for recording network logs,
-   while chrome.devtools.panels suitable to show the result.
-* Reuse URL from rule editor to verify expressions in action editor
 
 Aug 11, 2012 by Cyril Feng
 * Accordion style

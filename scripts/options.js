@@ -1158,7 +1158,7 @@ function initButtons() {
     }
     var rule = $('#rule-editor').data('rule');
     var test_log = [];
-    if (rule.type === 'fast_matching') {
+    function testMatchFastMatching (rule, url) {
       namespace.urlParser.parse(url);
       for (var i = 0; i < rule.conditions.length; i++) {
         var condition = rule.conditions[i];
@@ -1292,9 +1292,14 @@ function initButtons() {
           }
         }
         if (matched === true) {
-          test_log.push('Rule matches');
-          break;
+          return true;
         }
+      }
+      return matched;
+    }
+    if (rule.type === 'fast_matching') {
+      if (testMatchFastMatching(rule, url) === true) {
+        test_log.push('Rule matches');
       }
     } else {
       for (var i = 0; i < rule.conditions.length; i++) {
@@ -1374,6 +1379,11 @@ function initButtons() {
       default:
         assertError(false, new Error());
       }
+    }
+    if (rule.type === 'fast_matching' &&
+        testMatchFastMatching(rule, url) === true) {
+      alertDialog('This rule may create redirect loops!');
+      return;
     }
     alertDialog(test_log.join('\n'));
   });
@@ -1798,6 +1808,17 @@ function initSettings() {
   });
   $('[name="manual-sync"]', $settings).click(function () {
     syncData();
+  });
+  /* Enable debugger */
+  local.get({debugger_enabled: true}, function (items) {
+    $('[name="debugger"][data-enabled="' + items.debugger_enabled + '"]',
+      $settings)
+      .prop('checked', true).button('refresh');
+  });
+  $('[name="debugger"]', $settings).click(function () {
+    local.set({
+      debugger_enabled: $(this).is(':checked') && $(this).data('enabled')
+    });
   });
   // Backup
   $('[name="backup"]', $settings).click(function () {
