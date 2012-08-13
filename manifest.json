@@ -1,31 +1,22 @@
 {
-  "manifest_version": 2,
-  "name": "Redirector",
-  "icons": {
-    "16": "icons/icon_16.png",
-    "19": "icons/icon_19.png",
-    "128": "icons/icon_128.png"
-  },
-  "background": {
-    "scripts": ["scripts/background.js",
-                "scripts/utils.js",
-                "libs/xregexp-min.js"]
-  },
-  "options_page": "pages/options.html",
-  "page_action": {
-    "default_icon": "icons/icon_19.png",
-    "default_title": "Redirector",
-    "default_popup": "pages/popup.html"
-  },
-  "default_locale": "en",
-  "permissions": ["declarativeWebRequest",
-                  "webRequest",
-                  "webRequestBlocking",
-                  "storage",
-                  "tabs",
-                  "contextMenus",
-                  "downloads",
-                  "<all_urls>"],
-  "minimum_chrome_version": "22",
-  "version": "2.9.0.0"
+    "background_page": "/html/background.html",
+    "options_page": "/html/options.html",
+    "content                _scripts": [
+        {
+            "js": ["/js/linkTrans.js"],
+            "matches": ["http://*/*", "https://*/*"],
+            "run_at": "document_start"
+        }
+    ],
+    "page_action": {
+        "default_icon": "/icons/icon_19.png",
+        "default_title": "Redirector"
+    },
+    "icons": {
+        "128": "/icons/icon_128.png"
+    },
+    "name": "Redirector",
+    "permissions": ["webNavigation", "notifications", "tabs",
+                    "<all_urls>"],
+    "version": "2.1.4"
 }
