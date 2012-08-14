@@ -139,6 +139,7 @@ function syncData(alarm) {
       if (local_timestamp >= remote_timestamp) {
         chrome.storage.local.get(null, function (items) {
           items.sync_timestamp = current_timestamp;
+          delete items.online_cache; // Avoid syncing cache
           chrome.storage.sync.set(items, function () {
             if (chrome.extension.lastError !== undefined) {
               console.log('Sync data to remote server failed: ' +

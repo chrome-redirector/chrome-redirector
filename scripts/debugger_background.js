@@ -8,7 +8,8 @@
     var request_log = namespace.request_log;
     /* Record every manipulated request here */
     chrome.webRequest.onSendHeaders.addListener(function (details) {
-      if (namespace.storage_states.debugger_enabled !== true) {
+      if (namespace.storage_states.debugger_enabled !== true ||
+          details.tabId < 0) {
         return;
       }
       var request_log = namespace.request_log;
