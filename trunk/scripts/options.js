@@ -884,7 +884,7 @@ function initButtons() {
     chrome.storage.local.get(type, function (items) {
       var rule = items[type][index];
       var data = {};
-      data[type] = rule;
+      data[type] = [rule];
       saveTextToFile({
         text: JSON.stringify(data),
         filename: '[' + rule.name + ']' + (new Date()).toISOString() + '.json'
