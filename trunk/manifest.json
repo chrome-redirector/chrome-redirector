@@ -7,8 +7,8 @@
     "128": "icons/icon_128.png"
   },
   "background": {
-    "scripts": ["scripts/background.js",
-                "scripts/utils.js",
+    "scripts": ["scripts/utils.js",
+                "scripts/background.js",
                 "scripts/debugger_background.js",
                 "libs/xregexp-min.js"]
   },

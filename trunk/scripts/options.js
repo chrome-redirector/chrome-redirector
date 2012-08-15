@@ -54,6 +54,7 @@ function initDialogs() {
         switch (type) {
         case 'fast_matching': case 'redirect':
         case 'request_header': case 'response_header':
+        case 'error_handling':
           rule.conditions = [];
           rule.actions = [];
           break;
@@ -122,6 +123,9 @@ function initDialogs() {
     rule.name = $('[name="name"]', $dialog).prop('value');
     if (type === 'online') {
       rule.url = $('[name="online"]', $dialog).prop('value');
+      if (!window.redirector_options_js.urlValidator.validate(rule.url)) {
+        throw new Error('Please enter a valid URL');
+      }
     }
     var $list = $('#rule-list-' + type);
     var index = $dialog.data('rule_index');
@@ -144,10 +148,8 @@ function initDialogs() {
     } else {
       $('li:eq(' + index + ')', $list).replaceWith(wrapListItem(rule.name));
     }
-    $('#rule-lists').accordion('activate', [
-      'fast_matching', 'redirect', 'request_header',
-      'response_header', 'online'
-    ].indexOf(type));
+    $('#rule-lists').accordion(
+      'activate', window.redirector_utils_js.all_types.indexOf(type));
   }
   /**
    * Save the editing condition
@@ -332,6 +334,7 @@ function initDialogs() {
     case 'redirect':
     case 'request_header':
     case 'response_header':
+    case 'error_handling':
       condition.type = $('[type="radio"][name="type"]:checked', $dialog)
         .data('type');
       if (condition.type === 'manual') {
@@ -622,7 +625,7 @@ allowed in manual redirection');
     // Manual redirection rules cannot select resource
     var index = $rule_editor.data('condition_index');
     var condition = index < 0 ? {type: 'regexp'} : rule.conditions[index];
-    if (condition.type === 'manual') {
+    if (condition.type === 'manual' || rule.type === 'error_handling') {
       $('[name="resource"]', $(this)).prop('disabled', true).button('refresh');
     }
     $('[data-type="' + condition.type + '"]', $(this))
@@ -641,6 +644,10 @@ allowed in manual redirection');
   });
   // Resource enable/disable switcher
   $('#condition-editor-normal [data-type]').click(function () {
+    // Ignore rules of type error_handling
+    if ($rule_editor.data('rule').type === 'error_handling') {
+      return;
+    }
     var disabled = $(this).data('type') === 'manual';
     $('#condition-editor-normal [name="resource"]')
       .prop('disabled', disabled).button('refresh');
@@ -718,8 +725,7 @@ function initButtons() {
   /* Edit rule */
   function editRule () {
     var type_index = $('#rule-lists').accordion('option', 'active');
-    var type = ['fast_matching', 'redirect', 'request_header',
-                'response_header', 'online'][type_index];
+    var type = window.redirector_utils_js.all_types[type_index];
     var $list = $('#rule-list-' + type);
     var $rule = $('.ui-selected', $list);
     var index = $('li', $list).index($rule);
@@ -751,8 +757,7 @@ function initButtons() {
   /* Remove rule */
   function removeRule () {
     var type_index = $('#rule-lists').accordion('option', 'active');
-    var type = ['fast_matching', 'redirect', 'request_header',
-                'response_header', 'online'][type_index];
+    var type = window.redirector_utils_js.all_types[type_index];
     var $list = $('#rule-list-' + type);
     var $rule = $('.ui-selected', $list);
     var index = $('li', $list).index($rule);
@@ -867,18 +872,15 @@ function initButtons() {
       });
     });
     // Open the list contains the last imported rule
-    $('#rule-lists').accordion('activate', [
-      'fast_matching', 'redirect', 'request_header',
-      'response_header', 'online'
-    ].indexOf(type));
+    $('#rule-lists').accordion(
+      'activate', window.redirector_utils_js.all_types.indexOf(type));
     // Clear the file input
     $(this).prop('value', '');
   });
   /* Export rule */
   $('#floating-toolbar button[name="export"]').click(function () {
     var type_index = $('#rule-lists').accordion('option', 'active');
-    var type = ['fast_matching', 'redirect', 'request_header',
-                'response_header', 'online'][type_index];
+    var type = window.redirector_utils_js.all_types[type_index];
     var $list = $('#rule-list-' + type);
     var $rule = $('.ui-selected', $list);
     var index = $('li', $list).index($rule);
@@ -907,6 +909,7 @@ function initButtons() {
       $('#condition-editor-fast_matching').dialog('open');
       break;
     case 'redirect':
+    case 'error_handling':
       try {
         rule.conditions.forEach(function (condition) {
           if (condition.type === 'manual') {
@@ -942,6 +945,7 @@ function initButtons() {
       $('#condition-editor-fast_matching').dialog('open');
       break;
     case 'redirect': case 'request_header': case 'response_header':
+    case 'error_handling':
       $('#condition-editor-normal').dialog('open');
       break;
     default:
@@ -1066,7 +1070,7 @@ function initButtons() {
       var $dialog = $('#action-creator').data({actions: rule.actions});
       $dialog.dialog('open');
       break;
-    case 'redirect':
+    case 'redirect': case 'error_handling':
       try {
         rule.actions.forEach(function (action) {
           if (action.type === 'manual') {
@@ -1105,7 +1109,7 @@ function initButtons() {
     case 'fast_matching':
       type = rule.actions.type;
       /* No break here */
-    case 'redirect':
+    case 'redirect': case 'error_handling':
       $('#action-editor-redirect').dialog('open');
       break;
     case 'request_header':
@@ -1611,9 +1615,7 @@ function initMisc() {
     $('.ui-selected', $(this)).removeClass('ui-selected');
   });
   /* Rule lists sort binding */
-  $.each([
-    'fast_matching', 'redirect', 'request_header', 'response_header', 'online'
-  ], function (i, type) {
+  $.each(window.redirector_utils_js.all_types, function (i, type) {
     $('#rule-list-' + type).bind('sortstart', function (e, ui) {
       $(this).data({sort_start: ui.item.index()});
     });
@@ -1673,9 +1675,7 @@ function initMisc() {
  */
 function loadRules() {
   chrome.storage.local.get(null, function (items) {
-    $.each([
-      'fast_matching', 'redirect', 'request_header', 'response_header', 'online'
-    ], function (i, type) {
+    $.each(window.redirector_utils_js.all_types, function (i, type) {
       var rules = items[type];
       if (rules === undefined || rules.length === 0) {
         return;
@@ -1764,15 +1764,14 @@ function initSettings() {
     });
   });
   /* Enabled rule type */
-  local.get(
-    {enabled_rule_types: ['fast_matching', 'redirect', 'request_header',
-                         'response_header', 'online']},
-    function (items) {
-      $.each(items.enabled_rule_types, function (i, type) {
-        $('[name="rule_type"][data-type="' + type + '"]', $settings)
-          .prop('checked', true).button('refresh');
-      });
+  local.get({
+    enabled_rule_types: window.redirector_utils_js.all_types
+  }, function (items) {
+    $.each(items.enabled_rule_types, function (i, type) {
+      $('[name="rule_type"][data-type="' + type + '"]', $settings)
+        .prop('checked', true).button('refresh');
     });
+  });
   $('[name="rule_type"]', $settings).click(function () {
     var types = [];
     $('[name="rule_type"]:checked', $settings).each(function () {

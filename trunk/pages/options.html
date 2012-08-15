@@ -42,6 +42,8 @@
             <div><ul id="rule-list-request_header" class="selectable-draggable-list"></ul></div>
             <h3><a href="#">Response Header</a></h3>
             <div><ul id="rule-list-response_header" class="selectable-draggable-list"></ul></div>
+            <h3><a href="#">Error Handling</a></h3>
+            <div><ul id="rule-list-error_handling" class="selectable-draggable-list"></ul></div>
             <h3><a href="#">Online</a></h3>
             <div><ul id="rule-list-online" class="selectable-draggable-list"></ul></div>
           </div>
@@ -67,31 +69,33 @@
             <label for="settings-7">Request header</label>
             <input type="checkbox" name="rule_type" id="settings-8" data-type="response_header" />
             <label for="settings-8">Response header</label>
-            <input type="checkbox" name="rule_type" id="settings-9" data-type="online" />
-            <label for="settings-9">Online</label>
+            <input type="checkbox" name="rule_type" id="settings-9" data-type="error_handling" />
+            <label for="settings-9">Error handling</label>
+            <input type="checkbox" name="rule_type" id="settings-10" data-type="online" />
+            <label for="settings-10">Online</label>
           </form>
           <form class="button-set">
             <h5>Enabled protocols</h5>
-            <input type="checkbox" name="protocol" id="settings-10" data-type="http://*/*" /><label for="settings-10">HTTP</label>
-            <input type="checkbox" name="protocol" id="settings-11" data-type="https://*/*" /><label for="settings-11">HTTPS</label>
-            <input type="checkbox" name="protocol" id="settings-12" data-type="ftp://*/*" /><label for="settings-12">FTP</label>
-            <input type="checkbox" name="protocol" id="settings-13" data-type="file://*/*" /><label for="settings-13">FILE</label>
+            <input type="checkbox" name="protocol" id="settings-11" data-type="http://*/*" /><label for="settings-11">HTTP</label>
+            <input type="checkbox" name="protocol" id="settings-12" data-type="https://*/*" /><label for="settings-12">HTTPS</label>
+            <input type="checkbox" name="protocol" id="settings-13" data-type="ftp://*/*" /><label for="settings-13">FTP</label>
+            <input type="checkbox" name="protocol" id="settings-14" data-type="file://*/*" /><label for="settings-14">FILE</label>
           </form>
           <form class="button-set">
             <h5>Manual redirection methods</h5>
-            <input type="checkbox" name="manual" id="settings-14" data-type="page" /><label for="settings-14">Page</label>
-            <input type="checkbox" name="manual" id="settings-15" data-type="link" /><label for="settings-15">Link</label>
+            <input type="checkbox" name="manual" id="settings-15" data-type="page" /><label for="settings-15">Page</label>
+            <input type="checkbox" name="manual" id="settings-16" data-type="link" /><label for="settings-16">Link</label>
           </form>
           <form class="button-set">
             <h5>Auto sync</h5>
-            <input type="radio" name="sync" id="settings-16" data-enabled="true" checked /><label for="settings-16">Enable</label>
-            <input type="radio" name="sync" id="settings-17" data-enabled="false" /><label for="settings-17">Disable</label>
+            <input type="radio" name="sync" id="settings-17" data-enabled="true" checked /><label for="settings-17">Enable</label>
+            <input type="radio" name="sync" id="settings-18" data-enabled="false" /><label for="settings-18">Disable</label>
             <button name="manual-sync"><span>Sync now</span></button>
           </form>
           <form class="button-set">
             <h5>Enable debugger</h5>
-            <input type="radio" name="debugger" id="settings-18" data-enabled="true" checked /><label for="settings-18">Enable</label>
-            <input type="radio" name="debugger" id="settings-19" data-enabled="false" /><label for="settings-19">Disable</label>
+            <input type="radio" name="debugger" id="settings-19" data-enabled="true" checked /><label for="settings-19">Enable</label>
+            <input type="radio" name="debugger" id="settings-20" data-enabled="false" /><label for="settings-20">Disable</label>
           <form class="button-set">
             <h5>Backup & Restore</h5>
             <button name="backup"><span>Backup</span></button>
@@ -113,7 +117,8 @@
         <input type="radio" name="type" data-type="redirect" id="r-c-2" /><label for="r-c-2">Redirect</label><br />
         <input type="radio" name="type" data-type="request_header" id="r-c-3" /><label for="r-c-3">Request Header</label><br />
         <input type="radio" name="type" data-type="response_header" id="r-c-4" /><label for="r-c-4">Response Header</label><br />
-        <input type="radio" name="type" data-type="online" id="r-c-5" /><label for="r-c-5">Online</label>
+        <input type="radio" name="type" data-type="error_handling" id="r-c-5" /><label for="r-c-5">Error Handling</label><br />
+        <input type="radio" name="type" data-type="online" id="r-c-6" /><label for="r-c-6">Online</label>
       </form>
     </div>
     <!-- Rule editors
@@ -127,7 +132,6 @@
       <form class="online-rule button-set">
         <h5>URL</h5>
         <input type="url" name="online" />
-        <button type="submit" class="button-test" name="update"><span>Update</span></button>
       </form>
       <div class="local-rule accordion">
         <h6><a href="#">Conditions</a></h6>
@@ -208,7 +212,7 @@
         <form><h5>Ports</h5><input name="ports" /></form>
       </div>
     </div>
-    <!-- Normal (Redirect / Request Header / Response Header) rule condition -->
+    <!-- Normal (Redirect / Request Header / Response Header /Error Handling) rule condition -->
     <div id="condition-editor-normal" class="editor-dialog" title="Condition::Normal">
       <form class="button-set">
         <input type="checkbox" name="resource" id="c-e-n-1" data-type="all" /><label for="c-e-n-1">All</label>
@@ -221,25 +225,22 @@
         <input type="checkbox" name="resource" id="c-e-n-8" data-type="xmlhttprequest" /><label for="c-e-n-8">XHR</label>
         <input type="checkbox" name="resource" id="c-e-n-9" data-type="other" /><label for="c-e-n-9">Other</label>
       </form>
-      <div class="accordion">
-        <h6><a href="#">Value</a></h6>
-        <div>
-          <form class="button-set">
-            <input type="radio" name="type" id="c-e-n-10" data-type="regexp" checked /><label for="c-e-n-10">RegExp</label>
-            <input type="radio" name="type" id="c-e-n-11" data-type="wildcard" /><label for="c-e-n-11">Wildcard</label>
-            <input type="radio" name="type" id="c-e-n-12" data-type="manual" /><label for="c-e-n-12">Manul</label>
-          </form>
-          <form class="button-set">
-            <input type="checkbox" name="modifier" id="c-e-n-13" data-type="i" /><label for="c-e-n-13">Case insensitive</label>
-          </form>
-          <form><textarea name="value"></textarea></form>
-        </div>
-        <h6><a href="#">Test</a></h6>
+      <div>
         <form class="button-set">
-          <input type="url" />
-          <button type="submit" class="button-test" name="test-condition"><span>Test</span></button>
+          <input type="radio" name="type" id="c-e-n-10" data-type="regexp" checked /><label for="c-e-n-10">RegExp</label>
+          <input type="radio" name="type" id="c-e-n-11" data-type="wildcard" /><label for="c-e-n-11">Wildcard</label>
+          <input type="radio" name="type" id="c-e-n-12" data-type="manual" /><label for="c-e-n-12">Manul</label>
         </form>
+        <form class="button-set">
+          <input type="checkbox" name="modifier" id="c-e-n-13" data-type="i" /><label for="c-e-n-13">Case insensitive</label>
+        </form>
+        <form><h5>Value</h5><textarea name="value"></textarea></form>
       </div>
+      <form class="button-set">
+        <h5>Test</h5>
+        <input type="url" />
+        <button type="submit" class="button-test" name="test-condition"><span>Test</span></button>
+      </form>
     </div>
     <!-- Action creator (for fast matching rules)
       -->
@@ -263,23 +264,20 @@
         <input type="radio" name="type" id="a-e-r-5" data-type="redirect_to_transparent" /><label for="a-e-r-5">To transparent image</label>
         <input type="radio" name="type" id="a-e-r-6" data-type="redirect_to_empty" /><label for="a-e-r-6">To empty document</label>
       </form>
-      <div class="accordion">
-        <h6><a href="#">Value</a></h6>
-        <div>
-          <form class="button-set">
-            <input type="checkbox" name="modifier" id="a-e-r-7" data-type="i" /><label for="a-e-r-7">Case insensitive</label>
-            <input type="checkbox" name="modifier" id="a-e-r-8" data-type="g" /><label for="a-e-r-8">Global match</label>
-            <input type="checkbox" name="decode" id="a-e-r-9" data-type="g" /><label for="a-e-r-9">Decode</label>
-          </form>
-          <form><h5>From</h5><textarea name="from"></textarea></form>
-          <form><h5>To</h5><input name="to" /></form>
-        </div>
-        <h6><a href="#">Test</a></h6>
+      <div>
         <form class="button-set">
-          <input type="url" />
-          <button type="submit" class="button-test" name="test-action"><span>Test</span></button>
+          <input type="checkbox" name="modifier" id="a-e-r-7" data-type="i" /><label for="a-e-r-7">Case insensitive</label>
+          <input type="checkbox" name="modifier" id="a-e-r-8" data-type="g" /><label for="a-e-r-8">Global match</label>
+          <input type="checkbox" name="decode" id="a-e-r-9" data-type="g" /><label for="a-e-r-9">Decode</label>
         </form>
+        <form><h5>From</h5><textarea name="from"></textarea></form>
+        <form><h5>To</h5><input name="to" /></form>
       </div>
+      <form class="button-set">
+        <h5>Test</h5>
+        <input type="url" />
+        <button type="submit" class="button-test" name="test-action"><span>Test</span></button>
+      </form>
     </div>
     <!-- Modify request header action -->
     <div id="action-editor-request_header" class="editor-dialog" title="Action::Request Header">

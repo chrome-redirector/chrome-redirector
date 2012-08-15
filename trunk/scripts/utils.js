@@ -1,14 +1,17 @@
 'use strict';
-/* Debug mode */
-window.redirector_helper_js = {
-  debug: true
+window.redirector_utils_js = {
+  debug: true,                  // Debug mode switch
+  all_types: [
+    'fast_matching', 'redirect', 'request_header',
+    'response_header', 'error_handling', 'online'
+  ]
 };
 
 /**
  * Assertion
  */
 var assertError;
-if (window.redirector_helper_js.debug === true) {
+if (window.redirector_utils_js.debug === true) {
   assertError = function (expression, error) {
     if (!expression) {
       throw 'REDIRECTOR_ASSERTION_FAILED:\n' + error.stack;
