@@ -75,7 +75,7 @@ window.redirector_background_js = {
     initAutoSync();
     /* Event listeners
      */
-    /* Fresh install (not work for 150558) */
+    /* Fresh install / update to new version (not work for 151370) */
     chrome.runtime.onInstalled.addListener(function() {
       openOptionsPage();
     });
@@ -733,10 +733,11 @@ function initPageAction() {
   }
   var info = namespace.info;
   chrome.webRequest.onBeforeRedirect.addListener(function (details) {
-    if (info[details.tabId] === undefined) {
-      info[details.tabId] = [];
-    }
     if (namespace.redirected_requests[details.requestId] !== undefined) {
+      // Only add info when tab is available
+      if (info[details.tabId] === undefined) {
+        return;
+      }
       info[details.tabId].push(
         '#' + details.requestId + ' ' + details.url + '<br />' +
           Array(Math.ceil(Math.log(details.requestId) / Math.LN10)).join(' ') +
@@ -749,18 +750,19 @@ function initPageAction() {
         namespace.header_modified_requests[details.requestId] === undefined) {
       return;
     }
+    // Only add info when tab is available
     if (info[details.tabId] === undefined) {
-      info[details.tabId] = [];
+      return;
     }
     info[details.tabId].push(
       '#' + details.requestId + ' ' + details.error
     );
   }, {urls: namespace.storage_states.enabled_protocols});
   /* Set page action when tab is updated */
-  chrome.tabs.onUpdated.addListener(function(tabId, changeInfo) {
+  chrome.tabs.onUpdated.addListener(function(tabId, changeInfo, tab) {
     if (window.redirector_background_js
         .storage_states.icon_enabled === false ||
-        info[tabId] === undefined) {
+        info[tabId] === undefined || info[tabId].length <= 0) {
       return;
     }
     chrome.pageAction.setTitle({
@@ -769,6 +771,10 @@ function initPageAction() {
     });
     chrome.pageAction.show(tabId);
   });
+  /* Avoid unexpected tabs */
+  chrome.tabs.onCreated.addListener(function(tab) {
+    info[tab.id] = [];
+  });
   /* Clean up the corresponding logs when a tab is removed */
   chrome.tabs.onRemoved.addListener(function(tabId) {
     delete info[tabId];
@@ -776,7 +782,7 @@ function initPageAction() {
 }
 
 /**
- * Initialize auto sync (not work for 150558)
+ * Initialize auto sync (not work for 151370)
  */
 function initAutoSync() {
   // chrome.alarms.clear('auto_sync');

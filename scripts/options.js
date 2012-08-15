@@ -707,19 +707,8 @@ allowed in manual redirection');
 function initButtons() {
   /* Buttons */
   $('.button-set').buttonset();
-  /* Floating toolbar
-   */
-  $('#floating-toolbar').css({opacity: 0.5}).draggable()
-    .mouseenter(function () {$(this).fadeTo('normal', 1);})
-    .mouseleave(function () {$(this).fadeTo('normal', 0.5);})
-    .hide();
-  /* Center floating toolbar */
-  $(window).load(function () {
-    $('#floating-toolbar')
-      .css({'margin-left': $('#floating-toolbar').width() / -2}).show();
-  });
   /* New rule */
-  $('#floating-toolbar button[name="new"]').click(function () {
+  $('#nav-tab-rules button[name="new"]').click(function () {
     $('#rule-creator').dialog('open');
   });
   /* Edit rule */
@@ -740,7 +729,7 @@ function initButtons() {
       $dialog.dialog('open');
     });
   }
-  $('#floating-toolbar button[name="edit"]').click(editRule);
+  $('#nav-tab-rules button[name="edit"]').click(editRule);
   $('#rule-lists').on('dblclick', 'li', function () {
     $(this).addClass('ui-selected');
     editRule();
@@ -780,7 +769,7 @@ function initButtons() {
         });
     });
   }
-  $('#floating-toolbar button[name="remove"]').click(removeRule);
+  $('#nav-tab-rules button[name="remove"]').click(removeRule);
   // x => remove
   $(document).bind('keydown', 'ctrl+d x del backspace', function () {
     if ($('.ui-dialog:visible').length <= 0 &&
@@ -842,7 +831,7 @@ function initButtons() {
     return true;
   });
   /* Import rule */
-  $('#floating-toolbar input[type="file"][name="import"]').change(function () {
+  $('#nav-tab-rules input[type="file"][name="import"]').change(function () {
     var type;
     $.each($(this).prop('files'), function (i, file) {
       readTextFromFile(file, function (text) {
@@ -878,7 +867,7 @@ function initButtons() {
     $(this).prop('value', '');
   });
   /* Export rule */
-  $('#floating-toolbar button[name="export"]').click(function () {
+  $('#nav-tab-rules button[name="export"]').click(function () {
     var type_index = $('#rule-lists').accordion('option', 'active');
     var type = window.redirector_utils_js.all_types[type_index];
     var $list = $('#rule-list-' + type);
@@ -897,8 +886,7 @@ function initButtons() {
       });
     });
   });
-  /* Floating-toolbar end
-   */
+
   /* New condition */
   $('#rule-editor [name="new-condition"]').click(function () {
     var $rule_editor = $('#rule-editor');
@@ -1821,7 +1809,7 @@ function initSettings() {
     });
   });
   $('[name="manual-sync"]', $settings).click(function () {
-    syncData();
+    syncData(undefined, alertDialog);
   });
   /* Enable debugger */
   local.get({debugger_enabled: true}, function (items) {
