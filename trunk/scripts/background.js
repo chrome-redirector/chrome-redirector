@@ -344,13 +344,15 @@ function initRedirectRules(rules, storage) {
       case 'redirect_regexp':
         rule_actions.push({
           from: regexpStringToRegexp(action.from, action.modifiers),
-          to: action.to
+          to: action.to,
+          decode: action.decode
         });
         break;
       case 'redirect_wildcard':
         rule_actions.push({
           from: wildcardToRegexp(action.from, action.modifiers),
-          to: action.to
+          to: action.to,
+          decode: action.decode
         });
         break;
       case 'redirect_cancel':
@@ -840,6 +842,9 @@ function processRedirectRules(details) {
           return {redirectUrl: rule.actions.to};
         }
         redirectUrl = details.url.replace(action.from, action.to);
+        if (action.decode === true) {
+          redirectUrl = decodeURIComponent(redirectUrl);
+        }
       }
       break outmost;
     }

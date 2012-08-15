@@ -425,15 +425,17 @@ allowed in manual redirection');
         }
         // Check for syntax errors and add possible modifiers
         if (rule.type !== 'fast_matching') {
+          action.modifiers = [];
+          $('[name="modifier"]:checked', $dialog).each(function () {
+            action.modifiers.push($(this).data('type'));
+          });
           if (action.type === 'redirect_regexp') {
-            regexpStringToRegexp(action.from);
-            action.modifiers = [];
-            $('[name="modifier"]:checked', $dialog).each(function () {
-              action.modifiers.push($(this).data('type'));
-            });
+            regexpStringToRegexp(action.from, action.modifiers);
           } else {
-            wildcardToRegexp(action.from);
+            wildcardToRegexp(action.from, action.modifiers);
           }
+          action.decode = $('[name="decode"]', $dialog)
+            .prop('checked');
         } else {
           try {
             if (action.type === 'redirect_regexp') {
@@ -649,8 +651,10 @@ allowed in manual redirection');
     var rule = $rule_editor.data('rule');
     if (rule.type === 'fast_matching') {
       $('[name="modifier"]', $(this)).button('disable');
+      $('[name="decode"]', $(this)).button('disable');
     } else {
       $('[name="modifier"]', $(this)).button('enable');
+      $('[name="decode"]', $(this)).button('enable');
     }
     var index = $rule_editor.data('action_index');
     var action = index < 0 ? {type: 'regexp'} :
@@ -1336,6 +1340,9 @@ function initButtons() {
           regexpStringToRegexp(action.from, action.modifiers),
           action.to
         );
+        if (action.decode === true) {
+          url = decodeURIComponent(url);
+        }
         test_log.push('Redirect to: ' + url);
         break;
       case 'redirect_wildcard':
@@ -1343,6 +1350,9 @@ function initButtons() {
           wildcardToRegexp(action.from, action.modifiers),
           action.to
         );
+        if (action.decode === true) {
+          url = decodeURIComponent(url);
+        }
         test_log.push('Redirect to: ' + url);
         break;
       case 'redirect_cancel':
@@ -1433,6 +1443,7 @@ function initButtons() {
     $('[name="modifier"]:checked', $dialog).each(function () {
       modifiers.push($(this).data('type'));
     });
+    var decode = $('[name="decode"]', $dialog).prop('checked');
     var from = $('[name="from"]', $dialog).prop('value');
     var to = $('[name="to"]', $dialog).prop('value');
     try {
@@ -1443,7 +1454,11 @@ function initButtons() {
       alertDialog(x.message);
       return;
     }
-    alertDialog('Redirect to' + url.replace(regexp, to));
+    var result = url.replace(regexp, to);
+    if (decode === true) {
+      result = decodeURIComponent(result);
+    }
+    alertDialog('Redirect to: ' + result);
   });
   /* Condition type selection */
   $('#condition-editor-normal [name="type"]').click(function () {
