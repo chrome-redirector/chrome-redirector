@@ -17,7 +17,9 @@
       <h1>Redirector</h1>
     </header>
     <div class="header-shadow"></div>
+
     <div class="container">
+        <div class="content">
       <div id="nav-tabs">
         <ul>
           <li><a href="#nav-tab-rules">Rules</a></li>
@@ -25,29 +27,29 @@
           <li><a href="#nav-tab-help">Help</a></li>
         </ul>
         <div id="nav-tab-rules">
-          <div id="floating-toolbar" class="button-set ui-corner-top">
-            <button name="new"><span>New</span></button>
-            <button name="edit"><span>Edit</span></button>
-            <button name="remove"><span>Remove</span></button>
-            <input type="file" name="import" multiple />
-            <button name="import"><span>Import</span></button>
-            <button name="export"><span>Export</span></button>
-          </div>
-          <div id="rule-lists" class="accordion">
-            <h3><a href="#">Fast Matching</a></h3>
-            <div><ul id="rule-list-fast_matching" class="selectable-draggable-list"></ul></div>
-            <h3><a href="#">Redirect</a></h3>
-            <div><ul id="rule-list-redirect" class="selectable-draggable-list"></ul></div>
-            <h3><a href="#">Request Header</a></h3>
-            <div><ul id="rule-list-request_header" class="selectable-draggable-list"></ul></div>
-            <h3><a href="#">Response Header</a></h3>
-            <div><ul id="rule-list-response_header" class="selectable-draggable-list"></ul></div>
-            <h3><a href="#">Error Handling</a></h3>
-            <div><ul id="rule-list-error_handling" class="selectable-draggable-list"></ul></div>
-            <h3><a href="#">Online</a></h3>
-            <div><ul id="rule-list-online" class="selectable-draggable-list"></ul></div>
-          </div>
+            <div class="toolbar ui-widget-header button-set ui-corner-bottom">
+                <button name="new"><span>New</span></button>
+                <button name="edit"><span>Edit</span></button>
+                <button name="remove"><span>Remove</span></button>
+                <input type="file" name="import" multiple />
+                <button name="import"><span>Import</span></button>
+                <button name="export"><span>Export</span></button>
+            </div>
+
+            <div id="rule-list-section">
+                <h3>Fast Matching</h3>
+                <ul id="rule-list">
+                    <li><span class="ui-icon ui-icon-script"></span>Item 1</li>
+                    <li><span class="ui-icon ui-icon-script"></span>Item 2</li>
+                    <li><span class="ui-icon ui-icon-script"></span>Item 3</li>
+                    <li><span class="ui-icon ui-icon-script"></span>Item 4</li>
+                    <li><span class="ui-icon ui-icon-script"></span>Item 5</li>
+                    <li><span class="ui-icon ui-icon-script"></span>Item 6</li>
+                    <li><span class="ui-icon ui-icon-script"></span>Item 7</li>
+                </ul>
+            </div>
         </div> <!-- #nav-tab-rules -->
+        
         <div id="nav-tab-settings">
           <form class="button-set">
             <h5>Context menu</h5>
@@ -106,7 +108,8 @@
         <div id="nav-tab-help">
           <p>TODO</p>
         </div> <!-- #nav-tab-help -->
-      </div>   <!-- #nav-tabs -->
+        </div>   <!-- #nav-tabs -->
+        </div><!-- .content -->
     </div> <!-- .container -->
     <!-- Rule Creator
       -->
