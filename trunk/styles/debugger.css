@@ -15,6 +15,19 @@ summary {
     white-space: nowrap;
 }
 
+input[type="checkbox"] {
+    -webkit-appearance: none;
+    appearance: none;
+}
+
+input[type="checkbox"]~label {
+    -webkit-appearance: push-button;
+    appearance: push-button;
+    font: -webkit-small-control;
+    padding: 1px 6px;
+    border: 2px outset;
+}
+
 ::scrollbar,::-webkit-scrollbar {
     width: 5px;
     height: 5px;

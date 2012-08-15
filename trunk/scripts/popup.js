@@ -11,12 +11,20 @@ $(document).ready(function(){
       var $info = $('#info');
       if (info[id] === undefined) {
         $info.html('<pre>Nothing recorded</pre>');
-        return;
+      } else {
+        $info.html('');
+        $.each(info[id], function (i, message) {
+          $info.prepend('<pre>' + message + '</pre>');
+        });
       }
-      $info.html('');
-      $.each(info[id], function (i, message) {
-        $info.prepend('<pre>' + message + '</pre>');
-      });
+      $('#accordion').accordion('resize');
     });
+  });
+  $('#dismiss').click(function () {
+    chrome.storage.local.set({icon_enabled: false});
+    close();
+  });
+  $('#options').click(function () {
+    openOptionsPage();
   });
 });

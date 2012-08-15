@@ -112,23 +112,30 @@ function _(messagename) {
  * Open options page
  */
 function openOptionsPage (query) {
-  var background_page = chrome.extension.getBackgroundPage();
-  chrome.extension.getViews({type: 'tab'}).forEach(function (view) {
-    if (view !== background_page) {
-      view.close();
+  var url = chrome.runtime.getURL('/pages/options.html');
+  chrome.tabs.query({url: url + '*'}, function (tabs) {
+    url += fallback(query, '');
+    if (tabs.length > 0) {
+      var updateProperties = {active: true};
+      if (tabs[0].url !== url) {
+        updateProperties.url = url;
+      }
+      chrome.tabs.update(tabs[0].id, updateProperties);
+    } else {
+      chrome.tabs.create({url: url});
     }
-  });
-  chrome.tabs.create({
-    url: chrome.extension.getURL('pages/options.html' + fallback(query, ''))
   });
 };
 
 /**
  * Sync data to remote server
  */
-function syncData(alarm) {
+function syncData(alarm, callback) {
   if (alarm !== undefined && alarm.name !== 'auto_sync') {
     return;
+  }
+  if (callback === undefined) {
+    callback = console.error;
   }
   chrome.storage.sync.get('sync_timestamp', function (items) {
     var remote_timestamp = fallback(items.sync_timestamp, 0);
@@ -136,7 +143,7 @@ function syncData(alarm) {
       var local_timestamp = fallback(items.sync_timestamp, 0);
       var current_timestamp = (new Date()).getTime();
       if (current_timestamp < local_timestamp) {
-        alert('Something has gone wrong with your clock!');
+        callback('Something has gone wrong with your clock!');
         return;
       }
       if (local_timestamp >= remote_timestamp) {
@@ -145,8 +152,8 @@ function syncData(alarm) {
           delete items.online_cache; // Avoid syncing cache
           chrome.storage.sync.set(items, function () {
             if (chrome.extension.lastError !== undefined) {
-              console.log('Sync data to remote server failed: ' +
-                          chrome.extension.lastError);
+              callback('Sync data to remote server failed: ' +
+                       chrome.extension.lastError);
             }
           });
           chrome.storage.local.set({sync_timestamp: current_timestamp});
@@ -156,15 +163,15 @@ function syncData(alarm) {
           sync_timestamp: current_timestamp
         }, function () {
           if (chrome.extension.lastError !== undefined) {
-            console.log('Sync data from remote server failed: ' +
+            callback('Sync data from remote server failed: ' +
                         chrome.extension.lastError);
             return;
           }
           chrome.storage.sync.get(null, function (items) {
             chrome.storage.local.set(items, function () {
               if (chrome.extension.lastError !== undefined) {
-                console.log('Sync data from remote server failed: ' +
-                            chrome.extension.lastError);
+                callback('Sync data from remote server failed: ' +
+                         chrome.extension.lastError);
               }
             });
           });
