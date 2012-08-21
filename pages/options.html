@@ -22,18 +22,18 @@
       <div class="content">
         <div id="nav-tabs">
           <ul>
-            <li><a href="#nav-tab-rules">Rules</a></li>
-            <li><a href="#nav-tab-settings">Settings</a></li>
-            <li><a href="#nav-tab-help">Help</a></li>
+            <li><a href="#nav-tab-rules" data-i18n="RULES"></a></li>
+            <li><a href="#nav-tab-settings" data-i18n="SETTINGS"></a></li>
+            <li><a href="#nav-tab-help" data-i18n="HELP"></a></li>
           </ul>
           <div id="nav-tab-rules">
             <div class="toolbar ui-widget-header button-set ui-corner-bottom">
-              <button name="new"><span>New</span></button>
-              <button name="edit"><span>Edit</span></button>
-              <button name="remove"><span>Remove</span></button>
+              <button name="new"><span data-i18n="NEW"></span></button>
+              <button name="edit"><span data-i18n="EDIT"></span></button>
+              <button name="remove"><span data-i18n="REMOVE"></span></button>
               <input type="file" name="import" multiple />
-              <button name="import"><span>Import</span></button>
-              <button name="export"><span>Export</span></button>
+              <button name="import"><span data-i18n="IMPORT"></span></button>
+              <button name="export"><span data-i18n="EXPORT"></span></button>
             </div>
 
             <div id="rule-list-section">
@@ -43,57 +43,57 @@
 
           <div id="nav-tab-settings">
             <form class="button-set">
-              <h5>Context menu</h5>
-              <input type="radio" name="context" id="settings-1" data-enabled="true" checked /><label for="settings-1">Enable</label>
-              <input type="radio" name="context" id="settings-2" data-enabled="false" /><label for="settings-2">Disable</label>
+              <h5 data-i18n="CONTEXT_MENU"></h5>
+              <input type="radio" name="context" id="settings-1" data-enabled="true" checked /><label for="settings-1" data-i18n="ENABLE"></label>
+              <input type="radio" name="context" id="settings-2" data-enabled="false" /><label for="settings-2" data-i18n="DISABLE"></label>
             </form>
             <form class="button-set">
-              <h5>Icon notification</h5>
-              <input type="radio" name="icon" id="settings-3" data-enabled="true" checked /><label for="settings-3">Enable</label>
-              <input type="radio" name="icon" id="settings-4" data-enabled="false" /><label for="settings-4">Disable</label>
+              <h5 data-i18n="ICON_NOTIFICATION"></h5>
+              <input type="radio" name="icon" id="settings-3" data-enabled="true" checked /><label for="settings-3" data-i18n="ENABLE"></label>
+              <input type="radio" name="icon" id="settings-4" data-enabled="false" /><label for="settings-4" data-i18n="DISABLE"></label>
             </form>
             <form class="button-set">
-              <h5>Enabled rule types</h5>
+              <h5 data-i18n="ENABLED_RULE_TYPES"></h5>
               <input type="checkbox" name="rule_type" id="settings-5" data-type="fast_matching" />
-              <label for="settings-5">Fast matching</label>
+              <label for="settings-5" data-i18n="FAST_MATCHING"></label>
               <input type="checkbox" name="rule_type" id="settings-6" data-type="redirect" />
-              <label for="settings-6">Redirect</label>
+              <label for="settings-6" data-i18n="REDIRECT"></label>
               <input type="checkbox" name="rule_type" id="settings-7" data-type="request_header" />
-              <label for="settings-7">Request header</label>
+              <label for="settings-7" data-i18n="REQUEST_HEADER"></label>
               <input type="checkbox" name="rule_type" id="settings-8" data-type="response_header" />
-              <label for="settings-8">Response header</label>
+              <label for="settings-8" data-i18n="RESPONSE_HEADER"></label>
               <input type="checkbox" name="rule_type" id="settings-9" data-type="error_handling" />
-              <label for="settings-9">Error handling</label>
+              <label for="settings-9" data-i18n="ERROR_HANDLING"></label>
               <input type="checkbox" name="rule_type" id="settings-10" data-type="online" />
-              <label for="settings-10">Online</label>
+              <label for="settings-10" data-i18n="ONLINE"></label>
             </form>
             <form class="button-set">
-              <h5>Enabled protocols</h5>
+              <h5 data-i18n="ENABLED_PROTOCOLS"></h5>
               <input type="checkbox" name="protocol" id="settings-11" data-type="http://*/*" /><label for="settings-11">HTTP</label>
               <input type="checkbox" name="protocol" id="settings-12" data-type="https://*/*" /><label for="settings-12">HTTPS</label>
               <input type="checkbox" name="protocol" id="settings-13" data-type="ftp://*/*" /><label for="settings-13">FTP</label>
               <input type="checkbox" name="protocol" id="settings-14" data-type="file://*/*" /><label for="settings-14">FILE</label>
             </form>
             <form class="button-set">
-              <h5>Manual redirection methods</h5>
-              <input type="checkbox" name="manual" id="settings-15" data-type="page" /><label for="settings-15">Page</label>
-              <input type="checkbox" name="manual" id="settings-16" data-type="link" /><label for="settings-16">Link</label>
+              <h5 data-i18n="MANUAL_REDIRECTION_METHODS"></h5>
+              <input type="checkbox" name="manual" id="settings-15" data-type="page" /><label for="settings-15" data-i18n="PAGE"></label>
+              <input type="checkbox" name="manual" id="settings-16" data-type="link" /><label for="settings-16" data-i18n="LINK"></label>
             </form>
             <form class="button-set">
-              <h5>Auto sync</h5>
-              <input type="radio" name="sync" id="settings-17" data-enabled="true" checked /><label for="settings-17">Enable</label>
-              <input type="radio" name="sync" id="settings-18" data-enabled="false" /><label for="settings-18">Disable</label>
-              <button name="manual-sync"><span>Sync now</span></button>
+              <h5 data-i18n="AUTO_SYNC"></h5>
+              <input type="radio" name="sync" id="settings-17" data-enabled="true" checked /><label for="settings-17" data-i18n="ENABLE"></label>
+              <input type="radio" name="sync" id="settings-18" data-enabled="false" /><label for="settings-18" data-i18n="DISABLE"></label>
+              <button name="manual-sync"><span data-i18n="SYNC_NOW"></span></button>
             </form>
             <form class="button-set">
-              <h5>Enable debugger</h5>
-              <input type="radio" name="debugger" id="settings-19" data-enabled="true" checked /><label for="settings-19">Enable</label>
-              <input type="radio" name="debugger" id="settings-20" data-enabled="false" /><label for="settings-20">Disable</label>
+              <h5 data-i18n="ENABLE_DEBUGGER"></h5>
+              <input type="radio" name="debugger" id="settings-19" data-enabled="true" checked /><label for="settings-19" data-i18n="ENABLE"></label>
+              <input type="radio" name="debugger" id="settings-20" data-enabled="false" /><label for="settings-20" data-i18n="DISABLE"></label>
               <form class="button-set">
-                <h5>Backup & Restore</h5>
-                <button name="backup"><span>Backup</span></button>
+                <h5 data-i18n="BACKUP_AND_RESTORE"></h5>
+                <button name="backup"><span data-i18n="BACKUP"></span></button>
                 <input type="file" name="restore" />
-                <button name="restore"><span>Restore</span></button>
+                <button name="restore"><span data-i18n="RESTORE"></span></button>
               </form>
             </form>
           </div> <!-- #nav-tab-settings -->
@@ -106,181 +106,181 @@
     <!-- Rule Creator
       -->
     <div id="rule-creator">
-      <h5>Please choose a rule type:</h5>
+      <h5 data-i18n="PLEASE_CHOOSE_A_RULE_TYPE"></h5>
       <form>
-        <input type="radio" name="type" data-type="fast_matching" id="r-c-1" checked /><label for="r-c-1">Fast Matching</label><br />
-        <input type="radio" name="type" data-type="redirect" id="r-c-2" /><label for="r-c-2">Redirect</label><br />
-        <input type="radio" name="type" data-type="request_header" id="r-c-3" /><label for="r-c-3">Request Header</label><br />
-        <input type="radio" name="type" data-type="response_header" id="r-c-4" /><label for="r-c-4">Response Header</label><br />
-        <input type="radio" name="type" data-type="error_handling" id="r-c-5" /><label for="r-c-5">Error Handling</label><br />
-        <input type="radio" name="type" data-type="online" id="r-c-6" /><label for="r-c-6">Online</label>
+        <input type="radio" name="type" data-type="fast_matching" id="r-c-1" checked /><label for="r-c-1" data-i18n="FAST_MATCHING"></label><br />
+        <input type="radio" name="type" data-type="redirect" id="r-c-2" /><label for="r-c-2" data-i18n="REDIRECT"></label><br />
+        <input type="radio" name="type" data-type="request_header" id="r-c-3" /><label for="r-c-3" data-i18n="REQUEST_HEADER"></label><br />
+        <input type="radio" name="type" data-type="response_header" id="r-c-4" /><label for="r-c-4" data-i18n="RESPONSE_HEADER"></label><br />
+        <input type="radio" name="type" data-type="error_handling" id="r-c-5" /><label for="r-c-5" data-i18n="ERROR_HANDLING"></label><br />
+        <input type="radio" name="type" data-type="online" id="r-c-6" /><label for="r-c-6" data-i18n="ONLINE"></label>
       </form>
     </div>
     <!-- Rule editors
       -->
     <div id="rule-editor" class="editor-dialog" title="Rule Editor">
       <form class="button-set">
-        <input type="radio" name="rule-enabled" id="r-e-1" data-enabled="true" checked /><label for="r-e-1">Enable</label>
-        <input type="radio" name="rule-enabled" id="r-e-2" data-enabled="false" /><label for="r-e-2">Disable</label>
+        <input type="radio" name="rule-enabled" id="r-e-1" data-enabled="true" checked /><label for="r-e-1" data-i18n="ENABLE"></label>
+        <input type="radio" name="rule-enabled" id="r-e-2" data-enabled="false" /><label for="r-e-2" data-i18n="DISABLE"></label>
       </form>
-      <h5>Name</h5><input name="name" />
+      <h5 data-i18n="NAME"></h5><input name="name" />
       <form class="online-rule button-set">
-        <h5>URL</h5>
+        <h5 data-i18n="URL"></h5>
         <input type="url" name="online" />
       </form>
       <div class="local-rule accordion">
-        <h6><a href="#">Conditions</a></h6>
+        <h6><a href="#" data-i18n="CONDITIONS"></a></h6>
         <div>
           <form class="button-set">
-            <button name="new-condition"><span>New</span></button>
-            <button name="edit-condition"><span>Edit</span></button>
-            <button name="remove-condition"><span>Remove</span></button>
+            <button name="new-condition" data-i18n="NEW"><span></span></button>
+            <button name="edit-condition"><span data-i18n="EDIT"></span></button>
+            <button name="remove-condition"><span data-i18n="REMOVE"></span></button>
           </form>
           <ul id="rule-editor-conditions" class="selectable-draggable-list"></ul>
         </div>
-        <h6><a href="#">Actions</a></h6>
+        <h6><a href="#" data-i18n="ACTIONS"></a></h6>
         <div>
           <form class="button-set">
-            <button name="new-action"><span>New</span></button>
-            <button name="edit-action"><span>Edit</span></button>
-            <button name="remove-action"><span>Remove</span></button>
+            <button name="new-action"><span data-i18n="NEW"></span></button>
+            <button name="edit-action"><span data-i18n="EDIT"></span></button>
+            <button name="remove-action"><span data-i18n="REMOVE"></span></button>
           </form>
           <ul id="rule-editor-actions" class="selectable-draggable-list"></ul>
         </div>
-        <h6><a href="#">Test</a></h6>
+        <h6><a href="#" data-i18n="TEST"></a></h6>
         <form class="button-set">
           <input type="url" />
-          <button type="submit" class="button-test" name="test-rule"><span>Test</span></button>
+          <button type="submit" class="button-test" name="test-rule"><span data-i18n="TEST"></span></button>
         </form>
       </div>
     </div>
     <!-- Condition editors
       -->
     <!-- Fast matching rule condition -->
-    <div id="condition-editor-fast_matching" class="editor-dialog" title="Condition::Fast Matching">
+    <div id="condition-editor-fast_matching" class="editor-dialog" data-i18n="title:FAST_MATCHING_CONDITION">
       <form class="button-set">
-        <input type="checkbox" name="resource" id="c-e-f_m-1" data-type="all" /><label for="c-e-f_m-1">All</label>
-        <input type="checkbox" name="resource" id="c-e-f_m-2" data-type="main_frame" /><label for="c-e-f_m-2">Main Frame</label>
-        <input type="checkbox" name="resource" id="c-e-f_m-3" data-type="sub_frame" /><label for="c-e-f_m-3">Sub Frame</label>
-        <input type="checkbox" name="resource" id="c-e-f_m-4" data-type="stylesheet" /><label for="c-e-f_m-4">Stylesheet</label>
-        <input type="checkbox" name="resource" id="c-e-f_m-5" data-type="script" /><label for="c-e-f_m-5">Script</label>
-        <input type="checkbox" name="resource" id="c-e-f_m-6" data-type="image" /><label for="c-e-f_m-6">Image</label>
-        <input type="checkbox" name="resource" id="c-e-f_m-7" data-type="object" /><label for="c-e-f_m-7">Object</label>
-        <input type="checkbox" name="resource" id="c-e-f_m-8" data-type="xmlhttprequest" /><label for="c-e-f_m-8">XHR</label>
-        <input type="checkbox" name="resource" id="c-e-f_m-9" data-type="other" /><label for="c-e-f_m-9">Other</label>
+        <input type="checkbox" name="resource" id="c-e-f_m-1" data-type="all" /><label for="c-e-f_m-1" data-i18n="ALL"></label>
+        <input type="checkbox" name="resource" id="c-e-f_m-2" data-type="main_frame" /><label for="c-e-f_m-2" data-i18n="MAIN_FRAME"></label>
+        <input type="checkbox" name="resource" id="c-e-f_m-3" data-type="sub_frame" /><label for="c-e-f_m-3" data-i18n="SUB_FRAME"></label>
+        <input type="checkbox" name="resource" id="c-e-f_m-4" data-type="stylesheet" /><label for="c-e-f_m-4" data-i18n="STYLESHEET"></label>
+        <input type="checkbox" name="resource" id="c-e-f_m-5" data-type="script" /><label for="c-e-f_m-5" data-i18n="SCRIPT"></label>
+        <input type="checkbox" name="resource" id="c-e-f_m-6" data-type="image" /><label for="c-e-f_m-6" data-i18n="IMAGE"></label>
+        <input type="checkbox" name="resource" id="c-e-f_m-7" data-type="object" /><label for="c-e-f_m-7" data-i18n="OBJECT"></label>
+        <input type="checkbox" name="resource" id="c-e-f_m-8" data-type="xmlhttprequest" /><label for="c-e-f_m-8" data-i18n="XHR"></label>
+        <input type="checkbox" name="resource" id="c-e-f_m-9" data-type="other" /><label for="c-e-f_m-9" data-i18n="OTHER"></label>
       </form>
       <div class="accordion">
-        <h6><a href="#">Host</a></h6>
+        <h6><a href="#" data-i18n="HOST"></a></h6>
         <form>
-          <h5>Contains</h5><input name="hostContains" />
-          <h5>Equals</h5><input name="hostEquals" />
-          <h5>Prefix</h5><input name="hostPrefix" />
-          <h5>Suffix</h5><input name="hostSuffix" />
+          <h5 data-i18n="CONTAINS"></h5><input name="hostContains" />
+          <h5 data-i18n="EQUALS"></h5><input name="hostEquals" />
+          <h5 data-i18n="PREFIX"></h5><input name="hostPrefix" />
+          <h5 data-i18n="SUFFIX"></h5><input name="hostSuffix" />
         </form>
-        <h6><a href="#">Path</a></h6>
+        <h6><a href="#" data-i18n="PATH"></a></h6>
         <form>
-          <h5>Contains</h5><input name="pathContains" />
-          <h5>Equals</h5><input name="pathEquals" />
-          <h5>Prefix</h5><input name="pathPrefix" />
-          <h5>Suffix</h5><input name="pathSuffix" />
+          <h5 data-i18n="CONTAINS"></h5><input name="pathContains" />
+          <h5 data-i18n="EQUALS"></h5><input name="pathEquals" />
+          <h5 data-i18n="PREFIX"></h5><input name="pathPrefix" />
+          <h5 data-i18n="SUFFIX"></h5><input name="pathSuffix" />
         </form>
-        <h6><a href="#">Query</a></h6>
+        <h6><a href="#" data-i18n="QUERY"></a></h6>
         <form>
-          <h5>Contains</h5><input name="queryContains" />
-          <h5>Equals</h5><input name="queryEquals" />
-          <h5>Prefix</h5><input name="queryPrefix" />
-          <h5>Suffix</h5><input name="querySuffix" />
+          <h5 data-i18n="CONTAINS"></h5><input name="queryContains" />
+          <h5 data-i18n="EQUALS"></h5><input name="queryEquals" />
+          <h5 data-i18n="PREFIX"></h5><input name="queryPrefix" />
+          <h5 data-i18n="SUFFIX"></h5><input name="querySuffix" />
         </form>
-        <h6><a href="#">URL</a></h6>
+        <h6><a href="#" data-i18n="URL"></a></h6>
         <form>
-          <h5>Contains</h5><input name="urlContains" />
-          <h5>Equals</h5><input name="urlEquals" />
-          <h5>Prefix</h5><input name="urlPrefix" />
-          <h5>Suffix</h5><input name="urlSuffix" />
+          <h5 data-i18n="CONTAINS"></h5><input name="urlContains" />
+          <h5 data-i18n="EQUALS"></h5><input name="urlEquals" />
+          <h5 data-i18n="PREFIX"></h5><input name="urlPrefix" />
+          <h5 data-i18n="SUFFIX"></h5><input name="urlSuffix" />
         </form>
-        <h6><a href="#">Schemes</a></h6>
+        <h6><a href="#" data-i18n="SCHEMES"></a></h6>
         <form>
-          <h5>Schemes</h5>
+          <h5 data-i18n="SCHEMES"></h5>
           <input name="schemes" />
         </form>
-        <h6><a href="#">Ports</a></h6>
-        <form><h5>Ports</h5><input name="ports" /></form>
+        <h6><a href="#" data-i18n="PORTS"></a></h6>
+        <form><h5 data-i18n="PORTS"></h5><input name="ports" /></form>
       </div>
     </div>
     <!-- Normal (Redirect / Request Header / Response Header /Error Handling) rule condition -->
-    <div id="condition-editor-normal" class="editor-dialog" title="Condition::Normal">
+    <div id="condition-editor-normal" class="editor-dialog" data-i18n="title:NORMAL_CONDITION">
       <form class="button-set">
-        <input type="checkbox" name="resource" id="c-e-n-1" data-type="all" /><label for="c-e-n-1">All</label>
-        <input type="checkbox" name="resource" id="c-e-n-2" data-type="main_frame" /><label for="c-e-n-2">Main Frame</label>
-        <input type="checkbox" name="resource" id="c-e-n-3" data-type="sub_frame" /><label for="c-e-n-3">Sub Frame</label>
-        <input type="checkbox" name="resource" id="c-e-n-4" data-type="stylesheet" /><label for="c-e-n-4">Stylesheet</label>
-        <input type="checkbox" name="resource" id="c-e-n-5" data-type="script" /><label for="c-e-n-5">Script</label>
-        <input type="checkbox" name="resource" id="c-e-n-6" data-type="image" /><label for="c-e-n-6">Image</label>
-        <input type="checkbox" name="resource" id="c-e-n-7" data-type="object" /><label for="c-e-n-7">Object</label>
-        <input type="checkbox" name="resource" id="c-e-n-8" data-type="xmlhttprequest" /><label for="c-e-n-8">XHR</label>
-        <input type="checkbox" name="resource" id="c-e-n-9" data-type="other" /><label for="c-e-n-9">Other</label>
+        <input type="checkbox" name="resource" id="c-e-n-1" data-type="all" /><label for="c-e-n-1" data-i18n="ALL"></label>
+        <input type="checkbox" name="resource" id="c-e-n-2" data-type="main_frame" /><label for="c-e-n-2" data-i18n="MAIN_FRAME"></label>
+        <input type="checkbox" name="resource" id="c-e-n-3" data-type="sub_frame" /><label for="c-e-n-3" data-i18n="SUB_FRAME"></label>
+        <input type="checkbox" name="resource" id="c-e-n-4" data-type="stylesheet" /><label for="c-e-n-4" data-i18n="STYLESHEET"></label>
+        <input type="checkbox" name="resource" id="c-e-n-5" data-type="script" /><label for="c-e-n-5" data-i18n="SCRIPT"></label>
+        <input type="checkbox" name="resource" id="c-e-n-6" data-type="image" /><label for="c-e-n-6" data-i18n="IMAGE"></label>
+        <input type="checkbox" name="resource" id="c-e-n-7" data-type="object" /><label for="c-e-n-7" data-i18n="OBJECT"></label>
+        <input type="checkbox" name="resource" id="c-e-n-8" data-type="xmlhttprequest" /><label for="c-e-n-8" data-i18n="XHR"></label>
+        <input type="checkbox" name="resource" id="c-e-n-9" data-type="other" /><label for="c-e-n-9" data-i18n="OTHER"></label>
       </form>
       <div>
         <form class="button-set">
-          <input type="radio" name="type" id="c-e-n-10" data-type="regexp" checked /><label for="c-e-n-10">RegExp</label>
-          <input type="radio" name="type" id="c-e-n-11" data-type="wildcard" /><label for="c-e-n-11">Wildcard</label>
-          <input type="radio" name="type" id="c-e-n-12" data-type="manual" /><label for="c-e-n-12">Manul</label>
+          <input type="radio" name="type" id="c-e-n-10" data-type="regexp" checked /><label for="c-e-n-10" data-i18n="REGEXP"></label>
+          <input type="radio" name="type" id="c-e-n-11" data-type="wildcard" /><label for="c-e-n-11" data-i18n="WILDCARD"></label>
+          <input type="radio" name="type" id="c-e-n-12" data-type="manual" /><label for="c-e-n-12" data-i18n="MANUAL"></label>
         </form>
         <form class="button-set">
-          <input type="checkbox" name="modifier" id="c-e-n-13" data-type="i" /><label for="c-e-n-13">Case insensitive</label>
+          <input type="checkbox" name="modifier" id="c-e-n-13" data-type="i" /><label for="c-e-n-13" data-i18n="CASE_INSENSITIVE"></label>
         </form>
-        <form><h5>Value</h5><textarea name="value"></textarea></form>
+        <form><h5 data-i18n="VALUE"></h5><textarea name="value"></textarea></form>
       </div>
       <form class="button-set">
-        <h5>Test</h5>
+        <h5 data-i18n="TEST"></h5>
         <input type="url" />
-        <button type="submit" class="button-test" name="test-condition"><span>Test</span></button>
+        <button type="submit" class="button-test" name="test-condition"><span data-i18n="TEST"></span></button>
       </form>
     </div>
     <!-- Action creator (for fast matching rules)
       -->
     <div id="action-creator">
-      <h5>Please choose a action type:</h5>
+      <h5 data-i18n="PLEASE_CHOOSE_A_ACTION_TYPE"></h5>
       <form>
-        <input type="radio" name="type" id="a-c-1" data-type="redirect" checked /><label for="a-c-1">Redirect</label><br />
-        <input type="radio" name="type" id="a-c-2" data-type="request_header" /><label for="a-c-2">Request Header</label><br />
-        <input type="radio" name="type" id="a-c-3" data-type="response_header" /><label for="a-c-3">Response Header</label>
+        <input type="radio" name="type" id="a-c-1" data-type="redirect" checked /><label for="a-c-1" data-i18n="REDIRECT"></label><br />
+        <input type="radio" name="type" id="a-c-2" data-type="request_header" /><label for="a-c-2" data-i18n="REQUEST_HEADER"></label><br />
+        <input type="radio" name="type" id="a-c-3" data-type="response_header" /><label for="a-c-3" data-i18n="RESPONSE_HEADER"></label>
       </form>
     </div>
     <!-- Action editors
       -->
     <!-- Redirect action -->
-    <div id="action-editor-redirect" class="editor-dialog" title="Action::Redirect">
+    <div id="action-editor-redirect" class="editor-dialog" data-i18n="title:REDIRECT">
       <form class="button-set">
-        <input type="radio" name="type" id="a-e-r-1" data-type="redirect_regexp" checked /><label for="a-e-r-1">RegExp</label>
-        <input type="radio" name="type" id="a-e-r-2" data-type="redirect_wildcard" /><label for="a-e-r-2">Wildcard</label>
-        <input type="radio" name="type" id="a-e-r-3" data-type="redirect_cancel" /><label for="a-e-r-3">Cancel</label>
-        <input type="radio" name="type" id="a-e-r-4" data-type="redirect_to" /><label for="a-e-r-4">To...</label>
-        <input type="radio" name="type" id="a-e-r-5" data-type="redirect_to_transparent" /><label for="a-e-r-5">To transparent image</label>
-        <input type="radio" name="type" id="a-e-r-6" data-type="redirect_to_empty" /><label for="a-e-r-6">To empty document</label>
+        <input type="radio" name="type" id="a-e-r-1" data-type="redirect_regexp" checked /><label for="a-e-r-1" data-i18n="REGEXP"></label>
+        <input type="radio" name="type" id="a-e-r-2" data-type="redirect_wildcard" /><label for="a-e-r-2" data-i18n="WILDCARD"></label>
+        <input type="radio" name="type" id="a-e-r-3" data-type="redirect_cancel" /><label for="a-e-r-3" data-i18n="CANCEL"></label>
+        <input type="radio" name="type" id="a-e-r-4" data-type="redirect_to" /><label for="a-e-r-4" data-i18n="TO"></label>
+        <input type="radio" name="type" id="a-e-r-5" data-type="redirect_to_transparent" /><label for="a-e-r-5" data-i18n="TO_TRANSPARENT_IMAGE"></label>
+        <input type="radio" name="type" id="a-e-r-6" data-type="redirect_to_empty" /><label for="a-e-r-6" data-i18n="TO_EMPTY_DOCUMENT"></label>
       </form>
       <div>
         <form class="button-set">
-          <input type="checkbox" name="modifier" id="a-e-r-7" data-type="i" /><label for="a-e-r-7">Case insensitive</label>
-          <input type="checkbox" name="modifier" id="a-e-r-8" data-type="g" /><label for="a-e-r-8">Global match</label>
-          <input type="checkbox" name="decode" id="a-e-r-9" data-type="g" /><label for="a-e-r-9">Decode</label>
+          <input type="checkbox" name="modifier" id="a-e-r-7" data-type="i" /><label for="a-e-r-7" data-i18n="CASE_INSENSITIVE"></label>
+          <input type="checkbox" name="modifier" id="a-e-r-8" data-type="g" /><label for="a-e-r-8" data-i18n="GLOBAL_MATCH"></label>
+          <input type="checkbox" name="decode" id="a-e-r-9" data-type="g" /><label for="a-e-r-9" data-i18n="DECODE"></label>
         </form>
-        <form><h5>From</h5><textarea name="from"></textarea></form>
-        <form><h5>To</h5><input name="to" /></form>
+        <form><h5 data-i18n="FROM"></h5><textarea name="from"></textarea></form>
+        <form><h5 data-i18n="TO"></h5><input name="to" /></form>
       </div>
       <form class="button-set">
-        <h5>Test</h5>
+        <h5 data-i18n="TEST"></h5>
         <input type="url" />
-        <button type="submit" class="button-test" name="test-action"><span>Test</span></button>
+        <button type="submit" class="button-test" name="test-action"><span data-i18n="TEST"></span></button>
       </form>
     </div>
     <!-- Modify request header action -->
-    <div id="action-editor-request_header" class="editor-dialog" title="Action::Request Header">
+    <div id="action-editor-request_header" class="editor-dialog" data-i18n="title:REQUEST_HEADER">
       <form class="button-set">
-        <input type="radio" name="type" id="a-e-r_h-1" data-type="request_header_set" checked /><label for="a-e-r_h-1">Set</label>
-        <input type="radio" name="type" id="a-e-r_h-2" data-type="request_header_remove" /><label for="a-e-r_h-2">Remove</label>
+        <input type="radio" name="type" id="a-e-r_h-1" data-type="request_header_set" checked /><label for="a-e-r_h-1" data-i18n="SET"></label>
+        <input type="radio" name="type" id="a-e-r_h-2" data-type="request_header_remove" /><label for="a-e-r_h-2" data-i18n="REMOVE"></label>
       </form>
-      <h5>Name</h5>
+      <h5 data-i18n="NAME"></h5>
       <select name="name">
         <option value=""></option>
         <option value="Accept">Accept</option>
@@ -322,18 +322,18 @@
         <option value="X-Wap-Profile">X-Wap-Profile</option>
         <!-- <option value="Proxy-Connection">Proxy-Connection</option> -->
       </select>
-      <h5>Value</h5><input name="value" />
+      <h5 data-i18n="VALUE"></h5><input name="value" />
     </div>
     <!-- Modify Response Header action -->
-    <div id="action-editor-response_header" class="editor-dialog" title="Action::Response Header">
+    <div id="action-editor-response_header" class="editor-dialog" data-i18n="title:RESPONSE_HEADER">
       <form class="button-set">
-        <input type="radio" name="type" id="a-e-s_h-1" data-type="response_header_add" checked /><label for="a-e-s_h-1">Add</label>
-        <input type="radio" name="type" id="a-e-s_h-2" data-type="response_header_remove" /><label for="a-e-s_h-2">Remove</label>
+        <input type="radio" name="type" id="a-e-s_h-1" data-type="response_header_add" checked /><label for="a-e-s_h-1" data-i18n="ADD"></label>
+        <input type="radio" name="type" id="a-e-s_h-2" data-type="response_header_remove" /><label for="a-e-s_h-2" data-i18n="REMOVE"></label>
       </form>
       <form class="button-set">
-        <input type="checkbox" name="match_value" id="a-e-s_h-3" /><label for="a-e-s_h-3">Match value</label>
+        <input type="checkbox" name="match_value" id="a-e-s_h-3" /><label for="a-e-s_h-3" data-i18n="MATCH_VALUE"></label>
       </form>
-      <h5>Name</h5>
+      <h5 data-i18n="NAME"></h5>
       <select name="name">
         <option value=""></option>
         <option value="Accept-Ranges">Accept-Ranges</option>
@@ -378,7 +378,7 @@
         <option value="X-Powered-By">X-Powered-By</option>
         <option value="X-UA-Compatible">X-UA-Compatible</option>
       </select>
-      <h5>Value</h5><input name="value" />
+      <h5 data-i18n="VALUE"></h5><input name="value" />
     </div>
   </body>
 </html>

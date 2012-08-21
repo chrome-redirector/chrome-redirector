@@ -1,0 +1,344 @@
+{
+  "REDIRECTOR_DEBUGGER": {
+    "message": "Redirector调试器"
+  },
+  "TOGGLE_VISIBILITY": {
+    "message": "切换可见性"
+  },
+  "CLEAR": {
+    "message": "清空"
+  },
+  "RELOAD": {
+    "message": "刷新"
+  },
+  "RULES": {
+    "message": "规则"
+  },
+  "SETTINGS": {
+    "message": "设置"
+  },
+  "HELP": {
+    "message": "帮助"
+  },
+  "NEW": {
+    "message": "新建"
+  },
+  "EDIT": {
+    "message": "编辑"
+  },
+  "REMOVE": {
+    "message": "删除"
+  },
+  "IMPORT": {
+    "message": "导入"
+  },
+  "EXPORT": {
+    "message": "导出"
+  },
+  "CONTEXT_MENU": {
+    "message": "右键菜单"
+  },
+  "ENABLE": {
+    "message": "启用"
+  },
+  "DISABLE": {
+    "message": "禁用"
+  },
+  "ICON_NOTIFICATION": {
+    "message": "图标提示"
+  },
+  "ENABLED_RULE_TYPES": {
+    "message": "启用的规则类型"
+  },
+  "FAST_MATCHING": {
+    "message": "快速匹配"
+  },
+  "REDIRECT": {
+    "message": "重定向"
+  },
+  "REQUEST_HEADER": {
+    "message": "请求头"
+  },
+  "RESPONSE_HEADER": {
+    "message": "应答头"
+  },
+  "ERROR_HANDLING": {
+    "message": "错误处理"
+  },
+  "ONLINE": {
+    "message": "在线规则"
+  },
+  "ENABLED_PROTOCOLS": {
+    "message": "启用的协议"
+  },
+  "MANUAL_REDIRECTION_METHODS": {
+    "message": "手动重定向方式"
+  },
+  "PAGE": {
+    "message": "页面"
+  },
+  "LINK": {
+    "message": "链接"
+  },
+  "AUTO_SYNC": {
+    "message": "自动同步"
+  },
+  "SYNC_NOW": {
+    "message": "立即同步"
+  },
+  "ENABLE_DEBUGGER": {
+    "message": "启用调试器"
+  },
+  "BACKUP_AND_RESTORE": {
+    "message": "备份&还原"
+  },
+  "BACKUP": {
+    "message": "备份"
+  },
+  "RESTORE": {
+    "message": "还原"
+  },
+  "PLEASE_CHOOSE_A_RULE_TYPE": {
+    "message": "请选择规则类型："
+  },
+  "NAME": {
+    "message": "名称"
+  },
+  "URL": {
+    "message": "URL"
+  },
+  "CONDITIONS": {
+    "message": "条件"
+  },
+  "ACTIONS": {
+    "message": "行为"
+  },
+  "TEST": {
+    "message": "测试"
+  },
+  "FAST_MATCHING_CONDITION": {
+    "message": "快速匹配条件"
+  },
+  "ALL": {
+    "message": "所有"
+  },
+  "MAIN_FRAME": {
+    "message": "主框架"
+  },
+  "SUB_FRAME": {
+    "message": "子框架"
+  },
+  "STYLESHEET": {
+    "message": "样式表"
+  },
+  "SCRIPT": {
+    "message": "脚本"
+  },
+  "IMAGE": {
+    "message": "图像"
+  },
+  "OBJECT": {
+    "message": "对象"
+  },
+  "XHR": {
+    "message": "XHR"
+  },
+  "OTHER": {
+    "message": "其它"
+  },
+  "HOST": {
+    "message": "主机名"
+  },
+  "CONTAINS": {
+    "message": "包含"
+  },
+  "EQUALS": {
+    "message": "等于"
+  },
+  "PREFIX": {
+    "message": "始于"
+  },
+  "SUFFIX": {
+    "message": "止于"
+  },
+  "PATH": {
+    "message": "路径"
+  },
+  "QUERY": {
+    "message": "查询"
+  },
+  "SCHEMES": {
+    "message": "协议"
+  },
+  "PORTS": {
+    "message": "端口"
+  },
+  "NORMAL_CONDITION": {
+    "message": "普通条件"
+  },
+  "REGEXP": {
+    "message": "正则表达式"
+  },
+  "WILDCARD": {
+    "message": "通配符"
+  },
+  "MANUAL": {
+    "message": "手动"
+  },
+  "CASE_INSENSITIVE": {
+    "message": "忽略大小写"
+  },
+  "VALUE": {
+    "message": "值"
+  },
+  "PLEASE_CHOOSE_A_ACTION_TYPE": {
+    "message": "请选择行为类型："
+  },
+  "CANCEL": {
+    "message": "取消"
+  },
+  "TO": {
+    "message": "至……"
+  },
+  "TO_TRANSPARENT_IMAGE": {
+    "message": "至透明图像"
+  },
+  "TO_EMPTY_DOCUMENT": {
+    "message": "至空文档"
+  },
+  "GLOBAL_MATCH": {
+    "message": "多次匹配"
+  },
+  "DECODE": {
+    "message": "解码"
+  },
+  "FROM": {
+    "message": "自"
+  },
+  "SET": {
+    "message": "设置"
+  },
+  "ADD": {
+    "message": "添加"
+  },
+  "MATCH_VALUE": {
+    "message": "匹配值"
+  },
+  "NEXT": {
+    "message": "下一步"
+  },
+  "CONFLICTS_WITH_EXISTING_ACTIONS": {
+    "message": "`$1'与已有行为冲突"
+  },
+  "PLEASE_ENTER_A_VALID_URL": {
+    "message": "请输入合法的URL"
+  },
+  "INVALID_VALUE": {
+    "message": "$1的值非法"
+  },
+  "RANGES_ERROR": {
+    "message": "范围错误"
+  },
+  "MANUAL_REDIRECTION_RULE_CANNOT_COEXIST_WITH_OTHER_CONDITION": {
+    "message": "手动重定向不能与其它条件共存"
+  },
+  "ONLY_REGEXP_OR_WILDCARD_REDIRECTION_IS_ALLOWED_IN_MANUAL_REDIRECTION": {
+    "message": "手动重定向只接受正则表达式或通配符"
+  },
+  "NO_INPUT": {
+    "message": "无输入"
+  },
+  "NO_POINT_FOR_ACTION_OF_TYPE_USED_IN_MANUAL_REDIRECTION": {
+    "message": "$1类型的规则不能用于手动重定向"
+  },
+  "INCONSISTENT_WITH_OTHER_ACTIONS": {
+    "message": "`$1'与其它行为冲突"
+  },
+  "INCOMPLETE_INPUTS": {
+    "message": "不完整的输入"
+  },
+  "RE2_ERROR": {
+    "message": "RE2错误"
+  },
+  "SAVE": {
+    "message": "保存"
+  },
+  "FAILED_TO_IMPORT_RULE": {
+    "message": "无法导入规则：$1"
+  },
+  "DO_YOU_REALLY_WANT_TO_REMOVE": {
+    "message": "确定删除`%1'？"
+  },
+  "TEST_RESULT_FOR_MANUAL_REDIRECTION": {
+    "message": "此规则将在手动重定向选中的情况下生效"
+  },
+  "MATCHED_CONDITION": {
+    "message": "匹配的条件：$1"
+  },
+  "RULE_NOT_MATCH": {
+    "message": "规则不匹配"
+  },
+  "REDIRECT_TO": {
+    "message": "重定向至：$1"
+  },
+  "CANCEL_REQUEST": {
+    "message": "取消请求"
+  },
+  "REDIRECT_TO_TRANSPARENT_IMAGE": {
+    "message": "重定向至透明图像"
+  },
+  "REDIRECT_TO_EMPTY_DOCUMENT": {
+    "message": "重定向至空文档"
+  },
+  "SET_REQUEST_HEADER_TO": {
+    "message": "设置请求头`$1'为`$2'"
+  },
+  "REMOVE_REQUEST_HEADER": {
+    "message": "删除请求头`$1'"
+  },
+  "ADD_RESPONSE_HEADER": {
+    "message": "添加应答头`$1'，值为`$2'"
+  },
+  "REMOVE_RESPONSE_HEADER": {
+    "message": "删除应答头`$1'"
+  },
+  "REMOVE_RESPONSE_HEADER_WITH_VALUE": {
+    "message": "删除值为`$2'的应答头`$1'"
+  },
+  "THIS_RULE_MAY_CREATE_REDIRECT_LOOPS": {
+    "message": "此规则可能导致重定向环"
+  },
+  "NO_NEED_TO_TEST_THIS_KIND_OF_CONDITION": {
+    "message": "此条件无需测试"
+  },
+  "CONDITION_MATCH": {
+    "message": "条件满足"
+  },
+  "CONDITION_NOT_MATCH": {
+    "message": "条件不满足"
+  },
+  "NO_NEED_TO_TEST_THIS_KIND_OF_ACTION": {
+    "message": "此行为无需测试"
+  },
+  "CLOSE": {
+    "message": "关闭"
+  },
+  "YES": {
+    "message": "是"
+  },
+  "NO": {
+    "message": "否"
+  },
+  "RESTORE_DATA_FAILED": {
+    "message": "还原失败：$1"
+  },
+  "INFO": {
+    "message": "信息"
+  },
+  "DISMISS": {
+    "message": "不再显示"
+  },
+  "OPTIONS": {
+    "message": "选项……"
+  }
+}

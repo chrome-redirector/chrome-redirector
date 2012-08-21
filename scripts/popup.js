@@ -1,6 +1,7 @@
 'use strict';
 
 $(document).ready(function(){
+  applyI18n();
   $('#accordion').accordion({fillSpace: true});
   $('.button-set').buttonset();
   /* Set messages */

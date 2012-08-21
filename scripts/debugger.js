@@ -1,6 +1,7 @@
 $(document).ready(function () {
   'use strict';
 
+  applyI18n();
   /* Initialize elements */
   // Show/fold results
   $('#toggle-details').click(function () {

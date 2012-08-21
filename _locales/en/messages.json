@@ -1,2 +1,344 @@
 {
+  "REDIRECTOR_DEBUGGER": {
+    "message": "Redirector Debugger"
+  },
+  "TOGGLE_VISIBILITY": {
+    "message": "Toggle visibility"
+  },
+  "CLEAR": {
+    "message": "Clear"
+  },
+  "RELOAD": {
+    "message": "Reload"
+  },
+  "RULES": {
+    "message": "Rules"
+  },
+  "SETTINGS": {
+    "message": "Settings"
+  },
+  "HELP": {
+    "message": "Help"
+  },
+  "NEW": {
+    "message": "New"
+  },
+  "EDIT": {
+    "message": "Edit"
+  },
+  "REMOVE": {
+    "message": "Remove"
+  },
+  "IMPORT": {
+    "message": "Import"
+  },
+  "EXPORT": {
+    "message": "Export"
+  },
+  "CONTEXT_MENU": {
+    "message": "Context menu"
+  },
+  "ENABLE": {
+    "message": "Enable"
+  },
+  "DISABLE": {
+    "message": "Disable"
+  },
+  "ICON_NOTIFICATION": {
+    "message": "Icon notification"
+  },
+  "ENABLED_RULE_TYPES": {
+    "message": "Enabled rule types"
+  },
+  "FAST_MATCHING": {
+    "message": "Fast matching"
+  },
+  "REDIRECT": {
+    "message": "Redirect"
+  },
+  "REQUEST_HEADER": {
+    "message": "Request header"
+  },
+  "RESPONSE_HEADER": {
+    "message": "Response header"
+  },
+  "ERROR_HANDLING": {
+    "message": "Error handling"
+  },
+  "ONLINE": {
+    "message": "Online rule"
+  },
+  "ENABLED_PROTOCOLS": {
+    "message": "Enabled protocols"
+  },
+  "MANUAL_REDIRECTION_METHODS": {
+    "message": "Manual redirection methods"
+  },
+  "PAGE": {
+    "message": "Page"
+  },
+  "LINK": {
+    "message": "Link"
+  },
+  "AUTO_SYNC": {
+    "message": "Auto sync"
+  },
+  "SYNC_NOW": {
+    "message": "Sync now"
+  },
+  "ENABLE_DEBUGGER": {
+    "message": "Enable debugger"
+  },
+  "BACKUP_AND_RESTORE": {
+    "message": "Backup & Restore"
+  },
+  "BACKUP": {
+    "message": "Backup"
+  },
+  "RESTORE": {
+    "message": "Restore"
+  },
+  "PLEASE_CHOOSE_A_RULE_TYPE": {
+    "message": "Please choose a rule type:"
+  },
+  "NAME": {
+    "message": "Name"
+  },
+  "URL": {
+    "message": "URL"
+  },
+  "CONDITIONS": {
+    "message": "Conditions"
+  },
+  "ACTIONS": {
+    "message": "Actions"
+  },
+  "TEST": {
+    "message": "Test"
+  },
+  "FAST_MATCHING_CONDITION": {
+    "message": "Fast Matching Condition"
+  },
+  "ALL": {
+    "message": "All"
+  },
+  "MAIN_FRAME": {
+    "message": "Main Frame"
+  },
+  "SUB_FRAME": {
+    "message": "Sub Frame"
+  },
+  "STYLESHEET": {
+    "message": "Stylesheet"
+  },
+  "SCRIPT": {
+    "message": "Script"
+  },
+  "IMAGE": {
+    "message": "Image"
+  },
+  "OBJECT": {
+    "message": "Object"
+  },
+  "XHR": {
+    "message": "XHR"
+  },
+  "OTHER": {
+    "message": "Other"
+  },
+  "HOST": {
+    "message": "Host"
+  },
+  "CONTAINS": {
+    "message": "Contains"
+  },
+  "EQUALS": {
+    "message": "Equals"
+  },
+  "PREFIX": {
+    "message": "Prefix"
+  },
+  "SUFFIX": {
+    "message": "Suffix"
+  },
+  "PATH": {
+    "message": "Path"
+  },
+  "QUERY": {
+    "message": "Query"
+  },
+  "SCHEMES": {
+    "message": "Schemes"
+  },
+  "PORTS": {
+    "message": "Ports"
+  },
+  "NORMAL_CONDITION": {
+    "message": "Normal Condition"
+  },
+  "REGEXP": {
+    "message": "RegExp"
+  },
+  "WILDCARD": {
+    "message": "Wildcard"
+  },
+  "MANUAL": {
+    "message": "Manul"
+  },
+  "CASE_INSENSITIVE": {
+    "message": "Case insensitive"
+  },
+  "VALUE": {
+    "message": "Value"
+  },
+  "PLEASE_CHOOSE_A_ACTION_TYPE": {
+    "message": "Please choose a action type:"
+  },
+  "CANCEL": {
+    "message": "Cancel"
+  },
+  "TO": {
+    "message": "To..."
+  },
+  "TO_TRANSPARENT_IMAGE": {
+    "message": "To transparent image"
+  },
+  "TO_EMPTY_DOCUMENT": {
+    "message": "To empty document"
+  },
+  "GLOBAL_MATCH": {
+    "message": "Global match"
+  },
+  "DECODE": {
+    "message": "Decode"
+  },
+  "FROM": {
+    "message": "From"
+  },
+  "SET": {
+    "message": "Set"
+  },
+  "ADD": {
+    "message": "Add"
+  },
+  "MATCH_VALUE": {
+    "message": "Match value"
+  },
+  "NEXT": {
+    "message": "Next"
+  },
+  "CONFLICTS_WITH_EXISTING_ACTIONS": {
+    "message": "`$1' conflicts with existing actions"
+  },
+  "PLEASE_ENTER_A_VALID_URL": {
+    "message": "Please enter a valid URL"
+  },
+  "INVALID_VALUE": {
+    "message": "Invalid $1 value"
+  },
+  "RANGES_ERROR": {
+    "message": "Ranges error"
+  },
+  "MANUAL_REDIRECTION_RULE_CANNOT_COEXIST_WITH_OTHER_CONDITION": {
+    "message": "Manual redirection rule cannot coexist with other condition"
+  },
+  "ONLY_REGEXP_OR_WILDCARD_REDIRECTION_IS_ALLOWED_IN_MANUAL_REDIRECTION": {
+    "message": "Only regexp or wildcard redirection is allowed in manual redirection"
+  },
+  "NO_INPUT": {
+    "message": "No input"
+  },
+  "NO_POINT_FOR_ACTION_OF_TYPE_USED_IN_MANUAL_REDIRECTION": {
+    "message": "No point for action of type $1 used in manual redirection"
+  },
+  "INCONSISTENT_WITH_OTHER_ACTIONS": {
+    "message": "`$1' is inconsistent with other actions"
+  },
+  "INCOMPLETE_INPUTS": {
+    "message": "Incomplete inputs"
+  },
+  "RE2_ERROR": {
+    "message": "RE2 error"
+  },
+  "SAVE": {
+    "message": "Save"
+  },
+  "FAILED_TO_IMPORT_RULE": {
+    "message": "Failed to import rule: $1"
+  },
+  "DO_YOU_REALLY_WANT_TO_REMOVE": {
+    "message": "Do you really want to remove `%1'?"
+  },
+  "TEST_RESULT_FOR_MANUAL_REDIRECTION": {
+    "message": "This rule will be executed only when it's selected in manual redirection"
+  },
+  "MATCHED_CONDITION": {
+    "message": "Matched condition: $1"
+  },
+  "RULE_NOT_MATCH": {
+    "message": "Rule not match"
+  },
+  "REDIRECT_TO": {
+    "message": "Redirect to: $1"
+  },
+  "CANCEL_REQUEST": {
+    "message": "Cancel request"
+  },
+  "REDIRECT_TO_TRANSPARENT_IMAGE": {
+    "message": "Redirect to transparent image"
+  },
+  "REDIRECT_TO_EMPTY_DOCUMENT": {
+    "message": "Redirect to empty document"
+  },
+  "SET_REQUEST_HEADER_TO": {
+    "message": "Set request header `$1' to `$2'"
+  },
+  "REMOVE_REQUEST_HEADER": {
+    "message": "Remove request header `$1'"
+  },
+  "ADD_RESPONSE_HEADER": {
+    "message": "Add response header `$1' with value `$2'"
+  },
+  "REMOVE_RESPONSE_HEADER": {
+    "message": "Remove response header `$1'"
+  },
+  "REMOVE_RESPONSE_HEADER_WITH_VALUE": {
+    "message": "Remove response header `$1' with value `$2'"
+  },
+  "THIS_RULE_MAY_CREATE_REDIRECT_LOOPS": {
+    "message": "This rule may create redirect loops"
+  },
+  "NO_NEED_TO_TEST_THIS_KIND_OF_CONDITION": {
+    "message": "No need to test this kind of condition"
+  },
+  "CONDITION_MATCH": {
+    "message": "Condition match"
+  },
+  "CONDITION_NOT_MATCH": {
+    "message": "Condition not match"
+  },
+  "NO_NEED_TO_TEST_THIS_KIND_OF_ACTION": {
+    "message": "No need to test this kind of action"
+  },
+  "CLOSE": {
+    "message": "Close"
+  },
+  "YES": {
+    "message": "Yes"
+  },
+  "NO": {
+    "message": "No"
+  },
+  "RESTORE_DATA_FAILED": {
+    "message": "Restore data failed: $1"
+  },
+  "INFO": {
+    "message": "Info"
+  },
+  "DISMISS": {
+    "message": "Dismiss"
+  },
+  "OPTIONS": {
+    "message": "Options..."
+  }
 }

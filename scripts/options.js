@@ -7,8 +7,9 @@ $(document).ready(function(){
     urlParser: new UrlUtil.Parser()
   };
   /* The navigation tabs */
-  var tab_index = $('#nav-tabs>ul>li').length - 1;
   $('#nav-tabs').tabs();
+  /* Apply i18n */
+  applyI18n();
   /* Initialize dialogs */
   initDialogs();
   /* Initialize buttons */
@@ -40,7 +41,7 @@ function initDialogs() {
   /* Dialog on rule creation */
   $('#rule-creator').dialog({autoOpen: false, modal: true, buttons: [
     {
-      text: 'Next',
+      text: _('NEXT'),
       click: function () {
         $(this).dialog('close');
         var type = $('#rule-creator [type="radio"][name="type"]:checked')
@@ -72,14 +73,14 @@ function initDialogs() {
       }
     },
     {
-      text: 'Cancel',
+      text: _('CANCEL'),
       click: function () {$(this).dialog('close');}
     }
   ]});
   /* Dialog on action creation */
   $('#action-creator').dialog({autoOpen: false, modal: true, buttons: [
     {
-      text: 'Next',
+      text: _('NEXT'),
       click: function () {
         var type = $('[name="type"]:checked', $(this)).data('type');
         if (type === 'redirect') {
@@ -89,8 +90,7 @@ function initDialogs() {
               switch (action.type) {
               case 'redirect_cancel': case 'redirect_to':
               case 'redirect_to_transparent': case 'redirect_to_empty':
-                throw new Error(action.type +
-                                ' conflicts with existing actions');
+                throw new Error(_('CONFLICTS_WITH_EXISTING_ACTIONS', [action.type]));
               default:
                 break;
               }
@@ -105,7 +105,7 @@ function initDialogs() {
       }
     },
     {
-      text: 'Cancel',
+      text: _('CANCEL'),
       click: function () {$(this).dialog('close');}
     }
   ]});
@@ -123,7 +123,7 @@ function initDialogs() {
     if (type === 'online') {
       rule.url = $('[name="online"]', $dialog).prop('value');
       if (!window.redirector_options_js.urlValidator.validate(rule.url)) {
-        throw new Error('Please enter a valid URL');
+        throw new Error(_('PLEASE_ENTER_A_VALID_URL'));
       }
     }
     var index = $dialog.data('rule_index');
@@ -171,112 +171,112 @@ function initDialogs() {
           if (my.urlValidator.validateHostContains()) {
             condition.hostContains = value;
           } else {
-            throw new Error('Invalid ' + name + ' value');
+            throw new Error(_('INVALID_VALUE', [name]));
           }
           break;
         case 'hostEquals':
           if (my.urlValidator.validateHostEquals(value)) {
             condition.hostEquals = value;
           } else {
-            throw new Error('Invalid ' + name + ' value');
+            throw new Error(_('INVALID_VALUE', [name]));
           }
           break;
         case 'hostPrefix':
           if (my.urlValidator.validateHostPrefix(value)) {
             condition.hostPrefix = value;
           } else {
-            throw new Error('Invalid ' + name + ' value');
+            throw new Error(_('INVALID_VALUE', [name]));
           }
           break;
         case 'hostSuffix':
           if (my.urlValidator.validateHostSuffix(value)) {
             condition.hostSuffix = value;
           } else {
-            throw new Error('Invalid ' + name + ' value');
+            throw new Error(_('INVALID_VALUE', [name]));
           }
           break;
         case 'pathContains':
           if (my.urlValidator.validatePathContains(value)) {
             condition.pathContains = value;
           } else {
-            throw new Error('Invalid ' + name + ' value');
+            throw new Error(_('INVALID_VALUE', [name]));
           }
           break;
         case 'pathEquals':
           if (my.urlValidator.validatePathEquals(value)) {
             condition.pathEquals = value;
           } else {
-            throw new Error('Invalid ' + name + ' value');
+            throw new Error(_('INVALID_VALUE', [name]));
           }
           break;
         case 'pathPrefix':
           if (my.urlValidator.validatePathPrefix(value)) {
             condition.pathPrefix = value;
           } else {
-            throw new Error('Invalid ' + name + ' value');
+            throw new Error(_('INVALID_VALUE', [name]));
           }
           break;
         case 'pathSuffix':
           if (my.urlValidator.validatePathSuffix(value)) {
             condition.pathSuffix = value;
           } else {
-            throw new Error('Invalid ' + name + ' value');
+            throw new Error(_('INVALID_VALUE', [name]));
           }
           break;
         case 'queryContains':
           if (my.urlValidator.validateQueryContains(value)) {
             condition.queryContains = value;
           } else {
-            throw new Error('Invalid ' + name + ' value');
+            throw new Error(_('INVALID_VALUE', [name]));
           }
           break;
         case 'queryEquals':
           if (my.urlValidator.validateQueryEquals(value)) {
             condition.queryEquals = value;
           } else {
-            throw new Error('Invalid ' + name + ' value');
+            throw new Error(_('INVALID_VALUE', [name]));
           }
           break;
         case 'queryPrefix':
           if (my.urlValidator.validateQueryPrefix(value)) {
             condition.queryPrefix = value;
           } else {
-            throw new Error('Invalid ' + name + ' value');
+            throw new Error(_('INVALID_VALUE', [name]));
           }
           break;
         case 'querySuffix':
           if (my.urlValidator.validateQuerySuffix(value)) {
             condition.querySuffix = value;
           } else {
-            throw new Error('Invalid ' + name + ' value');
+            throw new Error(_('INVALID_VALUE', [name]));
           }
           break;
         case 'urlContains':
           if (my.urlValidator.validateUrlContains(value)) {
             condition.urlContains = value;
           } else {
-            throw new Error('Invalid ' + name + ' value');
+            throw new Error(_('INVALID_VALUE', [name]));
           }
           break;
         case 'urlEquals':
           if (my.urlValidator.validateUrlEquals(value)) {
             condition.urlEquals = value;
           } else {
-            throw new Error('Invalid ' + name + ' value');
+            throw new Error(_('INVALID_VALUE', [name]));
           }
           break;
         case 'urlPrefix':
           if (my.urlValidator.validateUrlPrefix(value)) {
             condition.urlPrefix = value;
           } else {
-            throw new Error('Invalid ' + name + ' value');
+            throw new Error(_('INVALID_VALUE', [name]));
           }
           break;
         case 'urlSuffix':
           if (my.urlValidator.validateUrlSuffix(value)) {
             condition.urlSuffix = value;
           } else {
-            throw new Error('Invalid ' + name + ' value');
+            throw new Error(_('INVALID_VALUE', [name]));
           }
           break;
         case 'schemes':
@@ -288,11 +288,11 @@ function initDialogs() {
           delete tmp[''];
           schemes = Object.keys(tmp);
           if (schemes.length === 0) {
-            throw new Error('No valid input!');
+            throw new Error(_('INVALID_VALUE', [name]));
           }
           schemes.forEach(function (scheme) {
             if (!my.urlValidator.validateScheme(scheme)) {
-              throw new Error('Invalid ' + name + ' value');
+              throw new Error(_('INVALID_VALUE', [name]));
             }
           });
           condition.schemes = schemes;
@@ -306,7 +306,7 @@ function initDialogs() {
             if (port.length !== 2 ||
                 !$.isNumeric(port[0]) || !$.isNumeric(port[1]) ||
                 port[0] >= port[1]) {
-              throw new Error('Ranges are of format [x, y] where x < y');
+              throw new Error(_('RANGES_ERROR'));
             }
           });
           condition.ports = ports;
@@ -333,15 +333,15 @@ function initDialogs() {
         // There exist some other conditions
         if (rule.conditions.length > 0 && index < 0) {
           throw new Error(
-            'Manual redirection rule cannot coexist with other condition');
+            _('MANUAL_REDIRECTION_RULE_CANNOT_COEXIST_WITH_OTHER_CONDITION'));
         }
         // Check if any inconsistent action type exists
         rule.actions.forEach(function (action) {
           var type = action.type;
           if (type !== 'redirect_regexp' && type !== 'redirect_wildcard' &&
               type !== 'redirect_to') {
-            throw new Error('Only RegExp or wildcard redirection is \
-allowed in manual redirection');
+            throw new Error(_('ONLY_REGEXP_OR_WILDCARD_REDIRECTION_IS_\
+ALLOWED_IN_MANUAL_REDIRECTION'));
           }
         });
       } else {
@@ -365,7 +365,7 @@ allowed in manual redirection');
       assertError(false, new Error());
     }
     if (Object.keys(condition).length === 0) {
-      throw new Error('No input!');
+      throw new Error(_('NO_INPUT'));
     }
     var $list = $('#rule-editor-conditions');
     if (index < 0) {
@@ -395,17 +395,14 @@ allowed in manual redirection');
         if (action.type !== 'redirect_regexp' &&
             action.type !== 'redirect_wildcard' &&
             action.type !== 'redirect_to') {
-          throw new Error(
-            'There is no point for action of type `' + action.type +
-              '\' used in manual redirection');
+          throw new Error(_('NO_POINT_FOR_ACTION_OF_TYPE_USED_IN_MANUAL_REDIRECTION', [action.type]));
         }
       }
       if (rule.actions.length > 0 && index < 0) {
         switch (action.type) {
         case 'redirect_cancel': case 'redirect_to':
         case 'redirect_to_transparent': case 'redirect_to_empty':
-          throw new Error('Action type `' + action.type +
-                          '\' is inconsistent with other actions!');
+          throw new Error(_('INCONSISTENT_WITH_OTHER_ACTIONS', [action.type]));
         default:
           break;
         }
@@ -416,7 +413,7 @@ allowed in manual redirection');
       case 'redirect_regexp':
       case 'redirect_wildcard':
         if (action.from === '') {
-          throw new Error('Incomplete inputs!');
+          throw new Error(_('INCOMPLETE_INPUTS'));
         }
         // Check for syntax errors and add possible modifiers
         if (rule.type !== 'fast_matching') {
@@ -443,18 +440,14 @@ allowed in manual redirection');
               wildcardToRegexp(action.from);
             }
           } catch (x) {
-            alertDialog(
-              'There was an error: ' + x.message + "." +
-                "however, since it was not reported by the RE2 engine, " +
-                "you may choose to ignore this error if nothing was wrong"
-            );
+            alertDialog(_('RE2_ERROR'));
           }
         }
         break;
       case 'redirect_to':
         if (action.to === '' ||
             !window.redirector_options_js.urlValidator.validate(action.to)) {
-          throw new Error('Incomplete inputs!');
+          throw new Error(_('INCOMPLETE_INPUTS'));
         }
         delete action.from;
         break;
@@ -467,7 +460,7 @@ allowed in manual redirection');
     case 'action-editor-request_header':
       action.name = $('[name="name"]', $dialog).prop('value');
       if (action.name === '') {
-        throw new Error('Incomplete inputs!');
+        throw new Error(_('INCOMPLETE_INPUTS'));
       }
       if (action.type !== 'request_header_remove') {
         action.value = $('[name="value"]', $dialog).prop('value');
@@ -475,7 +468,7 @@ allowed in manual redirection');
     case 'action-editor-response_header':
       action.name = $('[name="name"]', $dialog).prop('value');
       if (action.name === '') {
-        throw new Error('Incomplete inputs!');
+        throw new Error(_('INCOMPLETE_INPUTS'));
       }
       if ($('[name="match_value"]', $dialog).prop('checked') === true) {
         action.value = $('[name="value"]', $dialog).prop('value');
@@ -498,7 +491,7 @@ allowed in manual redirection');
   $('.editor-dialog').dialog({
     autoOpen: false, modal: true, width: 1000, height: 650, buttons: [
       {
-        text: 'Save',
+        text: _('SAVE'),
         click: function () {
           switch ($(this).prop('id')) {
           case 'rule-editor':
@@ -535,7 +528,7 @@ allowed in manual redirection');
         }
       },
       {
-        text: 'Cancel',
+        text: _('CANCEL'),
         click: function () {$(this).dialog('close');}
       }
     ]
@@ -856,7 +849,7 @@ function initButtons() {
           data = JSON.parse(text);
           // TODO: Judge file type, be able to read in Redirector-2.2 format
         } catch (x) {
-          alertDialog('Failed to import rule: ' + x.message);
+          alertDialog(_('FAILED_TO_IMPORT_RULE', [x.message]));
           return;
         }
         for (type in data) {
@@ -914,7 +907,7 @@ function initButtons() {
         rule.conditions.forEach(function (condition) {
           if (condition.type === 'manual') {
             throw new Error(
-              'Manual redirection rule cannot coexist with other condition');
+              _('MANUAL_REDIRECTION_RULE_CANNOT_COEXIST_WITH_OTHER_CONDITION'));
           }
         });
       } catch (x) {
@@ -973,7 +966,7 @@ function initButtons() {
     var index = $('#rule-editor-conditions li').index($selected);
     if (index >= 0) {
       confirmDialog(
-        'Do you really want to remove: ' + $selected.text() + '?',
+        _('DO_YOU_REALLY_WANT_TO_REMOVE' + [$selected.text()]),
         function (confirmed) {
           if (confirmed !== true) {
             return;
@@ -1075,7 +1068,7 @@ function initButtons() {
         rule.actions.forEach(function (action) {
           if (action.type === 'manual') {
             throw new Error(
-              'Manual redirection rule cannot coexist with other condition');
+              _('MANUAL_REDIRECTION_RULE_CANNOT_COEXIST_WITH_OTHER_CONDITION'));
           }
         });
       } catch (x) {
@@ -1139,8 +1132,7 @@ function initButtons() {
     var $selected = $('#rule-editor-actions .ui-selected');
     var index = $('#rule-editor-actions li').index($selected);
     if (index >= 0) {
-      confirmDialog(
-        'Do you really want to remove: ' + $selected.text() + '?',
+      confirmDialog(_('DO_YOU_REALLY_WANT_TO_REMOVE', [$selected.text()]),
         function (confirmed) {
           if (confirmed !== true) {
             return;
@@ -1161,7 +1153,7 @@ function initButtons() {
     var namespace = window.redirector_options_js;
     var url = $(this).prev().prop('value');
     if (!namespace.urlValidator.validate(url)) {
-      alertDialog('Please enter a valid URL');
+      alertDialog(_('PLEASE_ENTER_A_VALID_URL'));
       return;
     }
     var rule = $('#rule-editor').data('rule');
@@ -1313,27 +1305,26 @@ function initButtons() {
       for (var i = 0; i < rule.conditions.length; i++) {
         var condition = rule.conditions[i];
         if (condition.type === 'manual') {
-          test_log.push('This rule will be executed only when ' +
-                        'it\'s selected in manual redirection');
+          test_log.push(_('TEST_RESULT_FOR_MANUAL_REDIRECTION'));
           break;
         }
         if (condition.type === 'regexp') {
           if (regexpStringToRegexp(condition.value,
                                    condition.modifiers).test(url)) {
-            test_log.push('Matched condition: ' + JSON.stringify(condition));
+            test_log.push(_('MATCHED_CONDITION', [JSON.stringify(condition)]));
             break;
           }
         } else {
           if (wildcardToRegexp(condition.value,
                                    condition.modifiers).test(url)) {
-            test_log.push('Matched condition: ' + JSON.stringify(condition));
+            test_log.push(_('MATCHED_CONDITION', [JSON.stringify(condition)]));
             break;
           }
         }
       }
     }
     if (test_log.length === 0) {
-      alertDialog('Rule not match');
+      alertDialog(_('RULE_NOT_MATCH'));
       return;
     }
     for (var i = 0; i < rule.actions.length; i++) {
@@ -1347,7 +1338,7 @@ function initButtons() {
         if (action.decode === true) {
           url = decodeURIComponent(url);
         }
-        test_log.push('Redirect to: ' + url);
+        test_log.push(_('REDIRECT_TO', [url]));
         break;
       case 'redirect_wildcard':
         url = url.replace(
@@ -1357,37 +1348,35 @@ function initButtons() {
         if (action.decode === true) {
           url = decodeURIComponent(url);
         }
-        test_log.push('Redirect to: ' + url);
+        test_log.push(_('REDIRECT_TO', [url]));
         break;
       case 'redirect_cancel':
-        test_log.push('Cancel request');
+        test_log.push(_('CANCEL_REQUEST'));
         break;
       case 'redirect_to':
-        test_log.push('Redirect to: ' + action.to);
+        test_log.push(_('REDIRECT_TO', [action.to]));
         break;
       case 'redirect_to_transparent':
-        test_log.push('Redirect to: transparent image');
+        test_log.push(_('REDIRECT_TO_TRANSPARENT_IMAGE'));
         break;
       case 'redirect_to_empty':
-        test_log.push('Redirect to: empty document');
+        test_log.push(_('REDIRECT_TO_EMPTY_DOCUMENT'));
         break;
       case 'request_header_set':
-        test_log.push('Set request header ' + action.name +
-                      ' to ' + action.value);
+        test_log.push(_('SET_REQUEST_HEADER_TO', [action.name, action.value]));
         break;
       case 'request_header_remove':
-        test_log.push('Remove request header ' + action.name);
+        test_log.push(_('REMOVE_REQUEST_HEADER', [action.name]));
         break;
       case 'response_header_add':
-        test_log.push('Add response header ' + action.name +
-                      ' with value ' + action.value);
+        test_log.push(_('ADD_RESPONSE_HEADER', [action.name, action.value]));
         break;
       case 'response_header_remove':
         if (action.value === undefined) {
-          test_log.push('Remove response header ' + action.name);
+          test_log.push(_('REMOVE_RESPONSE_HEADER', [action.name]));
         } else {
-          test_log.push('Remove response header ' + action.name +
-                        ' with value ' + action.value);
+          test_log.push(_('REMOVE_RESPONSE_HEADER_WITH_VALUE',
+                          [action.name, action.value]));
         }
         break;
       default:
@@ -1396,7 +1385,7 @@ function initButtons() {
     }
     if (rule.type === 'fast_matching' &&
         testMatchFastMatching(rule, url) === true) {
-      alertDialog('This rule may create redirect loops!');
+      alertDialog(_('THIS_RULE_MAY_CREATE_REDIRECT_LOOPS'));
       return;
     }
     alertDialog(test_log.join('\n'));
@@ -1407,12 +1396,12 @@ function initButtons() {
     var $dialog = $('#condition-editor-normal');
     var url = $(this).prev().prop('value');
     if (!namespace.urlValidator.validate(url)) {
-      alertDialog('Please enter a valid URL');
+      alertDialog(_('PLEASE_ENTER_A_VALID_URL'));
       return;
     }
     var type = $('[type="radio"][name="type"]:checked', $dialog).data('type');
     if (type === 'manual') {
-      alertDialog('No need to test this kind of condition');
+      alertDialog(_('NO_NEED_TO_TEST_THIS_KIND_OF_CONDITION'));
       return;
     }
     var modifiers = [];
@@ -1427,7 +1416,8 @@ function initButtons() {
       alertDialog(x.message);
       return;
     }
-    alertDialog(regexp.test(url) === true ? 'Condition match' : 'Condition not match');
+    alertDialog(regexp.test(url) === true ? _('CONDITION_MATCH') :
+                _('CONDITION_NOT_MATCH'));
   });
   /* Test action */
   $('#action-editor-redirect [name="test-action"]').click(function () {
@@ -1435,12 +1425,12 @@ function initButtons() {
     var $dialog = $('#action-editor-redirect');
     var url = $(this).prev().prop('value');
     if (!namespace.urlValidator.validate(url)) {
-      alertDialog('Please enter a valid URL');
+      alertDialog(_('PLEASE_ENTER_A_VALID_URL'));
       return;
     }
     var type = $('[type="radio"][name="type"]:checked', $dialog).data('type');
     if (/cancel$|^redirect_to/.test(type)) {
-      alertDialog('No need to test this kind of action');
+      alertDialog(_('NO_NEED_TO_TEST_THIS_KIND_OF_ACTION'));
       return;
     }
     var modifiers = [];
@@ -1462,7 +1452,7 @@ function initButtons() {
     if (decode === true) {
       result = decodeURIComponent(result);
     }
-    alertDialog('Redirect to: ' + result);
+    alertDialog(_('REDIRECT_TO', [result]));
   });
   /* Condition type selection */
   $('#condition-editor-normal [name="type"]').click(function () {
@@ -1682,21 +1672,6 @@ function initMisc() {
         }, 1);
       });
   });
-  /* I18n */
-  $('[data-i18n]').each(function () {
-    var i18ns = $(this).data('i18n');
-    if (i18ns === '') {
-      return;
-    }
-    i18ns.split(/\s*;\s/).forEach(function (i18n) {
-      if (i18n.indexOf(':') < 0) {
-        var pair = i18n.split(':');
-        $(this).prop(pair[0].replace(/^\s*|\s*$/), _(pair[1]));
-      } else {
-        $(this).text(_(i18n));
-      }
-    });
-  });
 }
 
 /**
@@ -1716,10 +1691,10 @@ function loadRules(filter, callback) {
       if (rules.length <= 0) {
         return;
       }
-      $list.append('<h3>' + type + '</h3>');
+      $list.append('<h3>' + _(type) + '</h3>');
       $.each(rules, function (i, rule) {
         $list.append(
-          '<li data-type="' + _(type) +
+          '<li data-type="' + type +
             '"><span class="rule-handle ui-icon ui-icon-script"></span>' +
             rule.name + '</li>');
       });
@@ -1739,7 +1714,7 @@ function alertDialog(message) {
   $(html).dialog({
     modal: true,
     buttons: [{
-      text: 'Close',
+      text: _('CLOSE'),
       click: function () {
         $(this).dialog('close');
       }
@@ -1760,13 +1735,13 @@ $( "#dialog:ui-dialog" ).dialog( "destroy" );
   $(html).dialog({
     modal: true,
     buttons: [{
-      text: 'Yes',
+      text: _('YES'),
       click: function () {
         $(this).dialog('close');
         callback(true);
       }
     }, {
-      text: 'No',
+      text: _('NO'),
       click: function () {
         $(this).dialog('close');
         callback(false);
@@ -1894,12 +1869,12 @@ function initSettings() {
         data = JSON.parse(text);
         // TODO: Judge file type, be able to read in Redirector-2.2 format
       } catch (x) {
-        alertDialog('Restore data failed: ' + x.message);
+        alertDialog(_('RESTORE_DATA_FAILED', [x.message]));
         return;
       }
       chrome.storage.local.set(data, function () {
         if (chrome.extension.lastError !== undefined) {
-          alertDialog('Restore data failed: ' + chrome.extension.lastError);
+          alertDialog(_('RESTORE_DATA_FAILED', [chrome.extension.lastError]));
         } else {
           location.reload();
         }
