@@ -104,9 +104,30 @@ function saveTextToFile(properties) {
 /**
  * Get internationalization text
  */
-function _(messagename) {
-  // return chrome.i18n.getMessage(messagename.replace(/^\s*|\s*$/g, ''));
-  return messagename;
+function _(messagename, substitutions) {
+  return chrome.i18n.getMessage(
+    messagename.replace(/^\s*|\s*$/g, '').toUpperCase(), substitutions);
+}
+
+/**
+ * Apply I18N to HTML file
+ */
+function applyI18n() {
+  $('[data-i18n]').each(function () {
+    var i18ns = $(this).data('i18n');
+    if (i18ns === '') {
+      return;
+    }
+    var $this = $(this);
+    i18ns.split(/\s*;\s/).forEach(function (i18n) {
+      if (i18n.indexOf(':') < 0) {
+        $this.text(_(i18n));
+      } else {
+        var pair = i18n.split(':');
+        $this.prop(pair[0].replace(/\s+/g, ''), _(pair[1]));
+      }
+    });
+  });
 }
 
 /**
