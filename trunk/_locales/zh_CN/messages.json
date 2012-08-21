@@ -1,4 +1,7 @@
 {
+  "DESCRIPTION": {
+    "message": "任意重定向URL／修改HTTP头"
+  },
   "REDIRECTOR_DEBUGGER": {
     "message": "Redirector调试器"
   },
