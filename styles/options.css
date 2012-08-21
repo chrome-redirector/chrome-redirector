@@ -93,8 +93,8 @@ input[type="file"] {
 }
 
 /* nav-tab-rules */
-#nav-tab-rules.ui-tabs-panel { 
-    padding: 0px; 
+#nav-tab-rules.ui-tabs-panel {
+    padding: 0px;
 }
 
 #nav-tab-rules .toolbar {
@@ -115,36 +115,43 @@ input[type="file"] {
 }
 
 #rule-list-section h3 {
-    margin: 0; 
+    margin: 0;
     padding: 2px 5px;
     color: #888888;
     background: #EEEEEE;
     border-bottom: 3px solid #DDDDDD;
 }
 
-#rule-list {
+.selectable-draggable-list {
     padding: 0;
     margin: 0;
 }
 
-#rule-list li {
+.selectable-draggable-list li {
     background-color: #F7F7F7;
     border-bottom: 1px solid #DDDDDD;
     height: 24px;
     line-height: 24px;
     font-size: 16px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    cursor: default;
 }
 
-#rule-list li:hover {
-    background-color: #EEEEEE;
-}
-
-#rule-list li .ui-icon { 
+.selectable-draggable-list li .ui-icon {
     display: inline-block;
     margin-top: 2px;
 }
 
-/* Scrollbar (temporary design) */
+.selectable-draggable-list .ui-selecting {
+    background: #ddd;
+}
+.selectable-draggable-list .ui-selected {
+    background: #ccc;
+}
+
+/* Scrollbar */
 ::scrollbar,::-webkit-scrollbar {
     width: 5px;
     height: 5px;
@@ -159,52 +166,6 @@ input[type="file"] {
 }
 ::scrollbar-thumb:hover,::-webkit-scrollbar-thumb:hover {
     background-color: #17a;
-}
-
-
-/* Selectable & draggable */
-.selectable-draggable-list {
-    padding: 0;
-}
-.selectable-draggable-list li {
-    background: #e6e6e6;
-    color: #555;
-    border: 1px solid #d3d3d3;
-    position: relative;
-    margin: 1px 0;
-    padding: 1px;
-    padding-left: 32px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    cursor: default;
-}
-.selectable-draggable-list li .rule-handle {
-    position: absolute;
-    left: 0;
-    top: 0;
-    bottom: 0;
-    padding: 3px;
-}
-.selectable-draggable-list .ui-selecting {
-    background: #eae8ff;
-    color: #363636;
-    border-color: #fcefa1;
-}
-.selectable-draggable-list .ui-selecting~.ui-selecting {
-    background: #eee;
-    color: #212121;
-    border-color: #aaa;
-}
-.selectable-draggable-list .ui-selected {
-    background: #fbf9ee;
-    color: #363636;
-    border-color: #fcefa1;
-}
-.selectable-draggable-list .ui-selected~.ui-selected {
-    background: #fff;
-    color: #212121;
-    border-color: #aaa;
 }
 
 /* Combobox */
