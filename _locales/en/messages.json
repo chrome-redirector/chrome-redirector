@@ -1,4 +1,7 @@
 {
+  "DESCRIPTION": {
+    "message": "Redirects URLs / modifies HTTP headers arbitrarily."
+  },
   "REDIRECTOR_DEBUGGER": {
     "message": "Redirector Debugger"
   },

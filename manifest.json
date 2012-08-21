@@ -1,6 +1,7 @@
 {
   "manifest_version": 2,
   "name": "Redirector",
+  "description": "__MSG_DESCRIPTION__",
   "icons": {
     "16": "icons/icon_16.png",
     "19": "icons/icon_19.png",
