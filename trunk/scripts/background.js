@@ -75,7 +75,7 @@ window.redirector_background_js = {
     initAutoSync();
     /* Event listeners
      */
-    /* Fresh install / update to new version (not work for 151370) */
+    /* Fresh install / update to new version */
     chrome.runtime.onInstalled.addListener(function() {
       openOptionsPage();
     });

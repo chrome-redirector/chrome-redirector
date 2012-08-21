@@ -28,8 +28,8 @@ $(document).ready(function(){
 /* Create selectable & sortable list string (helper)
  */
 function wrapListItem(item) {
-  var pattern = '<li class="ui-corner-all"><div class="rule-handle">\
-<span class="ui-icon ui-icon-carat-2-n-s"></span></div>\0x0</li>';
+  var pattern = '<li><span class="rule-handle ui-icon ui-icon-script"></span>\
+\0x0</li>';
   return pattern.replace('\0x0', item);
 }
 
@@ -45,7 +45,6 @@ function initDialogs() {
         $(this).dialog('close');
         var type = $('#rule-creator [type="radio"][name="type"]:checked')
           .data('type');
-        var $list = $('#rule-lists-' + type);
         var rule = {
           enabled: true,
           type: type,
@@ -67,7 +66,7 @@ function initDialogs() {
         var $rule_editor = $('#rule-editor');
         $rule_editor.data({
           rule: rule,
-          rule_index: $('li', $list).index($('.ui-selected', $list))
+          rule_index: -1
         });
         $rule_editor.dialog('open');
       }
@@ -127,7 +126,6 @@ function initDialogs() {
         throw new Error('Please enter a valid URL');
       }
     }
-    var $list = $('#rule-list-' + type);
     var index = $dialog.data('rule_index');
     var opt = {};
     opt[type] = [];
@@ -140,16 +138,10 @@ function initDialogs() {
       }
       var result = {};
       result[type] = value;
-      chrome.storage.local.set(result);
+      chrome.storage.local.set(result, function () {
+        loadRules();
+      });
     });
-    if (index < 0) {
-      $list.append(wrapListItem(rule.name));
-      $('#nav-tab-rules>.accordion').accordion('resize');
-    } else {
-      $('li:eq(' + index + ')', $list).replaceWith(wrapListItem(rule.name));
-    }
-    $('#rule-lists').accordion(
-      'activate', window.redirector_utils_js.all_types.indexOf(type));
   }
   /**
    * Save the editing condition
@@ -713,14 +705,14 @@ function initButtons() {
   });
   /* Edit rule */
   function editRule () {
-    var type_index = $('#rule-lists').accordion('option', 'active');
-    var type = window.redirector_utils_js.all_types[type_index];
-    var $list = $('#rule-list-' + type);
-    var $rule = $('.ui-selected', $list);
-    var index = $('li', $list).index($rule);
+    var $rule = $('#rule-list .ui-selected');
+    var type = $rule.data('type');
+    var index = $rule.index();
     if (index < 0) {
       return;
     }
+    var offset = $('#rule-list [data-type="' + type + '"]:first').index();
+    index -= offset;
     chrome.storage.local.get(type, function (items) {
       var rule = items[type][index];
       rule.type = type;
@@ -730,7 +722,7 @@ function initButtons() {
     });
   }
   $('#nav-tab-rules button[name="edit"]').click(editRule);
-  $('#rule-lists').on('dblclick', 'li', function () {
+  $('#rule-list').on('dblclick', 'li', function () {
     $(this).addClass('ui-selected');
     editRule();
   });
@@ -745,14 +737,14 @@ function initButtons() {
   });
   /* Remove rule */
   function removeRule () {
-    var type_index = $('#rule-lists').accordion('option', 'active');
-    var type = window.redirector_utils_js.all_types[type_index];
-    var $list = $('#rule-list-' + type);
-    var $rule = $('.ui-selected', $list);
-    var index = $('li', $list).index($rule);
+    var $rule = $('#rule-list .ui-selected');
+    var type = $rule.data('type');
+    var index = $rule.index();
     if (index < 0) {
       return;
     }
+    var offset = $('#rule-list [data-type="' + type + '"]:first').index();
+    index -= offset;
     chrome.storage.local.get(type, function (items) {
       var rules = items[type];
       confirmDialog(
@@ -764,8 +756,9 @@ function initButtons() {
           rules.splice(index, 1);
           var obj = {};
           obj[type] = rules;
-          chrome.storage.local.set(obj);
-          $rule.remove();
+          chrome.storage.local.set(obj, function () {
+            loadRules();
+          });
         });
     });
   }
@@ -779,15 +772,39 @@ function initButtons() {
     }
     return true;
   });
-  /* Relative key-bindings */
+  /* Adjust rule priority */
+  function adjustRulePriority(command) {
+    var $rule = $('#rule-list .ui-selected');
+    var type = $rule.data('type');
+    var index = $rule.index();
+    if (index < 0) {
+      return;
+    }
+    var offset = $('#rule-list [data-type="' + type + '"]:first').index();
+    index -= offset;
+    var target = command === 'up' ? index - 1 : index + 1;
+    chrome.storage.local.get(type, function (items) {
+      var rules = items[type];
+      if (target < 0 || target >= rules.length) {
+        return;
+      }
+      var tmp = rules.splice(index, 1);
+      rules.splice(target, 0, tmp[0]);
+      var obj = {};
+      obj[type] = rules;
+      chrome.storage.local.set(obj);
+      if (command === 'up') {
+        $rule.insertBefore($rule.prev());
+      } else {
+        $rule.insertAfter($rule.next());
+      }
+    });
+  }
   // j => move down
   $(document).bind('keydown', 'ctrl+n j', function () {
     if ($('.ui-dialog:visible').length <= 0 &&
         $('#nav-tab-rules').is(':visible')) {
-      var $rule = $('.ui-selected', $('#rule-lists'));
-      if ($rule.next().length > 0) {
-        $rule.insertAfter($rule.next());
-      }
+      adjustRulePriority('down');
       return false;
     }
     return true;
@@ -796,10 +813,7 @@ function initButtons() {
   $(document).bind('keydown', 'ctrl+p k', function () {
     if ($('.ui-dialog:visible').length <= 0 &&
         $('#nav-tab-rules').is(':visible')) {
-      var $rule = $('.ui-selected', $('#rule-lists'));
-      if ($rule.prev().length > 0) {
-        $rule.insertBefore($rule.prev());
-      }
+      adjustRulePriority('up');
       return false;
     }
     return true;
@@ -808,10 +822,11 @@ function initButtons() {
   $(document).bind('keydown', 'tab', function () {
     if ($('.ui-dialog:visible').length <= 0 &&
         $('#nav-tab-rules').is(':visible')) {
-      var $rule = $('.ui-selected', $('#rule-lists'));
-      if ($rule.next().length > 0) {
+      var $rule = $('#rule-list .ui-selected');
+      var $next = $rule.next();
+      if ($next.length > 0 && $next.is('li')) {
         $rule.removeClass('ui-selected');
-        $rule.next().addClass('ui-selected');
+        $next.addClass('ui-selected');
       }
       return false;
     }
@@ -821,10 +836,11 @@ function initButtons() {
   $(document).bind('keydown', 'shift+tab', function () {
     if ($('.ui-dialog:visible').length <= 0 &&
         $('#nav-tab-rules').is(':visible')) {
-      var $rule = $('.ui-selected', $('#rule-lists'));
-      if ($rule.prev().length > 0) {
+      var $rule = $('#rule-list .ui-selected');
+      var $prev = $rule.prev();
+      if ($prev.length > 0 && $prev.is('li')) {
         $rule.removeClass('ui-selected');
-        $rule.prev().addClass('ui-selected');
+        $prev.addClass('ui-selected');
       }
       return false;
     }
@@ -845,37 +861,33 @@ function initButtons() {
         }
         for (type in data) {
           var rule = data[type];
-          var $list = $('#rule-list-' + type);
           var opt = {};
           opt[type] = [];
           chrome.storage.local.get(opt, function (items) {
             var value = items[type];
-            value.push(rule);
+            value.push(rule[0]);
             var result = {};
             result[type] = value;
-            chrome.storage.local.set(result);
+            chrome.storage.local.set(result, function () {
+              loadRules();
+            });
           });
-          $list.append(wrapListItem(rule.name));
-          $('#nav-tab-rules>.accordion').accordion('resize');
         }
       });
     });
-    // Open the list contains the last imported rule
-    $('#rule-lists').accordion(
-      'activate', window.redirector_utils_js.all_types.indexOf(type));
     // Clear the file input
     $(this).prop('value', '');
   });
   /* Export rule */
   $('#nav-tab-rules button[name="export"]').click(function () {
-    var type_index = $('#rule-lists').accordion('option', 'active');
-    var type = window.redirector_utils_js.all_types[type_index];
-    var $list = $('#rule-list-' + type);
-    var $rule = $('.ui-selected', $list);
-    var index = $('li', $list).index($rule);
+    var $rule = $('#rule-list .ui-selected');
+    var type = $rule.data('type');
+    var index = $rule.index();
     if (index < 0) {
       return;
     }
+    var offset = $('#rule-list [data-type="' + type + '"]:first').index();
+    index -= offset;
     chrome.storage.local.get(type, function (items) {
       var rule = items[type][index];
       var data = {};
@@ -1583,10 +1595,44 @@ function initMisc() {
     }
   });
   /* Selectabla & draggable lists */
-  $('.selectable-draggable-list')
-    .sortable({handle: '.rule-handle', axis: 'y'})
+  $('#rule-list')
+    .sortable({
+      handle: '.rule-handle',
+      axis: 'y',
+      start: function (e, ui) {
+        $(this).data({start_index: ui.item.index()});
+      },
+      stop: function (e, ui) {
+        var start = $(this).data('start_index');
+        var stop = ui.item.index();
+        if (start === stop) {
+          return;
+        }
+        var type = ui.item.data('type');
+        if (type !== ui.item.prev().data('type') &&
+            type !== ui.item.next().data('type')) {
+          $(this).sortable('cancel');
+          return;
+        }
+        var offset = $('[data-type="' + type + '"]:first', $(this)).index();
+        start -= offset;
+        stop -= offset;
+        chrome.storage.local.get(type, function (items) {
+          var rules = items[type];
+          var tmp = rules.splice(start, 1);
+          rules.splice(stop, 0, tmp[0]);
+          var obj = {};
+          obj[type] = rules;
+          chrome.storage.local.set(obj);
+        });
+      }
+    })
     .selectable({
-      distance: 1               // Allow double click
+      distance: 1,              // Allow double click
+      filter: 'li',             // Avoid selecting headers
+      stop: function (e, ui) {  // Prevent multiple selection
+        $('.ui-selected:not(:first)', $(this)).removeClass('ui-selected');
+      }
     })
     .on('click', 'li', function (e) { // Enable selection (better solution?)
       var $this = $(this);
@@ -1596,50 +1642,45 @@ function initMisc() {
     });
   /* Deselect when place elsewhere than a rule is clicked */
   $('#nav-tab-rules').click(function () {
-    $('[id^="rule-list-"] .ui-selected').removeClass('ui-selected');
+    $('#rule-list .ui-selected').removeClass('ui-selected');
   });
   /* Same for rule editor */
   $('#rule-editor').click(function () {
     $('.ui-selected', $(this)).removeClass('ui-selected');
   });
-  /* Rule lists sort binding */
-  $.each(window.redirector_utils_js.all_types, function (i, type) {
-    $('#rule-list-' + type).bind('sortstart', function (e, ui) {
-      $(this).data({sort_start: ui.item.index()});
-    });
-    $('#rule-list-' + type).bind('sortstop', function (e, ui) {
-      var start = $(this).data('sort_start');
-      var stop = ui.item.index();
-      if (start === stop) {
-        return;
-      }
-      chrome.storage.local.get(type, function (items) {
-        var rules = items[type];
-        var tmp = rules[start];
-        rules[start] = rules[stop];
-        rules[stop] = tmp;
-        var obj = {};
-        obj[type] = rules;
-        chrome.storage.local.set(obj);
-      });
-    });
-  });
   /* Rule editor conditons/actions sort binding */
-  $.each(['condition', 'action'], function (i, type) {
-    $('#rule-editor-' + type + 's').bind('sortstart', function (e, ui) {
-      $(this).data({sort_start: ui.item.index()});
-    });
-    $('#rule-editor-' + type + 's').bind('sortstop', function (e, ui) {
-      var start = $(this).data('sort_start');
-      var stop = ui.item.index();
-      if (start === stop) {
-        return;
-      }
-      var array = $('#rule-editor').data('rule')[type + 's'];
-      var tmp = array[start];
-      array[start] = array[stop];
-      array[stop] = tmp;
-    });
+  $.each(['conditions', 'actions'], function (i, type) {
+    $('#rule-editor-' + type)
+      .sortable({
+        handle: '.rule-handle',
+        axis: 'y',
+        start: function (e, ui) {
+          $(this).data({start_index: ui.item.index()});
+        },
+        stop: function (e, ui) {
+          var start = $(this).data('start_index');
+          var stop = ui.item.index();
+          if (start === stop) {
+            return;
+          }
+          var array = $('#rule-editor').data('rule')[type];
+          var tmp = array.splice(start, 1);
+          array.splice(stop, 0, tmp[0]);
+        }
+      })
+      .selectable({
+        distance: 1,
+        filter: 'li',
+        stop: function (e, ui) {
+          $('.ui-selected:not(:first)', $(this)).removeClass('ui-selected');
+        }
+      })
+      .on('click', 'li', function (e) {
+        var $this = $(this);
+        setTimeout(function () {
+          $this.addClass('ui-selected');
+        }, 1);
+      });
   });
   /* I18n */
   $('[data-i18n]').each(function () {
@@ -1659,20 +1700,33 @@ function initMisc() {
 }
 
 /**
- * Load rules to rule-lists
+ * Load rules to #rule-list
  */
-function loadRules() {
+function loadRules(filter, callback) {
+  var $list = $('#rule-list').html('');
   chrome.storage.local.get(null, function (items) {
     $.each(window.redirector_utils_js.all_types, function (i, type) {
       var rules = items[type];
       if (rules === undefined || rules.length === 0) {
         return;
       }
-      var $list = $('#rule-list-' + type);
+      if (filter instanceof Function) {
+        rules = rules.filter(filter);
+      }
+      if (rules.length <= 0) {
+        return;
+      }
+      $list.append('<h3>' + type + '</h3>');
       $.each(rules, function (i, rule) {
-        $list.append(wrapListItem(rule.name));
+        $list.append(
+          '<li data-type="' + _(type) +
+            '"><span class="rule-handle ui-icon ui-icon-script"></span>' +
+            rule.name + '</li>');
       });
     });
+    if (callback instanceof Function) {
+      callback();
+    }
   });
 }
 

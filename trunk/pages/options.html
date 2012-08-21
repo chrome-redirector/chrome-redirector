@@ -19,97 +19,89 @@
     <div class="header-shadow"></div>
 
     <div class="container">
-        <div class="content">
-      <div id="nav-tabs">
-        <ul>
-          <li><a href="#nav-tab-rules">Rules</a></li>
-          <li><a href="#nav-tab-settings">Settings</a></li>
-          <li><a href="#nav-tab-help">Help</a></li>
-        </ul>
-        <div id="nav-tab-rules">
+      <div class="content">
+        <div id="nav-tabs">
+          <ul>
+            <li><a href="#nav-tab-rules">Rules</a></li>
+            <li><a href="#nav-tab-settings">Settings</a></li>
+            <li><a href="#nav-tab-help">Help</a></li>
+          </ul>
+          <div id="nav-tab-rules">
             <div class="toolbar ui-widget-header button-set ui-corner-bottom">
-                <button name="new"><span>New</span></button>
-                <button name="edit"><span>Edit</span></button>
-                <button name="remove"><span>Remove</span></button>
-                <input type="file" name="import" multiple />
-                <button name="import"><span>Import</span></button>
-                <button name="export"><span>Export</span></button>
+              <button name="new"><span>New</span></button>
+              <button name="edit"><span>Edit</span></button>
+              <button name="remove"><span>Remove</span></button>
+              <input type="file" name="import" multiple />
+              <button name="import"><span>Import</span></button>
+              <button name="export"><span>Export</span></button>
             </div>
 
             <div id="rule-list-section">
-                <h3>Fast Matching</h3>
-                <ul id="rule-list">
-                    <li><span class="ui-icon ui-icon-script"></span>Item 1</li>
-                    <li><span class="ui-icon ui-icon-script"></span>Item 2</li>
-                    <li><span class="ui-icon ui-icon-script"></span>Item 3</li>
-                    <li><span class="ui-icon ui-icon-script"></span>Item 4</li>
-                    <li><span class="ui-icon ui-icon-script"></span>Item 5</li>
-                    <li><span class="ui-icon ui-icon-script"></span>Item 6</li>
-                    <li><span class="ui-icon ui-icon-script"></span>Item 7</li>
-                </ul>
+              <ul id="rule-list" class="selectable-draggable-list"></ul>
             </div>
-        </div> <!-- #nav-tab-rules -->
+          </div> <!-- #nav-tab-rules -->
 
-        <div id="nav-tab-settings">
-          <form class="button-set">
-            <h5>Context menu</h5>
-            <input type="radio" name="context" id="settings-1" data-enabled="true" checked /><label for="settings-1">Enable</label>
-            <input type="radio" name="context" id="settings-2" data-enabled="false" /><label for="settings-2">Disable</label>
-          </form>
-          <form class="button-set">
-            <h5>Icon notification</h5>
-            <input type="radio" name="icon" id="settings-3" data-enabled="true" checked /><label for="settings-3">Enable</label>
-            <input type="radio" name="icon" id="settings-4" data-enabled="false" /><label for="settings-4">Disable</label>
-          </form>
-          <form class="button-set">
-            <h5>Enabled rule types</h5>
-            <input type="checkbox" name="rule_type" id="settings-5" data-type="fast_matching" />
-            <label for="settings-5">Fast matching</label>
-            <input type="checkbox" name="rule_type" id="settings-6" data-type="redirect" />
-            <label for="settings-6">Redirect</label>
-            <input type="checkbox" name="rule_type" id="settings-7" data-type="request_header" />
-            <label for="settings-7">Request header</label>
-            <input type="checkbox" name="rule_type" id="settings-8" data-type="response_header" />
-            <label for="settings-8">Response header</label>
-            <input type="checkbox" name="rule_type" id="settings-9" data-type="error_handling" />
-            <label for="settings-9">Error handling</label>
-            <input type="checkbox" name="rule_type" id="settings-10" data-type="online" />
-            <label for="settings-10">Online</label>
-          </form>
-          <form class="button-set">
-            <h5>Enabled protocols</h5>
-            <input type="checkbox" name="protocol" id="settings-11" data-type="http://*/*" /><label for="settings-11">HTTP</label>
-            <input type="checkbox" name="protocol" id="settings-12" data-type="https://*/*" /><label for="settings-12">HTTPS</label>
-            <input type="checkbox" name="protocol" id="settings-13" data-type="ftp://*/*" /><label for="settings-13">FTP</label>
-            <input type="checkbox" name="protocol" id="settings-14" data-type="file://*/*" /><label for="settings-14">FILE</label>
-          </form>
-          <form class="button-set">
-            <h5>Manual redirection methods</h5>
-            <input type="checkbox" name="manual" id="settings-15" data-type="page" /><label for="settings-15">Page</label>
-            <input type="checkbox" name="manual" id="settings-16" data-type="link" /><label for="settings-16">Link</label>
-          </form>
-          <form class="button-set">
-            <h5>Auto sync</h5>
-            <input type="radio" name="sync" id="settings-17" data-enabled="true" checked /><label for="settings-17">Enable</label>
-            <input type="radio" name="sync" id="settings-18" data-enabled="false" /><label for="settings-18">Disable</label>
-            <button name="manual-sync"><span>Sync now</span></button>
-          </form>
-          <form class="button-set">
-            <h5>Enable debugger</h5>
-            <input type="radio" name="debugger" id="settings-19" data-enabled="true" checked /><label for="settings-19">Enable</label>
-            <input type="radio" name="debugger" id="settings-20" data-enabled="false" /><label for="settings-20">Disable</label>
-          <form class="button-set">
-            <h5>Backup & Restore</h5>
-            <button name="backup"><span>Backup</span></button>
-            <input type="file" name="restore" />
-            <button name="restore"><span>Restore</span></button>
-          </form>
-        </div> <!-- #nav-tab-settings -->
-        <div id="nav-tab-help">
-          <p>TODO</p>
-        </div> <!-- #nav-tab-help -->
+          <div id="nav-tab-settings">
+            <form class="button-set">
+              <h5>Context menu</h5>
+              <input type="radio" name="context" id="settings-1" data-enabled="true" checked /><label for="settings-1">Enable</label>
+              <input type="radio" name="context" id="settings-2" data-enabled="false" /><label for="settings-2">Disable</label>
+            </form>
+            <form class="button-set">
+              <h5>Icon notification</h5>
+              <input type="radio" name="icon" id="settings-3" data-enabled="true" checked /><label for="settings-3">Enable</label>
+              <input type="radio" name="icon" id="settings-4" data-enabled="false" /><label for="settings-4">Disable</label>
+            </form>
+            <form class="button-set">
+              <h5>Enabled rule types</h5>
+              <input type="checkbox" name="rule_type" id="settings-5" data-type="fast_matching" />
+              <label for="settings-5">Fast matching</label>
+              <input type="checkbox" name="rule_type" id="settings-6" data-type="redirect" />
+              <label for="settings-6">Redirect</label>
+              <input type="checkbox" name="rule_type" id="settings-7" data-type="request_header" />
+              <label for="settings-7">Request header</label>
+              <input type="checkbox" name="rule_type" id="settings-8" data-type="response_header" />
+              <label for="settings-8">Response header</label>
+              <input type="checkbox" name="rule_type" id="settings-9" data-type="error_handling" />
+              <label for="settings-9">Error handling</label>
+              <input type="checkbox" name="rule_type" id="settings-10" data-type="online" />
+              <label for="settings-10">Online</label>
+            </form>
+            <form class="button-set">
+              <h5>Enabled protocols</h5>
+              <input type="checkbox" name="protocol" id="settings-11" data-type="http://*/*" /><label for="settings-11">HTTP</label>
+              <input type="checkbox" name="protocol" id="settings-12" data-type="https://*/*" /><label for="settings-12">HTTPS</label>
+              <input type="checkbox" name="protocol" id="settings-13" data-type="ftp://*/*" /><label for="settings-13">FTP</label>
+              <input type="checkbox" name="protocol" id="settings-14" data-type="file://*/*" /><label for="settings-14">FILE</label>
+            </form>
+            <form class="button-set">
+              <h5>Manual redirection methods</h5>
+              <input type="checkbox" name="manual" id="settings-15" data-type="page" /><label for="settings-15">Page</label>
+              <input type="checkbox" name="manual" id="settings-16" data-type="link" /><label for="settings-16">Link</label>
+            </form>
+            <form class="button-set">
+              <h5>Auto sync</h5>
+              <input type="radio" name="sync" id="settings-17" data-enabled="true" checked /><label for="settings-17">Enable</label>
+              <input type="radio" name="sync" id="settings-18" data-enabled="false" /><label for="settings-18">Disable</label>
+              <button name="manual-sync"><span>Sync now</span></button>
+            </form>
+            <form class="button-set">
+              <h5>Enable debugger</h5>
+              <input type="radio" name="debugger" id="settings-19" data-enabled="true" checked /><label for="settings-19">Enable</label>
+              <input type="radio" name="debugger" id="settings-20" data-enabled="false" /><label for="settings-20">Disable</label>
+              <form class="button-set">
+                <h5>Backup & Restore</h5>
+                <button name="backup"><span>Backup</span></button>
+                <input type="file" name="restore" />
+                <button name="restore"><span>Restore</span></button>
+              </form>
+            </form>
+          </div> <!-- #nav-tab-settings -->
+          <div id="nav-tab-help">
+            <p>TODO</p>
+          </div> <!-- #nav-tab-help -->
         </div>   <!-- #nav-tabs -->
-        </div><!-- .content -->
+      </div><!-- .content -->
     </div> <!-- .container -->
     <!-- Rule Creator
       -->

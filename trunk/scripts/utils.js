@@ -105,7 +105,8 @@ function saveTextToFile(properties) {
  * Get internationalization text
  */
 function _(messagename) {
-  return chrome.i18n.getMessage(messagename.replace(/^\s*|\s*$/g, ''));
+  // return chrome.i18n.getMessage(messagename.replace(/^\s*|\s*$/g, ''));
+  return messagename;
 }
 
 /**
