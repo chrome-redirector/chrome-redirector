@@ -30,7 +30,7 @@ window.redirector_background_js = {
   },
   redirected_requests: {},      // For recording redirected request ID
   header_modified_requests: {}, // For recording header modified request ID
-  info: {},                    // Web request log info for page action
+  info: {}, // Web request log info for page action
   // Values stored in local storage and their default values
   storage_states: {
     // Rule lists (raw)
