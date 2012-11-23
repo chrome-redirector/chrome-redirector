@@ -21,6 +21,6 @@
                     "tabs", "contextMenus", "<all_urls>",
                     "notifications", "storage"],
     "default_locale": "en_US",
-    "version": "2.2.22.2",
+    "version": "2.2.22.3",
     "minimum_chrome_version": "18"
 }
