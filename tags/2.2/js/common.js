@@ -286,28 +286,27 @@ $f.writeFile = function (file, content) {
      */
     // file: filename (in user's download dir); content: string
 
-    if (!window.BlobBuilder) {
-        BlobBuilder = WebKitBlobBuilder;
+    if (window.Blob) {
+        var blob = new Blob([content], {type: 'application/force-download'});
+        var link = $c('a');     // Tmp link
+        link.href = URL.createObjectURL(blob);
+        link.download = file;
+        link.click();           // Simulate mouse click to download
+    } else {
+        if (!window.BlobBuilder) {
+          BlobBuilder = WebKitBlobBuilder;
+        }
+        if (!window.URL) {
+          URL = webkitURL;
+        }
+
+        var blob = new BlobBuilder();
+        blob.append(content);
+
+        var link = $c('a');     // Tmp link
+        link.href = URL.createObjectURL(
+          blob.getBlob('application/force-download'));
+        link.download = file;
+        link.click();           // Simulate mouse click to download
     }
-    if (!window.URL) {
-        URL = webkitURL;
-    }
-
-    var blob = new BlobBuilder();
-    blob.append(content);
-
-    var link = $c('a'); // Tmp link
-    link.href = URL.createObjectURL(
-        blob.getBlob('application/force-download'));
-    link.download = file;
-    link.click();               // Simulate mouse click to download
-
-    /* BlobBuilder() is deprecated!
-     * Switch to Blob() when Cr21 is widely used
-     */
-    // var blob = new Blob([content], {type: 'application/force-download'});
-    // var link = $c('a'); // Tmp link
-    // link.href = URL.createObjectURL(blob);
-    // link.download = file;
-    // link.click();               // Simulate mouse click to download
 };
