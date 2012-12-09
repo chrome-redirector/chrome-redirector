@@ -286,6 +286,8 @@ $f.writeFile = function (file, content) {
      */
     // file: filename (in user's download dir); content: string
 
+    var URL = window.URL || window.webkitURL;
+
     if (window.Blob) {
         var blob = new Blob([content], {type: 'application/force-download'});
         var link = $c('a');     // Tmp link
@@ -295,9 +297,6 @@ $f.writeFile = function (file, content) {
     } else {
         if (!window.BlobBuilder) {
           BlobBuilder = WebKitBlobBuilder;
-        }
-        if (!window.URL) {
-          URL = webkitURL;
         }
 
         var blob = new BlobBuilder();

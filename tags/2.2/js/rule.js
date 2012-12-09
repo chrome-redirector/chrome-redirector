@@ -639,8 +639,8 @@ RuleList.prototype.bak = function (single) { // Backup rule list
 
     var date = new Date();
     var filename = 'Redirector_' + addition + '_' +
-        date.toISOString().substring(0, 10) + '_' +
-        date.toLocaleTimeString() + '.json';
+        date.toLocaleString().replace(/\//g, '-').replace(/ /g, '_') +
+        '.json';
 
     $f.writeFile(filename, JSON.stringify(out));
 };
