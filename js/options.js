@@ -96,7 +96,7 @@ window.onload = function () {         // Option page init
 
     // Navigation bar (work with switchNav)
     var transitionEndEvent = window.TransitionEvent ?
-        'transitionEnd' : 'webkitTransitionEnd';
+        'transitionend' : 'webkitTransitionEnd';
     $e($('main-container'), function (e) { // Fade in
         $('main-container').className = '';
         $('main-container').style.margin = '0 0';
